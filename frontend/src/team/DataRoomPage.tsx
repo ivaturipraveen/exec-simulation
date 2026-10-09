@@ -87,7 +87,15 @@ export function DataRoomPage() {
                   ))}
                 </div>
               ))}
-              {groups.length === 0 && <Empty title="No documents match" />}
+              {groups.length === 0 &&
+                ((data ?? []).length === 0 ? (
+                  <Empty title="The data room is not open yet" icon={<FolderSearch aria-hidden />}>
+                    Five orientation documents open at <strong>Meet your company</strong>; all
+                    thirty open at <strong>Diagnose</strong>. Your facilitator moves the session on.
+                  </Empty>
+                ) : (
+                  <Empty title="No documents match">Try another ID, title or topic.</Empty>
+                ))}
             </div>
           )}
         </Card>
