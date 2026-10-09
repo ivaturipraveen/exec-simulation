@@ -222,6 +222,8 @@ function RunForm() {
   const [names, setNames] = useState<Record<string, string>>({})
   const payers = catalog?.payers ?? []
   const chosen = payers.filter((p) => picked[p.id] !== false)
+  // Deterministic runs use each card's midpoint, so the seed only matters in Variable mode.
+  const variable = (mode || catalog?.rules.sim_mode) === 'variable'
   const [seed, setSeed] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -236,7 +238,7 @@ function RunForm() {
         body: {
           name,
           round2_mechanic: mechanic || null,
-          seed: seed ? Number(seed) : null,
+          seed: variable && seed ? Number(seed) : null,
           sim_mode: mode || null,
           payer_ids: chosen.map((p) => p.id),
           team_names: Object.fromEntries(
@@ -287,12 +289,18 @@ function RunForm() {
               </Select>
             )}
           </Field>
-          <Field label="Scenario seed" hint="Same seed → comparable runs">
+          <Field
+            label="Scenario seed"
+            hint={
+              variable ? 'Same seed → same random draws, for replays' : 'Only used in Variable mode'
+            }
+          >
             {(id) => (
               <Input
                 id={id}
-                value={seed}
-                placeholder="Default"
+                value={variable ? seed : ''}
+                placeholder={variable ? 'Default' : 'Not used'}
+                disabled={!variable}
                 onChange={(e) => setSeed(e.target.value.replace(/\D/g, ''))}
                 inputMode="numeric"
               />
