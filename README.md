@@ -49,7 +49,7 @@ The API and the UI can run as two services. Set `VITE_API_URL` on the UI build s
 
 Use one API worker: live updates (WebSocket) and the session lock are in-process.
 
-The API's production values are kept in `backend/.env.production` (git-ignored). Paste them into Render under **Environment → Add from .env**. The UI needs only `VITE_API_URL` and `NODE_VERSION`.
+The API's production values are kept in `backend/.env.production` (git-ignored). Paste them into Render under **Environment → Add from .env**. The UI needs only `VITE_API_URL` and `NODE_VERSION`, kept in `frontend/.env.render` (git-ignored, and not loaded by local builds).
 
 ## Commands
 
