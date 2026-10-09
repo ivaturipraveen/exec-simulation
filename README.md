@@ -34,6 +34,21 @@ Blank game values fall back to `content/game.yaml`. Set `ADMIN_PASSWORD` to enab
 
 The AI analyst uses Claude when `ANTHROPIC_API_KEY` is set; otherwise it runs in retrieval-only mode.
 
+## Deploying (Render, two services)
+
+The API and the UI can run as two services. Set `VITE_API_URL` on the UI build so it calls the API, and set `CORS_ORIGINS` on the API so it accepts the UI.
+
+| | API (Web Service) | UI (Static Site) |
+|---|---|---|
+| Root directory | `backend` | `frontend` |
+| Build | `pip install -r requirements.lock` | `npm ci && npm run build` |
+| Start / publish | `uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1` | publish `dist` |
+| Health check | `/api/health` | — |
+| Env | `ENVIRONMENT=production`, `SECRET_KEY`, `ADMIN_PASSWORD`, `ANTHROPIC_API_KEY`, `CORS_ORIGINS=<UI URL>`, `PYTHON_VERSION` | `VITE_API_URL=<API URL>`, `NODE_VERSION` |
+| Extra | A persistent disk at `/var/data` with `DATA_DIR=/var/data` and `DATABASE_URL=sqlite:////var/data/exec_sim.db`; without it, sessions are lost on every deploy or restart | Rewrite rule `/*` → `/index.html` so deep links work |
+
+Use one API worker: live updates (WebSocket) and the session lock are in-process.
+
 ## Commands
 
 | Command | What it does |

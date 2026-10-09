@@ -6,10 +6,10 @@ project root so the server behaves the same whichever directory it is started fr
 
 from functools import lru_cache
 from pathlib import Path
-from typing import Literal
+from typing import Annotated, Any, Literal
 
-from pydantic import Field, SecretStr, model_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import Field, SecretStr, field_validator, model_validator
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 _SQLITE_PREFIX = "sqlite:///"
@@ -34,7 +34,8 @@ class Settings(BaseSettings):
     data_dir: Path = Path("data")
     static_dir: Path = Path("frontend/dist")
     database_url: str = "sqlite:///data/exec_sim.db"
-    cors_origins: list[str] = ["http://localhost:5180", "http://127.0.0.1:5180"]
+    # Comma-separated or a JSON list, e.g. https://exec-sim.onrender.com,http://localhost:5180
+    cors_origins: Annotated[list[str], NoDecode] = ["http://localhost:5180", "http://127.0.0.1:5180"]
     api_port: int = 8800
     web_port: int = 5180
     admin_password: SecretStr | None = Field(
@@ -59,6 +60,18 @@ class Settings(BaseSettings):
     ai_max_tokens: int = Field(default=8000, ge=1024)  # headroom: adaptive thinking counts toward it
     ai_requests_per_10_min: int = Field(default=20, ge=1)
     ai_effort: Literal["low", "medium", "high"] = "medium"
+
+    @field_validator("cors_origins", mode="before")
+    @classmethod
+    def _split_origins(cls, v: Any) -> Any:
+        if isinstance(v, str):
+            v = v.strip()
+            if v.startswith("["):
+                import json
+
+                return json.loads(v)
+            return [o.strip().rstrip("/") for o in v.split(",") if o.strip()]
+        return v
 
     @model_validator(mode="after")
     def _resolve(self) -> "Settings":

@@ -23,3 +23,10 @@ def test_secrets_are_masked_and_blank_key_disables_ai() -> None:
 def test_production_requires_secret_key() -> None:
     with pytest.raises(ValidationError, match="SECRET_KEY"):
         Settings(_env_file=None, environment="production")
+
+
+def test_cors_origins_accept_comma_separated_or_json(monkeypatch) -> None:
+    monkeypatch.setenv("CORS_ORIGINS", "https://exec-sim.onrender.com, http://localhost:5180/")
+    assert Settings(_env_file=None).cors_origins == ["https://exec-sim.onrender.com", "http://localhost:5180"]
+    monkeypatch.setenv("CORS_ORIGINS", '["https://a.example"]')
+    assert Settings(_env_file=None).cors_origins == ["https://a.example"]

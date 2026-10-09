@@ -1,5 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useRef, useState } from 'react'
+import { wsOrigin } from '../lib/apiOrigin'
 
 /** Subscribes to session invalidation hints and refetches affected queries. */
 export function useRealtime(sessionId: string | undefined, token: string | null, teamId?: string) {
@@ -15,8 +16,7 @@ export function useRealtime(sessionId: string | undefined, token: string | null,
     let closed = false
 
     const connect = () => {
-      const proto = window.location.protocol === 'https:' ? 'wss' : 'ws'
-      ws = new WebSocket(`${proto}://${window.location.host}/ws/sessions/${sessionId}`)
+      ws = new WebSocket(`${wsOrigin()}/ws/sessions/${sessionId}`)
       ws.onopen = () => {
         ws?.send(JSON.stringify({ token })) // authenticate in-band; never put tokens in URLs
         retry.current = 0

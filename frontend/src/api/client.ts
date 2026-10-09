@@ -1,3 +1,5 @@
+import { API_ORIGIN } from '../lib/apiOrigin'
+
 export class ApiError extends Error {
   readonly status: number
   readonly code: string
@@ -35,7 +37,7 @@ export async function request<T>(
   if (options.token) headers.Authorization = `Bearer ${options.token}`
   let response: Response
   try {
-    response = await fetch(`/api${path}`, {
+    response = await fetch(`${API_ORIGIN}/api${path}`, {
       method,
       headers,
       body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
