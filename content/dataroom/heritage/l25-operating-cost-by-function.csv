@@ -1,0 +1,14 @@
+function,annual_cost_usd_m,fte,cost_pmpm_usd,note
+Contact center (member services),41.0,540,7.93,"Simulated, fictional data for executive education. Not real PHI. FY2026 budget, $ millions per year. PMPM = per member per month on 431,000 members. 540 in-house agents across 3 sites; IVR and telephony $2.1M within total"
+Care management,24.0,250,4.64,"210 care managers, 40 outreach staff; pharmacists budgeted under Pharmacy"
+Pharmacy clinical programs,3.4,14,0.66,"6 pharmacists ($1.3M), MTM vendor, adherence mailings"
+Appeals and grievances,6.0,58,1.16,Two case systems; IRE file preparation largely manual
+Stars and quality,7.8,38,1.51,Quality team of 38; HEDIS engine and chart retrieval vendor
+Enrollment and billing,9.6,96,1.86,
+Claims operations,28.5,310,5.51,Includes TPA fees for Lakeshore and Pinecrest ($8.2M)
+Provider network management,11.2,85,2.17,
+IT run (applications and infrastructure),62.0,290,11.99,14 source systems; 3 CRM licenses; EDW support
+Data and analytics,9.1,54,1.76,
+"Compliance, privacy and audit",7.4,41,1.43,
+Marketing and sales,31.0,120,5.99,
+"Total, functions shown",241.0,1896,46.60,Excludes medical and pharmacy benefit cost; excludes transformation envelope

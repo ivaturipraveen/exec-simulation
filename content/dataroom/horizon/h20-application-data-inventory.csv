@@ -1,0 +1,15 @@
+system,category,vendor_or_platform,hosting,business_owner,data_domains,refresh_to_data_platform,status,contract_end,note
+Horizon Data Cloud,Cloud data platform (single analytics platform),Built on a commercial cloud lakehouse,Public cloud,Arjun Mehta (CIO),All analytics; HEDIS and Stars marts; outreach lists,n/a (destination),Live since 2024; 2 years old,n/a,"Simulated, fictional data for executive education. Not real PHI. Inventory as of 1 September 2026. 4 source systems feed the platform."
+Apex Core Admin,Source system 1: core administration,Apex Health Systems (SaaS),Vendor cloud,Operations,"Enrollment, eligibility, claims, premium billing, provider data",Daily,Live,2028-12-31,Modern core admin; implemented 2023
+ClearRx PBM feed,Source system 2: pharmacy claims,ClearRx Pharmacy Benefit Services,Vendor SFTP to cloud,Pharmacy,"Part D claims, PDC calculations, refill reminder events",Weekly (daily available at extra fee),Live,2027-12-31,
+LabBridge results feed,Source system 3: lab results,LabBridge Clinical Data Exchange,Vendor API,Quality,HbA1c and other lab results,Weekly,Live,2027-06-30,Lab feed coverage 58% of members (two national labs plus one regional)
+Supplemental data intake,Source system 4: provider supplemental data,In-house (cloud platform pipeline),Public cloud,Quality,"BP readings, encounters, chart abstraction results",Monthly,Live,n/a,Files from 2 risk-bearing groups; 1 home health vendor
+Relay CRM,CRM (single customer relationship management system),Relay Cloud CRM,SaaS,Member Experience,"Member contact data, call notes, grievances, outreach history",Near real time,Live,2027-09-30,Contact data synced from Apex nightly; agents can overwrite phone numbers
+Pulsewise Engage,Engagement platform (downstream of CRM),Pulsewise Inc.,SaaS,Digital Member Experience,"App, SMS, email and push campaigns; segmentation scoring",Nightly,Live,2028-06-30,3-year contract signed July 2025 (see H-27)
+VoxBridge IVR,Telephony and IVR,VoxBridge Contact Solutions,Vendor cloud,Member Experience,"Call routing, IVR menus, call logs",Daily,Live,2027-03-31,Annual contract
+ProviderLink portal,Provider portal,In-house on Apex provider module,Vendor cloud,Network Management,"Gap alerts, eligibility lookup, scorecards",Daily,Live,n/a,Single sign-on not completed for 140 practices
+QualiMetric HEDIS engine,HEDIS certified measure engine,QualiMetric Analytics,SaaS,Quality,HEDIS and Stars measure calculation,Monthly,Live,2027-12-31,
+AppealsTrack,Grievance and appeals case management,Relay CRM module,SaaS,Grievance and Appeals,"Appeals, grievances, IRE case files",Daily,Live,2027-09-30,
+Prior-plan claims history,External data (not a system),None,n/a,Unassigned,Claims and pharmacy history from members' previous plans,n/a,Not ingested,n/a,See proposal H-22
+INTEGRATION BACKLOG,Platform team queue,n/a,n/a,Arjun Mehta (CIO),n/a,n/a,11 open tickets,n/a,Current backlog about 3 weeks; median new integration 4 to 6 weeks end to end
+DATA READINESS,Self-assessment,n/a,n/a,Arjun Mehta (CIO),n/a,n/a,3 of 5,n/a,"Strengths: modern stack, few systems. Gap: 40% of members have under 12 months of history on the platform"

@@ -1,0 +1,18 @@
+county,county_type,product,members,attributed_to_cascade_valley_health,attributed_to_independent_pcps,pct_attributed_to_system,analyst_note
+Cascade,Metro core and suburbs,HMO,39628,34503,5125,87.1,"Simulated, fictional data for executive education. Not real PHI. Snapshot as of 1 Aug 2026; attribution by plurality of PCP visits over 24 months, else by PCP selection on enrollment."
+Cascade,Metro core and suburbs,PPO,8862,7001,1861,79.0,
+Cascade,Metro core and suburbs,D-SNP,3650,3176,474,87.0,
+Cascade,Metro core and suburbs,All products,52140,44680,7460,85.7,County subtotal.
+Bellmont,Suburban with rural ridge,HMO,16140,13719,2421,85.0,
+Bellmont,Suburban with rural ridge,PPO,3912,2934,978,75.0,
+Bellmont,Suburban with rural ridge,D-SNP,1752,1472,280,84.0,
+Bellmont,Suburban with rural ridge,All products,21804,18125,3679,83.1,County subtotal.
+Orchard,Small city with rural hills,HMO,8820,6880,1940,78.0,
+Orchard,Small city with rural hills,PPO,2454,1620,834,66.0,
+Orchard,Small city with rural hills,D-SNP,1050,808,242,77.0,
+Orchard,Small city with rural hills,All products,12324,9308,3016,75.5,County subtotal.
+Granite,Rural edge,HMO,5564,3784,1780,68.0,
+Granite,Rural edge,PPO,1836,1047,789,57.0,
+Granite,Rural edge,D-SNP,1132,792,340,70.0,
+Granite,Rural edge,All products,8532,5623,2909,65.9,County subtotal.
+All counties,Cascade Valley region,All products,94800,77736,17064,82.0,"Product mix 74% HMO (70,152), 18% PPO (17,064), 8% D-SNP (7,584). 18% dual-eligible, 26% Low-Income Subsidy (LIS). Average age 73.9."

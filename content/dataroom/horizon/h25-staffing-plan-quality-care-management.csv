@@ -1,0 +1,17 @@
+function,role,budgeted_fte,filled_fte,open_requisitions,avg_days_open,caseload_or_workload,reports_to,note
+Quality and Stars,Vice President and quality analysts,6,6,0,n/a,"10 Star measures, HEDIS hybrid season, CAHPS vendor oversight","Jordan Whitaker, VP Quality","Simulated, fictional data for executive education. Not real PHI. Snapshot 1 September 2026. No current team member has run a full Stars cycle at Horizon."
+Quality and Stars,Stars program manager (new),1,0,1,74,n/a,"Jordan Whitaker, VP Quality",Approved March 2026
+Quality and Stars,HEDIS data analyst (new),1,0,1,58,n/a,"Jordan Whitaker, VP Quality",
+Care management,Care managers (RN and licensed social workers),22,22,0,n/a,118 active cases per care manager (target 80),"Dr. Elena Ortiz, CMO",Two covering D-SNP part-time
+Care management,D-SNP care managers (new),3,0,3,41,Model of Care requires 1 per 150 high-risk D-SNP members,"Dr. Elena Ortiz, CMO",Requisitions opened in May 2026 but not funded in operating budget; on hold
+Care management,Social worker (D-SNP),1,0,1,41,n/a,"Dr. Elena Ortiz, CMO",On hold with D-SNP care managers
+Pharmacy,Clinical pharmacists,4,4,0,n/a,About 320 outbound adherence calls per month across the team,"Dr. Samuel Osei, Director of Pharmacy",
+Pharmacy,Pharmacy technician (new),2,0,2,63,n/a,"Dr. Samuel Osei, Director of Pharmacy",Would handle 90-day fill conversions
+Outreach,Outreach coordinators,3,3,0,n/a,Reassigned to D-SNP health risk assessment calls since March 2026,"Tara Nakamura, Outreach Manager",New-county welcome calls paused
+Network Management,Provider relations representatives (new counties),3,3,0,n/a,268 practices in 9 new counties,"Rachel Kim-Lowell, VP Network",Fourth representative requested; not approved
+Network Management,Provider relations representative (new),1,0,1,30,n/a,"Rachel Kim-Lowell, VP Network",Requisition drafted only
+Member Experience,Contact-center agents (vendor),72,68,0,n/a,100 calls per 1000 members per month,"Carla Brandt, VP Member Experience","Vendor-staffed (VoxBridge 40, Meridian CX 28); 4 vacancies are the vendors' responsibility and are not Horizon requisitions"
+Member Experience,Grievance and appeals specialists,5,4,1,88,"219 CTM complaints Jan to Aug 2026; IRE case preparation","Luis Echeverría, G&A Manager",
+Data and Technology,Data engineers,6,5,1,49,11-ticket integration backlog (about 3 weeks),"Arjun Mehta, CIO",
+Data and Technology,Data scientists,3,3,0,n/a,2 models in production,"Dr. Hannah Lindqvist, Director Data Science",No dedicated model validation role
+TOTAL,Horizon-employed roles in scope (excluding vendor agents),61,50,11,n/a,n/a,n/a,11 open requisitions; 4 on hold for funding (D-SNP care managers and social worker)

@@ -1,0 +1,14 @@
+row_type,name_or_period,base_location,fte,adherence_outreach_fte_share,outreach_hours_per_week,calls_attempted_q,calls_completed_q,queue_assignment,note
+Pharmacist,"R. Delgado, PharmD",Columbus OH,1.0,0.45,18,1010,372,core and Pinecrest queue,"Simulated, fictional data for executive education. Not real PHI. Q2 2026 (Apr-Jun). Pharmacists are 1.0 FTE each; remainder of time on MTM CMRs, prior authorization and formulary consults."
+Pharmacist,"M. Achebe, PharmD",Columbus OH,1.0,0.45,18,990,365,core queue,
+Pharmacist,"S. Lindqvist, PharmD",Grand Rapids MI,1.0,0.5,20,1180,384,Lakeshore queue,Higher no-answer rate on Lakeshore numbers
+Pharmacist,"T. Nguyen, PharmD",Pittsburgh PA,1.0,0.4,16,920,330,core queue,Also covers prior authorization consults
+Pharmacist,"A. Romano, PharmD",Albany NY,1.0,0.4,16,930,318,Pinecrest queue,
+Pharmacist,"J. Whitaker, PharmD (lead)",Columbus OH,1.0,0.3,12,690,331,"escalations, all books",Lead also runs MTM comprehensive medication review (CMR) program
+Team total,6 pharmacists,,6.0,2.5,100,5720,2100,,Completed = member reached and adherence conversation documented
+Quarter trend,2025-Q3,,6.0,,,,2080,at-risk list 13600,15.3% of at-risk list reached
+Quarter trend,2025-Q4,,6.0,,,,2050,at-risk list 13900,14.7% of at-risk list reached
+Quarter trend,2026-Q1,,6.0,,,,2120,at-risk list 14300,14.8% of at-risk list reached
+Quarter trend,2026-Q2,,6.0,,,,2100,at-risk list 14000,15.0% of at-risk list reached
+Benchmark,Outreach technician model (not funded),,,,,,,,Pharmacy ops estimate: 1 technician completes ~900 refill-reminder calls per quarter at ~40% of pharmacist cost
+Open requisitions,Pharmacist x2; technician x4,,,,,,,,Requested FY2026 budget cycle; deferred pending transformation envelope

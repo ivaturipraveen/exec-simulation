@@ -1,0 +1,87 @@
+# Reference material — Content Pack v0.1 sections 1 (assumptions log), 10.3 (Opportunity Map)
+# and 11 (simplification register). Shown to the facilitator and, for the register, to teams.
+
+assumptions:
+  - {id: OD-01, decision: Workshop duration, assumption: "180-minute core simulation plus an optional 25-minute real-company translation extension. The run-of-show is built to that boundary."}
+  - {id: OD-02, decision: Second-round capital mechanic, assumption: "Hybrid: $8.0M base per team plus up to $4.0M earned by the board pitch rubric. Playtests may test fixed and differentiated by changing the base."}
+  - {id: OD-03, decision: Payer baselines and names, assumption: "Names kept from v0.1. CommunityCare starting rating set at 3.5. Memberships, budgets and starting measure values set in this pack."}
+  - {id: OD-04, decision: Which measures, assumption: "Ten measures: M1, M2, M3, M4, M5, M7, M9, M10, M11, M12 from the twelve candidates. Colorectal screening and ED follow-up held in reserve."}
+  - {id: OD-05, decision: Formula transparency, assumption: "Participants see result drivers (which investments moved which leading KPIs and measures, and which multipliers applied). Formulas and parameters live in a facilitator appendix. Full model reveal is offered after the session on request."}
+  - {id: OD-06, decision: Competition fairness, assumption: "Normalized scoring: lift divided by headroom, benefit divided by 4-Star bonus value. Archetype-specific board mandates are shown but not scored."}
+  - {id: OD-07, decision: AI interaction boundaries, assumption: "Hybrid: a free-form grounded assistant limited to the team's data room, plus four scripted analyst roles (analyst, challenger, explainer, pitch coach). The assistant refuses to produce figures without a cited artifact."}
+  - {id: OD-08, decision: Board pitch adjudication, assumption: "Facilitator scores the rubric; an AI-assisted rubric produces a suggested score the facilitator can accept or override with a note."}
+  - {id: OD-09, decision: Opportunity Map ownership and privacy, assumption: "Per-participant capture, organization-level aggregate, named owners only on the organization's own map, 12-month retention, consent line on the form."}
+  - {id: OD-10, decision: Prototype form, assumption: "Paper-ready packets in this document first; Slice 1 browser prototype runs the playtests; Slice 2 adds the engine."}
+  - {id: OD-11, decision: Randomness, assumption: "Deterministic seed in V1 for comparability; variable mode available for replay."}
+  - {id: OD-12, decision: Participant prerequisites, assumption: "No pre-work. A two-page Stars primer is offered as optional pre-read and summarized in the 12-minute briefing. Roles are assigned at the table."}
+  - {id: A-13, decision: Measure thresholds, assumption: "Game constructs chosen to place each payer where the narrative needs it. Not CMS cut points."}
+  - {id: A-14, decision: Weight classes, assumption: "Outcome and intermediate outcome 3, patient experience and complaints/access 2, process 1, as understood for the 2026 Star Ratings. Verify before the pilot."}
+  - {id: A-15, decision: 4-Star bonus value, assumption: "$600 per member per year illustrative for crossing 4.0 Stars. Used only for the financial dimension."}
+  - {id: A-16, decision: Capacity points, assumption: "An abstraction for implementation bandwidth. Investments carry a demand; payers carry a quarterly supply. Overrun slows progress proportionally."}
+  - {id: A-17, decision: Investment costs, assumption: "Two-year totals in the ranges from v0.1 where given; six non-AI operational cards added so that portfolios can mix technology with capacity, incentives and access."}
+  - {id: A-18, decision: Data room size, assumption: "30 artifacts per payer, 8 domains, each tagged to a root cause, misleading signal or neutral. Brightcone generates the artifact bodies from these specifications; Girish reviews."}
+  # Build assumptions added during implementation (review items for the content owner)
+  - {id: B-01, decision: 1-Star thresholds, assumption: "The pack gives thresholds for 2 to 5 Stars only. A 1-Star floor is set per measure (e.g. complaints 0.80 per 1,000) so 'complaints fall to 1 Star' can occur."}
+  - {id: B-02, decision: Heritage baseline rating, assumption: "The pack's Heritage starting values compute to a 3.08 summary (3.0 Stars). A +0.20 adjustment standing in for unmodelled measures makes the baseline the stated 3.5; Lakeshore computes to 3.0."}
+  - {id: B-03, decision: Rating-year lag, assumption: "Year review value = start + lag share × this year's average full effect + (1 − lag share) × last year's average full effect. Projected path = start + full effect at year end."}
+  - {id: B-04, decision: Crisis timing, assumption: "Crises occur after Year 2, so crisis effects are applied to the final scorecard (measures, capacity, write-offs, dimension adjustments) rather than to simulated quarters."}
+  - {id: B-05, decision: Adoption, assumption: "Adoption multiplies only the copilot and agent cards (I4, I6, I8), per the card texts. Other cards carry their own rules."}
+  - {id: B-06, decision: Per-year cards, assumption: "I14 and I15 cost their annual amount for each remaining year: two years if funded in Round 1, one year in Round 2."}
+  - {id: B-07, decision: Drifts, assumption: "Heritage complaints +0.125 and Customer Service -0.75 per year, and Horizon complaints +0.05 per year, unless I17 or I4 is live (L-MS2, H-MS2)."}
+  - {id: B-08, decision: Lead times, assumption: "I13 waits 1 quarter for data-sharing agreements and I6 waits 2 quarters in the CommunityCare system IT queue before building starts; no capacity is used while waiting."}
+  - {id: B-09, decision: Weights inside dimensions, assumption: "The pack names what each scorecard dimension captures (§10.1); the weights inside each dimension are build assumptions, editable in Settings → Scorecard."}
+  - {id: B-10, decision: Results release, assumption: "After each simulation the facilitator reviews results in the console and releases them to teams (§9.2 'review before release'); scorecards are released explicitly at Final results."}
+
+simplifications:
+  - {actual: "Full CMS measure set (40+ measures)", representation: "10 selected measures", reason: "Enough levers for distinct strategies without a full replica", risk: "Participants may over-weight the selected measures", disclosure: "We use 10 of 40-plus measures. The lessons transfer; the arithmetic does not."}
+  - {actual: "Cut points set annually from national distribution", representation: "Fixed game thresholds per measure", reason: "Comparability between runs", risk: "Participants may treat thresholds as real cut points", disclosure: "Thresholds are game constructs. Real cut points move every year."}
+  - {actual: "Improvement measures (weight 5)", representation: "Excluded", reason: "Complexity; double counts movement", risk: "Under-states the value of year-over-year improvement", disclosure: "In the real system, improving also pays. We left that out."}
+  - {actual: "Readmissions as a risk-adjusted observed-to-expected ratio", representation: "Readmissions per 100 index stays", reason: "Readable at workshop pace", risk: "Not the CMS construct", disclosure: "Direction and lag are faithful; the statistic is simplified."}
+  - {actual: "CAHPS sampling, case-mix adjustment, survey timing", representation: "Composite score with a one-year lag", reason: "Readable", risk: "Timing of survey effects is approximate", disclosure: "Survey results arrive late and reflect the prior six months."}
+  - {actual: "Tukey outlier deletion, guardrails, reward factor mechanics", representation: "Omitted; Health Equity Index represented as a subgroup modifier", reason: "Executive learning, not rating calculation", risk: "Participants may expect a reward factor", disclosure: "We model equity as a modifier; the actual reward mechanics are more detailed."}
+  - {actual: "Contract-level ratings and enrollment weighting", representation: "One rating per payer; Heritage shows a Lakeshore sub-rating", reason: "Simplicity", risk: "Multi-contract plans are more complex", disclosure: "Heritage has one contract that matters for this exercise."}
+  - {actual: "Quality bonus payment and rebate arithmetic", representation: "Single illustrative 4-Star bonus value per payer ($600 PMPY)", reason: "Order of magnitude for decisions", risk: "Not a payment calculation", disclosure: "The number is illustrative. The cliff is real."}
+  - {actual: "Multi-year investment amortization and operating budgets", representation: "Two-year capital envelope plus stated run costs", reason: "Decision focus", risk: "Simplifies finance", disclosure: "Treat the envelope as the board did: one number, two years."}
+  - {actual: "Real PHI and real provider data", representation: "Fictional data generated from specified root causes", reason: "Privacy; replayability", risk: "None", disclosure: "Everything in the data room is invented."}
+
+opportunity:
+  capability_classes: [GenAI, Predictive, Copilot, Automation, Agent, Foundation]
+  readiness_dimensions: [data, workflow, owner, controls]
+  foundational_themes: [Data integration, Governance, Knowledge architecture, Adoption capability]
+  act_now_value: 4
+  act_now_readiness: 4
+  foundational_min_links: 3
+  retention_months: 12
+  consent_text: >-
+    I consent to this opportunity being stored for 12 months and shared with my organization's
+    aggregate AI Opportunity Map. Named owners appear only on my organization's own map; I can ask
+    for deletion at any time.
+
+# Reference portfolios (section 5.2 plus the regression suite list in section 5). Illustrative
+# outcomes are the pack's; the calibration report compares them with the engine.
+portfolios:
+  - {id: hz-foundation-light, payer_id: horizon, name: Foundation-light, kind: viable, round1: [i1, i3, i14, i10, i17, i4, i12], illustrative_year1: "Identity match to 97%; abandonment -7; at-risk contacted 45%; little measure signal", illustrative_year2: "M1 +3.0, M2 +2.5, M10 +3, M11 -0.25; overall 3.5", illustrative_crisis: E1 low severity}
+  - {id: hz-provider-first, payer_id: horizon, name: Provider-first, kind: viable, round1: [i15, i5, i4, i17, i10, i7, i12], illustrative_year1: "Provider action rate +40; BP readings captured +25; abandonment -7", illustrative_year2: "M3 +9, M4 +3, M5 +5, M10 +2.5, M11 -0.15; overall 3.5", illustrative_crisis: "E1 medium (I7 without I1)"}
+  - {id: hz-failure, payer_id: horizon, name: "Failure: automate everything", kind: failure, round1: [i7, i8, i2, i3], illustrative_year1: "Capacity overrun 130%; outreach reach up; complaints up", illustrative_year2: "M11 +0.30 (1 Star), M1 +0.5; overall 2.5", illustrative_crisis: E1 high}
+  - {id: hz-modernize, payer_id: horizon, name: "Failure: modernization-heavy", kind: failure, round1: [i2, i1]}
+  - {id: lg-sequenced, payer_id: heritage, name: Sequenced foundation, kind: viable, round1: [i1, i13, i14, i10, i17, i9, i12], round2: [i3], scopes: {i1: scoped}, illustrative_year1: "Lakeshore match to 96%; ADT latency under 1 day; 48-hr follow-up 58%; abandonment -7", illustrative_year2: "M7 -2.0, M1 Lakeshore +4, M12 +6, M11 -0.10; core holds 4.0, Lakeshore 3.5", illustrative_crisis: E2 low}
+  - {id: lg-operational, payer_id: heritage, name: Operational value, kind: viable, round1: [i4, i17, i9, i13, i14, i10], illustrative_year1: "FCR +12, abandonment -7, appeals cycle -40%, follow-up 58%", illustrative_year2: "M10 +3.5, M11 -0.12, M12 +7, M7 -1.8; core holds 4.0; Lakeshore 3.0", illustrative_crisis: None or E5 if I2 added}
+  - {id: lg-failure, payer_id: heritage, name: "Failure: modernize everything", kind: failure, round1: [i1, i2, i8], illustrative_year1: "Capacity overrun 160%; nothing live by the pitch", illustrative_year2: "Flat; abandonment slide takes M11 to 2 Stars; core slips to 3.5", illustrative_crisis: E2 high}
+  - {id: lg-predictive, payer_id: heritage, name: "Failure: predictive-heavy", kind: failure, round1: [i3, i5, i8]}
+  - {id: cc-adoption-first, payer_id: communitycare, name: Adoption-first, kind: viable, round1: [i15, i11, i6, i16], round2: [i10], illustrative_year1: "Provider action rate +40; copilot adoption 60% by Q4; third-next-available to 11 days", illustrative_year2: "M9 +5, M5 +4, M3 +3, M4 +2; overall 4.0", illustrative_crisis: E3 low}
+  - {id: cc-capacity-first, payer_id: communitycare, name: Capacity-first, kind: viable, round1: [i16, i14, i7, i10, i18, i12], illustrative_year1: "Third-next-available to 11 days; at-risk contacted 45%; outreach conversion up", illustrative_year2: "M9 +5, M1 +3, M2 +2.5, M5 +3; overall 4.0", illustrative_crisis: None}
+  - {id: cc-failure, payer_id: communitycare, name: "Failure: insight-heavy", kind: failure, round1: [i5, i6, i2], illustrative_year1: "Model validation excellent; adoption 7%", illustrative_year2: "Flat; overall 3.5", illustrative_crisis: E3 high}
+  - {id: cc-outreach, payer_id: communitycare, name: "Failure: outreach-heavy", kind: failure, round1: [i7, i8]}
+
+# Content Pack §12 — review checklist for Girish, in the order the items unblock the build.
+# Sign-off status is recorded in Settings → Content review.
+review_checklist:
+  - {id: RC-1, section: "§1", item: "Assumptions log: confirm or change each of the 18 rows, especially OD-01 duration, OD-02 capital mechanic and OD-07 AI boundaries."}
+  - {id: RC-2, section: "§3", item: "Measure list: confirm the ten measures, the weight classes and the measure names against the current CMS Technical Notes. Decide whether colorectal screening or ED follow-up replaces any of them."}
+  - {id: RC-3, section: "§3", item: "Game thresholds and starting values: adjust so that each payer sits where you want it narratively. The engine does not care about the absolute numbers, only the distance to the next star."}
+  - {id: RC-4, section: "§2", item: "Payer bibles: check that the root causes ring true to a payer executive and that no archetype is obviously superior."}
+  - {id: RC-5, section: "§4–5", item: "Investment effects and payer multipliers: sanity-check magnitudes against your experience. The reference portfolios in 5.2 show what the numbers produce (see docs/calibration.md)."}
+  - {id: RC-6, section: "§7", item: "Crisis packets: adjust tone and realism; add any event you have seen in practice that is missing."}
+  - {id: RC-7, section: "§9", item: "Run-of-show: rehearse the transition scripts; cut what does not sound like you."}
+  - {id: RC-8, section: "CMS-005", item: "Name the independent Stars reviewer."}
+  - {id: RC-9, section: "§6", item: "Approve the data room specifications (and the 90 generated artifacts) for realism."}

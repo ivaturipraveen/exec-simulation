@@ -1,0 +1,164 @@
+# Payer bible — Content Pack v0.1 section 2.1. Simulated, fictional organization.
+id: horizon
+name: Horizon Health
+archetype: PE-backed challenger
+tagline: Fast, modern, thin on history and relationships.
+members: 52400
+starting_stars: 3.0
+starting_stars_text: 3.0 Stars (simulated)
+rating_adjustment: 0.0
+capital_round1_musd: 18.0
+capacity_per_quarter: 10
+data_readiness: 3
+dual_share: 0.14
+flags: [shared_contact_data, thin_history]
+profile:
+  - {label: Members, value: "52,400 (grew from 19,000 in 30 months)"}
+  - {label: Geography, value: "17 counties across Arizona, Texas and Florida; 9 counties entered in the last 18 months"}
+  - {label: Product mix, value: "88% MA-PD HMO, 12% PPO; one D-SNP launched this year (3,100 members)"}
+  - {label: Dual-eligible / LIS share, value: "14% dual, 21% LIS"}
+  - {label: Average member age, value: "71.2 (younger than market)"}
+  - {label: Starting overall rating, value: "3.0 Stars (simulated)"}
+  - {label: Revenue, value: "$690M illustrative"}
+  - {label: Round 1 capital, value: "$18.0M"}
+  - {label: Round 2 capital, value: "$8.0M base plus up to $4.0M earned at the board pitch"}
+  - {label: Implementation capacity, value: "10 capacity points per quarter"}
+  - {label: Data readiness score, value: "3 of 5 (modern stack, 40% of members have under 12 months of history)"}
+  - {label: Care management staff, value: "22 care managers, 4 pharmacists, 3 outreach coordinators"}
+  - {label: Contact center, value: "68 agents, 2 vendors, abandonment 11%"}
+  - {label: Technology, value: "Single cloud data platform (2 years old), one CRM, modern core admin; 4 source systems"}
+  - {label: Provider network, value: "Mostly fee-for-service contracts in new counties; 2 risk-bearing groups in legacy counties"}
+population: >-
+  Younger, faster-growing membership with incomplete longitudinal history. Digital engagement
+  rates look strong but are concentrated among healthy members in legacy counties. New-county
+  members skew older, more rural and less reachable by app or SMS.
+board_mandate: >-
+  Reach 4.0 Stars within two rating cycles to support the next funding round, without slowing
+  county expansion. The board is comfortable with speed and uncomfortable with anything that
+  looks like a two-year foundation program.
+briefing: >-
+  Horizon Health is a private-equity-backed Medicare Advantage plan that has grown from 19,000
+  to 52,400 members in 30 months by entering nine new counties across Arizona, Texas and
+  Florida. It runs a two-year-old cloud data platform, a single CRM and a modern core admin
+  system, and its leadership team has a strong appetite for AI. The plan sits at 3.0 Stars.
+  Blood pressure control, breast screening and complaints are at 2 Stars, and the six-person
+  quality operations team has never run a full Stars cycle. You have $18.0M of Round 1 capital
+  and 10 capacity points a quarter. The board wants 4.0 Stars within two rating cycles to
+  support the next funding round.
+advantages:
+  - Modern cloud data platform; integrations take weeks, not quarters
+  - Capital is available and the board decides quickly
+  - Leadership appetite for AI is high; no legacy vendor contracts to unwind
+  - Low readmission baseline because the population is younger
+constraints:
+  - 40% of members lack 12 months of claims and pharmacy history, so risk models and gap lists are unstable
+  - No quality incentives in new-county provider contracts; alerts to those providers are ignored
+  - Quality operations team is six people and has never run a full Stars cycle
+  - Complaint rate is already at 2 Stars and rising with growth
+hidden_root_causes:
+  - id: H-RC1
+    title: History gap mis-targets everything
+    description: >-
+      Members enrolled under 12 months are excluded from or mis-scored in adherence and gap
+      models. Outreach lists over-represent legacy-county members who are already adherent and
+      miss the new-county members driving the shortfall. Any predictive investment inherits
+      this unless identity and history stitching from prior-plan data is funded first.
+    affected_measures: [m1, m2]
+    clue: >-
+      Adherence outreach keeps reaching members who were already above 80% PDC; members enrolled
+      in the last 12 months barely appear on the lists.
+    addressed_by: [i1]
+  - id: H-RC2
+    title: Digital-first engagement mis-segments
+    description: >-
+      The engagement platform defaults to app and SMS. 61% of new-county members over 75 have
+      never opened the app. Outreach reports show high 'reach' because the message was sent, not
+      because anyone read it. Complaints are rising from members who receive messages intended
+      for other households (shared phone numbers, address churn).
+    affected_measures: [m5, m11]
+    clue: >-
+      Outreach "reach" counts messages sent, not read, and a third of complaints are coded
+      "outreach received in error" or "wrong household".
+    addressed_by: [i1, i10]
+  - id: H-RC3
+    title: Providers in new counties have no reason to act
+    description: >-
+      New-county contracts are fee-for-service with no quality incentive. Gap alerts go to a
+      portal with 9% open rate. Blood pressure control sits at 2 Stars mainly because readings
+      are not captured, not because members are uncontrolled.
+    affected_measures: [m3, m4]
+    clue: >-
+      New-county practices open 9% of gap alerts and act on 3%; chart review suggests most
+      hypertensive members are controlled but readings never reach the plan.
+    addressed_by: [i15]
+misleading_signals:
+  - id: H-MS1
+    title: App engagement looks excellent
+    why_misleading: >-
+      A 44% monthly active rate is real but comes from healthy legacy-county members. Teams that
+      invest in more digital engagement will see leading KPIs rise and measures barely move.
+  - id: H-MS2
+    title: Call volume per member is low
+    why_misleading: >-
+      Low volume reads as low demand. It is actually 11% abandonment and a vendor IVR that drops
+      calls after 4 minutes. Complaints and CAHPS customer service are the downstream cost.
+trap_title: Automate everything
+trap_description: >-
+  Speed outpaces validation, governance and organizational readiness. The signature failure is a
+  personalized engagement agent launched on bad identity data that sends inappropriate outreach to
+  thousands of members.
+measures:
+  m1: {value: 84.0, headroom: 4.5, headroom_text: "+4.5 pts", root_cause_link: H-RC1}
+  m2: {value: 86.5, headroom: 3.5, headroom_text: "+3.5 pts", root_cause_link: H-RC1}
+  m3: {value: 59.0, headroom: 12.0, headroom_text: "+12 pts (mostly capture, not control)", root_cause_link: H-RC3}
+  m4: {value: 70.0, headroom: 6.0, headroom_text: "+6 pts", root_cause_link: H-RC3}
+  m5: {value: 62.0, headroom: 10.0, headroom_text: "+10 pts", root_cause_link: H-RC2}
+  m7: {value: 9.0, headroom: 1.0, headroom_text: "-1.0", root_cause_link: "none; younger population"}
+  m9: {value: 80.0, headroom: 2.0, headroom_text: "+2 pts", root_cause_link: none}
+  m10: {value: 88.0, headroom: 4.0, headroom_text: "+4 pts", root_cause_link: H-MS2}
+  m11: {value: 0.55, headroom: 0.30, headroom_text: "-0.30", root_cause_link: "H-RC2, H-MS2"}
+  m12: {value: 87.0, headroom: 5.0, headroom_text: "+5 pts", root_cause_link: none}
+kpis:
+  identity_match: 93
+  at_risk_contacted: 20
+  fill_90day: 38
+  bp_capture: 54
+  provider_action_rate: 3
+  lab_feed_coverage: 62
+  outreach_response: 9
+  adt_latency_days: 3.0
+  followup_48h: 41
+  third_next_available: 9
+  abandonment: 11
+  fcr: 71
+  appeals_cycle_days: 31
+  copilot_adoption: 0
+drifts:
+  - measure: m11
+    delta_per_year: 0.05
+    unless: {any_live: [i17, i4]}
+    note: Complaints keep rising with growth while the vendor IVR drops calls
+viable_strategies:
+  - title: Foundation-light
+    description: >-
+      Fund identity resolution and prior-plan history stitching (I1), then predictive adherence
+      (I3) and pharmacy capacity (I14) with governance (I10). Slower Year 1, strong Year 2.
+    round1: [i1, i3, i14, i10, i17, i4, i12]
+  - title: Provider-first
+    description: >-
+      Fund provider incentives (I15) and provider performance intelligence (I5) to unlock blood
+      pressure and screening in new counties, with contact-center copilot (I4) to arrest
+      complaints. Faster Year 1 on clinical measures.
+    round1: [i15, i5, i4, i17, i10, i7, i12]
+failure_modes:
+  - title: Engagement-heavy
+    description: "Engagement-heavy portfolio (I7 plus I8) without I1 or I10: triggers the eligibility crisis at high severity and complaints fall to 1 Star."
+  - title: Modernization-heavy
+    description: "Modernization-heavy portfolio (I2 plus I1) consumes all capacity and shows nothing by the board pitch; Round 2 capital is cut."
+conflict_hooks:
+  - roles: [CEO, Chief Compliance Officer]
+    tension: Launch automation this quarter to show the board progress vs. validate first.
+  - roles: [CFO, Chief Quality Officer]
+    tension: Fund AI that cuts admin cost vs. fund provider incentives and quality capacity.
+  - roles: [CTO, Provider Network Lead]
+    tension: Build a provider copilot vs. invest in incentives and relationships practices value.

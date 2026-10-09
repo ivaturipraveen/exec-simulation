@@ -1,0 +1,24 @@
+section,cohort,metric,members_or_records,value,note
+Administrative data,All,Hypertensive members in M3 denominator,19850,100%,"Simulated, fictional data for executive education. Not real PHI. Measurement year 2025 final (2026 Star Ratings, M3 = 59.0). Prepared by Quality Analytics, August 2026."
+Administrative data,All,Members with any BP reading in plan data (claims CPT II codes or supplemental data),10719,54%,Measure-year reading in plan data; members without a reading count as not controlled
+Administrative data,Legacy,Members with any BP reading in plan data,8032,66% of 12170,
+Administrative data,New,Members with any BP reading in plan data,2687,35% of 7680,
+Administrative data,All,Readings under 140/90 among members with a reading,8146,76% of 10719,Administrative-only compliant rate would be 41.0%
+Administrative data,Legacy,Readings under 140/90 among members with a reading,6185,77% of 8032,
+Administrative data,New,Readings under 140/90 among members with a reading,1961,73% of 2687,
+Reading source,All,CPT II blood pressure codes on primary care claims,6110,57% of readings,Most fee-for-service practices do not bill CPT II codes; there is no payment attached
+Reading source,All,Supplemental data files from the two risk-bearing groups,4190,39% of readings,Monthly files; both groups are in legacy counties
+Reading source,All,Other supplemental (home health and lab vendor),419,4% of readings,
+Hybrid chart review,All,HEDIS hybrid sample size,412,100%,Systematic sample; chart pursuit by RecordPath Retrieval (vendor)
+Hybrid chart review,All,Charts retrieved with a qualifying most-recent reading,342,83.0%,
+Hybrid chart review,All,Most-recent reading under 140/90 (of charts with a reading),243,71% of 342,Chart review suggests about 71% of hypertensive members with a reading are controlled
+Hybrid chart review,All,Reported M3 rate (compliant of sample),243,59.0%,Matches 2026 Star Ratings value
+Hybrid chart review,Legacy,Sample members,252,100%,
+Hybrid chart review,Legacy,Charts with a qualifying reading,228,90.5%,
+Hybrid chart review,Legacy,Controlled (of charts with a reading),163,71.5%,Compliant rate 64.7%
+Hybrid chart review,New,Sample members,160,100%,
+Hybrid chart review,New,Charts with a qualifying reading,114,71.3%,Non-retrieval reasons: practice did not respond 29; record had no BP in measure year 17
+Hybrid chart review,New,Controlled (of charts with a reading),80,70.2%,Compliant rate 50.0%
+Leading indicator,All,Hypertensive members with a BP reading on file in the last 6 months (August 2026),8140,41%,Leading indicator for M3; target 65% by Q4 2027
+Leading indicator,All,Supplemental data submissions per month (12-month average),96,n/a,81% from the two risk-bearing groups (see H-04)
+Leading indicator,All,Provider alert action rate (blood pressure alerts),n/a,2.6%,See H-04

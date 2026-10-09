@@ -1,0 +1,33 @@
+source_pair,book,members_in_scope,match_rate_pct,unmatched_members,analyst_note
+Pharmacy (S04) to medical claims,Heritage core,268000,97.0,8040,"Simulated, fictional data for executive education. Not real PHI. Deterministic match on internal member ID, then MBI. Source: data quality job DQ-114, run 2026-07-28."
+Pharmacy (S04) to medical claims,Lakeshore,97000,86.0,13580,Lakeshore PBM member keys predate 2021 conversion
+Pharmacy (S04) to medical claims,Pinecrest,66000,91.0,5940,
+Pharmacy (S04) to medical claims,Enterprise,431000,93.6,27560,Enterprise figure reported in IT quarterly data-quality KPI
+Enrollment to CRM,Heritage core,268000,98.6,3752,
+Enrollment to CRM,Lakeshore,97000,81.5,17945,
+Enrollment to CRM,Pinecrest,66000,88.9,7326,
+Enrollment to CRM,Enterprise,431000,93.3,29023,Enterprise figure reported in IT quarterly data-quality KPI
+Enrollment to care management (CareFlow),Heritage core,268000,98.9,2948,
+Enrollment to care management (CareFlow),Lakeshore,97000,89.2,10476,
+Enrollment to care management (CareFlow),Pinecrest,66000,93.0,4620,
+Enrollment to care management (CareFlow),Enterprise,431000,95.8,18044,Enterprise figure reported in IT quarterly data-quality KPI
+Medical claims to lab results (S11),Heritage core,268000,93.4,17688,
+Medical claims to lab results (S11),Lakeshore,97000,78.0,21340,
+Medical claims to lab results (S11),Pinecrest,66000,84.6,10164,
+Medical claims to lab results (S11),Enterprise,431000,88.6,49192,Enterprise figure reported in IT quarterly data-quality KPI
+Enrollment to provider attribution (S12),Heritage core,268000,96.8,8576,
+Enrollment to provider attribution (S12),Lakeshore,97000,84.1,15423,
+Enrollment to provider attribution (S12),Pinecrest,66000,89.5,6930,
+Enrollment to provider attribution (S12),Enterprise,431000,92.8,30929,Enterprise figure reported in IT quarterly data-quality KPI
+Mailing address passes USPS standardization,Heritage core,268000,97.2,7504,
+Mailing address passes USPS standardization,Lakeshore,97000,79.0,20370,Measured against USPS standardization; 'moved' flags not applied to Lakeshore file
+Mailing address passes USPS standardization,Pinecrest,66000,88.3,7722,
+Mailing address passes USPS standardization,Enterprise,431000,91.7,35596,Enterprise figure reported in IT quarterly data-quality KPI
+Phone number verified in last 12 months,Heritage core,268000,81.0,50920,
+Phone number verified in last 12 months,Lakeshore,97000,52.0,46560,
+Phone number verified in last 12 months,Pinecrest,66000,66.0,22440,
+Phone number verified in last 12 months,Enterprise,431000,72.2,119920,Enterprise figure reported in IT quarterly data-quality KPI
+Appeals case to enrollment,Heritage core,268000,99.0,2680,
+Appeals case to enrollment,Lakeshore,97000,90.8,8924,
+Appeals case to enrollment,Pinecrest,66000,92.5,4950,
+Appeals case to enrollment,Enterprise,431000,96.2,16554,Enterprise figure reported in IT quarterly data-quality KPI

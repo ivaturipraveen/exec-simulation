@@ -1,0 +1,41 @@
+measure_id,measure,weight,book,denominator,denominator_definition,rate,unit,game_stars,analyst_note
+M1,Medication Adherence for Diabetes Medications,3,Enterprise (blended),70000,members on oral diabetes medications,87.5,% PDC >= 80%,4,"Simulated, fictional data for executive education. Not real PHI. Enterprise roll-up is the figure in the board Stars pack. Meets the 4-Star game cut (86.0)."
+M1,Medication Adherence for Diabetes Medications,3,Heritage core,48000,members on oral diabetes medications,89.2,% PDC >= 80%,4,
+M1,Medication Adherence for Diabetes Medications,3,Lakeshore,12000,members on oral diabetes medications,82.1,% PDC >= 80%,3,0.1 point above the 3-Star floor (82.0). Denominator is 12.4% of book vs 17.9% in core; Pharmacy Analytics says some prescription drug event (PDE) records do not link to enrollment
+M1,Medication Adherence for Diabetes Medications,3,Pinecrest,10000,members on oral diabetes medications,86.0,% PDC >= 80%,4,Exactly at the 4-Star game cut
+M2,Medication Adherence for Hypertension (RAS antagonists),3,Enterprise (blended),123000,members on RAS antagonists,88.5,% PDC >= 80%,4,Meets the 4-Star game cut (88.0)
+M2,Medication Adherence for Hypertension (RAS antagonists),3,Heritage core,82000,members on RAS antagonists,90.0,% PDC >= 80%,4,
+M2,Medication Adherence for Hypertension (RAS antagonists),3,Lakeshore,24000,members on RAS antagonists,84.3,% PDC >= 80%,3,3.7 points below the 4-Star game cut (88.0)
+M2,Medication Adherence for Hypertension (RAS antagonists),3,Pinecrest,17000,members on RAS antagonists,87.0,% PDC >= 80%,3,
+M3,Controlling Blood Pressure,3,Enterprise (blended),147000,eligible hypertensive members,66.0,% BP < 140/90,3,
+M3,Controlling Blood Pressure,3,Heritage core,96000,eligible hypertensive members,68.0,% BP < 140/90,3,
+M3,Controlling Blood Pressure,3,Lakeshore,30000,eligible hypertensive members,60.5,% BP < 140/90,2,
+M3,Controlling Blood Pressure,3,Pinecrest,21000,eligible hypertensive members,65.0,% BP < 140/90,3,
+M4,Glycemic Status Assessment for Patients with Diabetes,3,Enterprise (blended),86000,eligible diabetic members,72.0,% HbA1c/GMI < 8.0,3,
+M4,Glycemic Status Assessment for Patients with Diabetes,3,Heritage core,56000,eligible diabetic members,74.0,% HbA1c/GMI < 8.0,3,
+M4,Glycemic Status Assessment for Patients with Diabetes,3,Lakeshore,17500,eligible diabetic members,66.5,% HbA1c/GMI < 8.0,2,
+M4,Glycemic Status Assessment for Patients with Diabetes,3,Pinecrest,12500,eligible diabetic members,70.4,% HbA1c/GMI < 8.0,3,
+M5,Breast Cancer Screening,1,Enterprise (blended),63500,eligible women 50-74,74.0,% screened,4,
+M5,Breast Cancer Screening,1,Heritage core,41000,eligible women 50-74,76.2,% screened,4,
+M5,Breast Cancer Screening,1,Lakeshore,13000,eligible women 50-74,67.4,% screened,3,
+M5,Breast Cancer Screening,1,Pinecrest,9500,eligible women 50-74,73.6,% screened,4,
+M7,Plan All-Cause Readmissions,3,Enterprise (blended),91000,index stays,11.8,readmits per 100 index stays (lower is better),2,Game construct; CMS uses observed-to-expected ratio
+M7,Plan All-Cause Readmissions,3,Heritage core,50000,index stays,10.9,readmits per 100 index stays (lower is better),3,
+M7,Plan All-Cause Readmissions,3,Lakeshore,25000,index stays,13.6,readmits per 100 index stays (lower is better),2,
+M7,Plan All-Cause Readmissions,3,Pinecrest,16000,index stays,11.8,readmits per 100 index stays (lower is better),2,
+M9,Getting Appointments and Care Quickly (CAHPS),2,Enterprise (blended),2080,CAHPS respondents,76.0,composite 0-100,3,Survey fielded Mar-Jun 2026
+M9,Getting Appointments and Care Quickly (CAHPS),2,Heritage core,1150,CAHPS respondents,77.4,composite 0-100,3,
+M9,Getting Appointments and Care Quickly (CAHPS),2,Lakeshore,520,CAHPS respondents,73.1,composite 0-100,2,
+M9,Getting Appointments and Care Quickly (CAHPS),2,Pinecrest,410,CAHPS respondents,75.6,composite 0-100,3,
+M10,Customer Service (CAHPS),2,Enterprise (blended),2080,CAHPS respondents,87.0,composite 0-100,3,Survey fielded Mar-Jun 2026
+M10,Customer Service (CAHPS),2,Heritage core,1150,CAHPS respondents,88.0,composite 0-100,3,
+M10,Customer Service (CAHPS),2,Lakeshore,520,CAHPS respondents,84.6,composite 0-100,2,
+M10,Customer Service (CAHPS),2,Pinecrest,410,CAHPS respondents,87.2,composite 0-100,3,
+M11,Complaints about the Health Plan,2,Enterprise (blended),431000,average enrolled members,0.30,"CTM complaints per 1,000 members (lower is better)",3,Rolling 12 months to Aug 2026
+M11,Complaints about the Health Plan,2,Heritage core,268000,average enrolled members,0.24,"CTM complaints per 1,000 members (lower is better)",4,
+M11,Complaints about the Health Plan,2,Lakeshore,97000,average enrolled members,0.47,"CTM complaints per 1,000 members (lower is better)",3,
+M11,Complaints about the Health Plan,2,Pinecrest,66000,average enrolled members,0.29,"CTM complaints per 1,000 members (lower is better)",3,
+M12,Reviewing Appeals Decisions,2,Enterprise (blended),1040,cases reviewed by IRE,83.0,% upheld by IRE,2,Calendar 2025 IRE decisions
+M12,Reviewing Appeals Decisions,2,Heritage core,610,cases reviewed by IRE,86.1,% upheld by IRE,3,
+M12,Reviewing Appeals Decisions,2,Lakeshore,260,cases reviewed by IRE,76.5,% upheld by IRE,2,
+M12,Reviewing Appeals Decisions,2,Pinecrest,170,cases reviewed by IRE,81.8,% upheld by IRE,2,

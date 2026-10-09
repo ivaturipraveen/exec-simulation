@@ -1,0 +1,86 @@
+# Game configuration — Content Pack v0.1 (Oct 8, 2026), section 5 "Simulation model parameters".
+# Every number is an assumption until the content owner confirms it (pack section 12).
+# Runtime overrides: SIM_MODE, ROUND2_MECHANIC, ROUND2_BASE_MUSD, CONFIDENCE_BAND,
+# SIM_DEFAULT_SEED in .env take precedence over the values below.
+
+edition: Medicare Advantage
+content_version: "1.0.0"
+content_pack: "Content Pack v0.1 (Oct 8, 2026)"
+methodology_baseline_date: "2026-10-08"     # CMS-003: verify weights against current CMS Technical Notes
+default_seed: 42
+sim_mode: deterministic                       # OD-11: deterministic | variable
+
+effect_range: 0.20                            # each base effect is base ±20%; deterministic draws the midpoint
+confidence_band: 0.20                         # displayed values carry a ±20%-of-effect band
+payer_effectiveness: {high: 1.0, medium: 0.6, low: 0.3}
+diminishing_returns: [1.0, 0.6, 0.3]          # 2nd card on a measure realizes 60%, 3rd and later 30%
+adoption_with_workflow: 0.60                  # I11 live
+adoption_with_workflow_and_incentives: 0.85   # I11 + I15 live
+adoption_literacy_bonus: 0.10                 # I18 live
+capacity_overrun_cap: 1.5                     # > 150% in a quarter: half-speed progress, maturity capped
+capacity_overrun_speed: 0.5
+paused_effect_share: 0.5                      # a paused live card keeps half its effect
+paused_opex_share: 0.25                       # and a quarter of its run cost
+adoption_decay_per_year: 0.10                 # I11: adoption falls 10 pts a year without reinforcement (I18)
+
+round2_mechanic: hybrid                       # OD-02: hybrid | fixed | differentiated
+round2_base_musd: 8.0                         # earned capital comes from the board-pitch rubric tiers
+round2_differentiated_musd: [8.0, 10.0, 12.0]
+
+bonus_pmpy_usd: 600                           # A-15: illustrative 4-Star bonus per member per year
+target_stars: 4.0
+
+# Dual-eligible members respond less to digital reminders and more to pharmacist calls
+# (measure model M2). Used for the equity modifier on Member outcomes.
+dual_responsiveness: {digital: 0.5, phone: 1.25, provider: 1.0, access: 1.1, internal: 1.0}
+
+score_weights: {stars: 0.30, member: 0.20, financial: 0.20, maturity: 0.15, risk: 0.15}
+crisis_probability: {high: 0.9, medium: 0.6, low: 0.3}
+critical_incident_penalty: 10                 # crisis rubric under 6 of 18
+member_harm_risk_cap: 20                      # member harm with no corrective action
+overrun_maturity_cap: 50
+opmodel_share_of_maturity: 0.40
+crisis_share_of_risk: 0.50
+
+# Weights inside each dimension. The pack names the ingredients (§10.1); these weights are build
+# assumptions (B-09) for the content owner to tune — editable in Settings → Scoring.
+scoring:
+  stars_lift_weight: 0.6          # lift ÷ headroom
+  stars_path_weight: 0.4          # projected path to 4.0
+  equity_scale: 2.5               # equity modifier = (dual-eligible lift ratio − 1) × 2.5, clamped ±1
+  equity_points: 10               # member points per unit of equity modifier
+  member_harm_points: 5           # member points lost per harm incident
+  financial_bonus_weight: 0.5
+  financial_savings_weight: 0.2
+  financial_discipline_weight: 0.3
+  savings_reference_share: 0.02   # run-rate savings worth 2% of the bonus value = full marks
+  writeoff_penalty_factor: 3
+  maturity_foundations_weight: 0.4
+  maturity_adoption_weight: 0.4
+  maturity_rights_weight: 0.2
+  risk_governance_weight: 0.35
+  risk_validation_weight: 0.25
+  risk_subgroup_weight: 0.2
+  risk_privacy_weight: 0.2
+  risk_harm_points: 8
+
+# Facilitation
+nudge_minutes: 15                 # Diagnose: flag teams with no cited evidence after this many minutes
+playtest_stall_minutes: 8         # Playtest report: a team idle this long in a working stage is a stall
+playtest_overrun_share: 0.20      # Playtest report: a stage this much over plan is an overrun
+pitch_word_limit: 230             # about 90 seconds spoken
+pitch_words_per_second: 2.5
+pilot_targets: {learning: 0.80, judgment_changed: 0.75, usefulness: 0.85}   # docx §21
+
+member_measures: [m3, m4, m7, m9, m10, m11]
+foundation_cards: [i1, i2, i13]
+governance_card: i10
+validation_card: i12
+workflow_card: i11
+incentive_card: i15
+literacy_card: i18
+identity_card: i1
+identity_kpi: identity_match
+reserve_measures:
+  - Colorectal Cancer Screening (Part C)
+  - Follow-up after Emergency Department Visit for People with Multiple High-Risk Chronic Conditions (Part C)

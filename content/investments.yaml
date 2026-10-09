@@ -1,0 +1,588 @@
+# Investment catalog — Content Pack v0.1 section 4 (18 cards). No card has a fixed effect:
+# realized effect = base × payer fit × rule multipliers × adoption × capacity × diminishing
+# returns × lag share (section 5). Effects are in raw measure units, signed as reported
+# (M7 and M11 improve when they go DOWN). Rules use the condition vocabulary in models.py.
+
+- id: i1
+  code: I1
+  name: Member 360 and identity resolution
+  capability_class: data_foundation
+  class_label: Data foundation
+  summary: Resolve member identity across pharmacy, medical and CRM data into one governed record, including prior-plan history.
+  cost_musd: 5.0
+  cost_text: "$5.0M full scope; $2.5M scoped to one book or region"
+  scopes:
+    - {id: full, label: Full scope, cost_musd: 5.0, factor: 1.0}
+    - {id: scoped, label: Scoped to one book or region, cost_musd: 2.5, factor: 0.5}
+  duration_quarters: 3
+  capacity_points: 4
+  opex_musd_per_year: 0.4
+  opex_text: $0.4M per year stewardship
+  prerequisites_text: None. Executive data owner named.
+  effect_text: No direct measure effect. Multiplies I3, I7, I8 by 1.4 and removes the identity penalty (0.6) on outreach-based investments.
+  decay_text: None if stewardship funded; identity drifts 2% per year otherwise
+  synergies: [i2, i3, i7, i8]
+  conflicts: [i2]
+  conflicts_text: Competes with I2 for the same data engineers (capacity)
+  reversible_text: Yes, but sunk cost
+  reversibility: 0.5
+  payer_fit:
+    horizon: {level: medium, note: "Few systems, but prior-plan history stitching is the real need"}
+    heritage: {level: high, note: "The binding constraint for Lakeshore and Pinecrest"}
+    communitycare: {level: low, note: "Identity is already clean on the shared EHR"}
+  kpi_effects:
+    - {kpi: identity_match, set_to: 97}
+  owner_required: true
+  owner_missing_multiplier: 0.5
+  owner_prompt: Executive data owner
+  risk: {tags: [privacy, delivery], text: "Scope creep; match-rule errors create new duplicates; source-system owners resist"}
+  is_foundation: true
+
+- id: i2
+  code: I2
+  name: Data modernization and integration
+  capability_class: data_foundation
+  class_label: Data foundation
+  summary: Modern integration layer and near-real-time feeds that cut data latency for every later initiative.
+  cost_musd: 6.0
+  cost_text: $6.0M
+  duration_quarters: 4
+  capacity_points: 5
+  opex_musd_per_year: 0.8
+  opex_text: $0.8M per year platform
+  prerequisites_text: None. Realistically needs I1 to deliver value.
+  effect_text: No direct measure effect. Reduces data latency; multiplies I5, I6, I8 by 1.3 from the quarter after completion. Lab feed coverage +30 pts (M4 leading KPI).
+  decay_text: None
+  synergies: [i1, i5, i6, i8, i13]
+  conflicts: [i1]
+  conflicts_text: I1 (capacity); Heritage claims platform migration
+  reversible_text: "No"
+  reversibility: 0.0
+  payer_fit:
+    horizon: {level: low, note: "Stack is already modern; this is money spent twice"}
+    heritage: {level: high, note: "But four quarters is longer than the board will wait"}
+    communitycare: {level: medium, note: "Payer-side data is weak, but system IT controls the EHR side"}
+  kpi_effects:
+    - {kpi: lab_feed_coverage, delta: 30}
+  savings_musd_per_year: {horizon: 0.0, heritage: 1.0, communitycare: 0.3}
+  risk: {tags: [delivery, privacy], text: "Time to value; scope creep; competes with core platform migrations"}
+  is_foundation: true
+
+- id: i3
+  code: I3
+  name: Predictive adherence intelligence
+  capability_class: predictive
+  class_label: Predictive AI
+  summary: Model that ranks members by risk of non-adherence so outreach reaches the right members before refills lapse.
+  cost_musd: 1.75
+  cost_text: $1.75M
+  duration_quarters: 2
+  capacity_points: 2
+  opex_musd_per_year: 0.2
+  opex_text: $0.2M per year
+  prerequisites_text: 12 months of pharmacy history for the target population; I12 recommended
+  effect_text: M1 +2.5 pts, M2 +2.0 pts at full execution, only when outreach capacity (I14 or I8) exists. Without capacity, +0.5 pts.
+  decay_text: "Model drift: effect falls 25% per year without I12"
+  synergies: [i1, i12, i14, i8]
+  reversible_text: "Yes"
+  reversibility: 0.8
+  channel: phone
+  payer_fit:
+    horizon: {level: low, note: "40% of members lack history; mis-targets without I1"}
+    heritage: {level: medium, note: "Right members are already known; capacity is the limit"}
+    communitycare: {level: medium, note: "Good data, transport barriers limit response"}
+  effects:
+    - {measure: m1, base: 2.5}
+    - {measure: m2, base: 2.0}
+  rules:
+    - {when: {none_live: [i14, i8]}, multiplier: 0.2, label: "No outreach capacity (I14 or I8): +0.5 pts only"}
+    - {when: {any_live: [i14]}, multiplier: 2.0, label: "Pharmacy outreach capacity (I14) doubles the realized effect"}
+    - {when: {any_live: [i1]}, multiplier: 1.4, label: "Member 360 (I1) live"}
+    - {when: {none_live: [i1], kpi_below: {identity_match: 95}}, multiplier: 0.6, label: "Identity penalty: match rate under 95% without I1"}
+  decay: {rate_per_year: 0.25, unless: {any_live: [i12]}, label: "Model drift without validation and monitoring (I12)"}
+  risk: {tags: [bias], text: "Bias against members with thin history; drift; targets the wrong members on bad identity data"}
+
+- id: i4
+  code: I4
+  name: AI contact-center copilot
+  capability_class: copilot
+  class_label: Copilot
+  summary: Real-time knowledge retrieval, guidance and summarization for member-services agents.
+  cost_musd: 2.0
+  cost_text: $2.0M
+  duration_quarters: 2
+  capacity_points: 2
+  opex_musd_per_year: 0.35
+  opex_text: $0.35M per year
+  prerequisites_text: Knowledge base current (I17 or 1 quarter of cleanup); human review of generated responses
+  effect_text: M10 +2.5 pts; M11 -0.10; first-contact resolution +12 pts; handle time -15%. Halved without I17 or knowledge cleanup.
+  decay_text: Effect falls 30% per year if knowledge base is not maintained
+  synergies: [i17, i10]
+  reversible_text: "Yes"
+  reversibility: 0.8
+  channel: phone
+  payer_fit:
+    horizon: {level: medium, note: "Two vendors, two knowledge bases; abandonment is the IVR, not the agents"}
+    heritage: {level: high, note: "540 agents, legacy knowledge, biggest leverage"}
+    communitycare: {level: low, note: "Service is already 4 Stars"}
+  effects:
+    - {measure: m10, base: 2.5}
+    - {measure: m11, base: -0.10}
+  kpi_effects:
+    - {kpi: fcr, delta: 12}
+  rules:
+    - {when: {any_live: [i17]}, multiplier: 2.0, label: "Knowledge base and IVR modernized (I17): ×2.0 (section 5 dependency multiplier)"}
+  adoption: {baseline: 0.30}
+  decay: {rate_per_year: 0.30, unless: {any_live: [i17]}, label: "Knowledge base not maintained"}
+  savings_musd_per_year: {horizon: 0.4, heritage: 2.5, communitycare: 0.3}
+  risk: {tags: [member_harm, reputation], text: "Wrong answers to members on benefits; agent over-reliance; needs oversight sampling"}
+
+- id: i5
+  code: I5
+  name: Provider performance intelligence
+  capability_class: predictive
+  class_label: Predictive AI and analytics
+  summary: Attribution-aware provider scorecards and gap lists that focus provider relations where variation is greatest.
+  cost_musd: 3.0
+  cost_text: $3.0M
+  duration_quarters: 2
+  capacity_points: 3
+  opex_musd_per_year: 0.3
+  opex_text: $0.3M per year
+  prerequisites_text: Attribution confidence above 85%; I2 improves latency
+  effect_text: M3 +3 pts, M4 +2 pts, M5 +2 pts when paired with I15 or value-based contracts; +0.5 pts each without.
+  decay_text: Low
+  synergies: [i15, i6, i2]
+  reversible_text: "Yes"
+  reversibility: 0.8
+  channel: provider
+  payer_fit:
+    horizon: {level: low, note: "Fee-for-service providers have no reason to look"}
+    heritage: {level: high, note: "35% of members under value-based contracts"}
+    communitycare: {level: medium, note: "Rich data, no incentive; needs I15"}
+  effects:
+    - {measure: m3, base: 3.0}
+    - {measure: m4, base: 2.0}
+    - {measure: m5, base: 2.0}
+  kpi_effects:
+    - {kpi: provider_action_rate, delta: 10}
+    - {kpi: bp_capture, delta: 5}
+  rules:
+    - {when: {none_live: [i15], not_payer_flags: [value_based_contracts]}, multiplier: 0.2, label: "No quality incentive (I15) or value-based contracts: +0.5 pts each only"}
+    - {when: {any_live: [i2]}, multiplier: 1.3, label: "Data modernization (I2) live"}
+  risk: {tags: [adoption], text: "Attribution disputes; provider trust; data latency makes reports stale"}
+
+- id: i6
+  code: I6
+  name: Provider copilot at point of care
+  capability_class: copilot
+  class_label: Copilot
+  summary: Gap and medication prompts delivered inside the clinician's EHR workflow at the point of care.
+  cost_musd: 2.5
+  cost_text: $2.5M
+  duration_quarters: 3
+  capacity_points: 3
+  opex_musd_per_year: 0.4
+  opex_text: $0.4M per year
+  prerequisites_text: EHR integration path (system IT at CommunityCare; vendor at others); I11 for adoption
+  lead_quarters: {communitycare: 2}   # system IT change queue (C-22)
+  effect_text: M3 +4 pts, M4 +3 pts at full adoption. Adoption baseline 15%; 60% with I11; 85% with I11 plus I15. Effect scales with adoption.
+  decay_text: "Alert fatigue: effect falls 20% per year without tuning (I12)"
+  synergies: [i11, i15, i5, i12]
+  conflicts_text: CommunityCare system IT queue (2 quarters)
+  reversible_text: "Yes"
+  reversibility: 0.8
+  channel: provider
+  payer_fit:
+    horizon: {level: low, note: "No EHR access to new-county providers"}
+    heritage: {level: medium, note: "Works for value-based groups only"}
+    communitycare: {level: high, note: "Shared EHR; the only payer where this can be embedded in the inbox"}
+  effects:
+    - {measure: m3, base: 4.0}
+    - {measure: m4, base: 3.0}
+  kpi_effects:
+    - {kpi: provider_action_rate, delta: 30}
+  rules:
+    - {when: {any_live: [i2]}, multiplier: 1.3, label: "Data modernization (I2) live"}
+  adoption: {baseline: 0.15}
+  decay: {rate_per_year: 0.20, unless: {any_live: [i12]}, label: "Alert fatigue without tuning (I12)"}
+  risk: {tags: [member_harm, adoption], text: "Alert fatigue; liability; clinicians ignore it; integration queue delays"}
+
+- id: i7
+  code: I7
+  name: Personalized member engagement
+  capability_class: generative
+  class_label: Generative AI and automation
+  summary: Generated, personalized outreach across app, SMS, mail and voice, tuned to each member's barriers.
+  cost_musd: 2.25
+  cost_text: $2.25M
+  duration_quarters: 2
+  capacity_points: 2
+  opex_musd_per_year: 0.3
+  opex_text: $0.3M per year plus channel costs
+  prerequisites_text: Consent and channel preferences captured; I10 for message review; identity match above 95% or outreach misfires
+  effect_text: "M1 +1.0, M2 +1.0, M5 +4 pts at full execution. On identity match under 90%: effect halved and M11 +0.15 (complaints rise)."
+  decay_text: Response rates fall 15% per year without refresh
+  synergies: [i1, i10, i3]
+  conflicts: [i8]
+  conflicts_text: Raises demand that I16 must absorb at CommunityCare
+  reversible_text: "Yes"
+  reversibility: 0.8
+  channel: digital
+  payer_fit:
+    horizon: {level: medium, note: "Strong platform, wrong channels for new-county members; dangerous without I1"}
+    heritage: {level: medium, note: "Wrong addresses for 11% of members without I1"}
+    communitycare: {level: medium, note: "Reach is not the problem; access is"}
+  effects:
+    - {measure: m1, base: 1.0}
+    - {measure: m2, base: 1.0}
+    - {measure: m5, base: 4.0}
+  kpi_effects:
+    - {kpi: outreach_response, delta: 8}
+  rules:
+    - {when: {any_live: [i1]}, multiplier: 1.4, label: "Member 360 (I1) live"}
+    - {when: {none_live: [i1], kpi_below: {identity_match: 95}, kpi_at_least: {identity_match: 90}}, multiplier: 0.6, label: "Identity penalty: match rate under 95% without I1"}
+    - {when: {none_live: [i1], kpi_below: {identity_match: 90}}, multiplier: 0.5, label: "Identity match under 90%: effect halved"}
+    - {when: {none_funded: [i10]}, multiplier: 0.5, label: "No message review (I10): prerequisite not met"}
+  side_effects:
+    - {when: {none_live: [i1], kpi_below: {identity_match: 90}}, measure: m11, delta: 0.15, label: "Outreach to wrong addresses and households raises complaints"}
+    - {when: {none_live: [i16], payers: [communitycare]}, measure: m9, delta: -2.5, label: "Outreach generates appointment demand the clinics cannot absorb"}
+    - {when: {none_live: [i16], payers: [communitycare]}, measure: m11, delta: 0.08, label: "Access complaints rise as outreach outpaces appointments"}
+  decay: {rate_per_year: 0.15, label: "Response rates fall without content refresh"}
+  risk: {tags: [member_harm, privacy, reputation], text: "Inappropriate outreach; consent violations; channel mismatch for older or dual members; reputational incidents"}
+
+- id: i8
+  code: I8
+  name: Quality-gap orchestration agent
+  capability_class: agent
+  class_label: Agent
+  summary: Agent that identifies open gaps, picks the intervention and triggers outreach and provider actions across channels.
+  cost_musd: 4.0
+  cost_text: $4.0M
+  duration_quarters: 3
+  capacity_points: 4
+  opex_musd_per_year: 0.5
+  opex_text: $0.5M per year
+  prerequisites_text: Identity match above 95% (I1); defined decision rights (I10); integration to outreach and provider channels
+  effect_text: "M1 +1.5, M2 +1.5, M3 +2, M5 +3 pts at full execution with prerequisites. Without I1 or I10: 40% of effect and a crisis trigger."
+  decay_text: Low with monitoring
+  synergies: [i1, i10, i12, i14]
+  conflicts: [i7]
+  conflicts_text: I7 (duplicate outreach if both run without coordination)
+  reversible_text: Partly; member-facing actions are not
+  reversibility: 0.5
+  channel: digital
+  payer_fit:
+    horizon: {level: medium, note: "Modern integrations help; identity and provider inaction hurt"}
+    heritage: {level: medium, note: "Highest upside after I1; worst outcome before it"}
+    communitycare: {level: low, note: "Orchestrates outreach into clinics that have no capacity"}
+  effects:
+    - {measure: m1, base: 1.5}
+    - {measure: m2, base: 1.5}
+    - {measure: m3, base: 2.0}
+    - {measure: m5, base: 3.0}
+  kpi_effects:
+    - {kpi: at_risk_contacted, delta: 15}
+  rules:
+    - {when: {not_all_live: [i1, i10]}, multiplier: 0.4, label: "Without I1 and I10 live: 40% of effect"}
+    - {when: {any_live: [i1]}, multiplier: 1.4, label: "Member 360 (I1) live"}
+    - {when: {any_live: [i2]}, multiplier: 1.3, label: "Data modernization (I2) live"}
+  side_effects:
+    - {when: {none_live: [i16], payers: [communitycare]}, measure: m9, delta: -2.5, label: "Orchestrated outreach floods clinics with no appointment capacity"}
+    - {when: {none_live: [i16], payers: [communitycare]}, measure: m11, delta: 0.08, label: "Access complaints rise as outreach outpaces appointments"}
+  adoption: {baseline: 0.25}
+  risk: {tags: [member_harm, regulatory], text: "Acts on bad data at scale; unclear ownership; member harm if autonomy is set too high"}
+
+- id: i9
+  code: I9
+  name: Appeals and document intelligence
+  capability_class: generative
+  class_label: Generative AI and automation
+  summary: Extraction, summarization and consistency checks for appeals case files before the Independent Review Entity sees them.
+  cost_musd: 1.25
+  cost_text: $1.25M
+  duration_quarters: 2
+  capacity_points: 1
+  opex_musd_per_year: 0.15
+  opex_text: $0.15M per year
+  prerequisites_text: Human review on every decision; I12 for accuracy monitoring
+  effect_text: M12 +5 pts; appeals cycle time -40%; admin cost -$0.6M per year at Heritage scale.
+  decay_text: Low
+  synergies: [i12, i10]
+  reversible_text: "Yes"
+  reversibility: 0.8
+  payer_fit:
+    horizon: {level: medium, note: "Small volume"}
+    heritage: {level: high, note: "Two appeals systems, 2-Star measure"}
+    communitycare: {level: medium, note: "Small volume"}
+  effects:
+    - {measure: m12, base: 5.0}
+  kpi_effects:
+    - {kpi: appeals_cycle_days, pct: -0.40}
+  rules:
+    - {when: {none_live: [i12]}, multiplier: 0.5, label: "No accuracy monitoring (I12): prerequisite not met"}
+  savings_musd_per_year: {horizon: 0.1, heritage: 0.6, communitycare: 0.15}
+  risk: {tags: [privacy], text: "Extraction errors; privacy; over-automation of decisions"}
+
+- id: i10
+  code: I10
+  name: Enterprise AI governance and controls
+  capability_class: governance
+  class_label: Governance
+  summary: Decision rights, model inventory, message review, kill switches and an accountable executive for every AI capability.
+  cost_musd: 1.25
+  cost_text: $1.25M
+  duration_quarters: 1
+  capacity_points: 1
+  opex_musd_per_year: 0.3
+  opex_text: $0.3M per year
+  prerequisites_text: Named accountable executive; otherwise the investment is ceremonial (effect zero)
+  effect_text: No direct measure effect. Reduces crisis probability by 50% and severity by one level. Required for I8 full effect. Scores directly in Risk and Governance (15%).
+  decay_text: None if owned
+  synergies: [i3, i4, i5, i6, i7, i8, i9]
+  conflicts_text: None
+  reversible_text: "Yes"
+  reversibility: 0.8
+  payer_fit:
+    horizon: {level: high, note: "No controls exist today"}
+    heritage: {level: high, note: "Many systems, many owners"}
+    communitycare: {level: medium, note: "Fewer systems; clinical governance already exists"}
+  owner_required: true
+  owner_missing_multiplier: 0.0
+  owner_prompt: Accountable executive
+  risk: {tags: [], text: "Becomes a committee without authority"}
+
+- id: i11
+  code: I11
+  name: Workflow redesign and change management
+  capability_class: operating_model
+  class_label: Operating model
+  summary: Redesign the workflows where AI lands, with sponsors, role changes and reinforcement, so people actually use it.
+  cost_musd: 3.0
+  cost_text: $3.0M
+  duration_quarters: 2
+  capacity_points: 2
+  opex_musd_per_year: 0.2
+  opex_text: $0.2M per year
+  prerequisites_text: Executive sponsor per redesigned workflow
+  effect_text: No direct measure effect. Sets adoption to 60% for I4, I6, I8 (baseline 15 to 30%). Scores in AI Transformation Maturity (15%).
+  decay_text: Adoption falls 10 pts per year without reinforcement (I18 reinforces)
+  synergies: [i4, i6, i8, i15]
+  reversible_text: "Yes"
+  reversibility: 0.8
+  payer_fit:
+    horizon: {level: medium, note: "Small teams change fast; provider side untouched"}
+    heritage: {level: medium, note: "Large, slow, but value-based groups respond"}
+    communitycare: {level: high, note: "The missing piece for everything clinical"}
+  kpi_effects:
+    - {kpi: provider_action_rate, delta: 5}
+  owner_prompt: Executive sponsor
+  risk: {tags: [adoption], text: "Sponsorship fades; incentives conflict; treated as training instead of redesign"}
+
+- id: i12
+  code: I12
+  name: Model validation and monitoring
+  capability_class: governance
+  class_label: Governance
+  summary: Independent validation, drift and subgroup monitoring for every model in production.
+  cost_musd: 1.0
+  cost_text: $1.0M
+  duration_quarters: 1
+  capacity_points: 1
+  opex_musd_per_year: 0.25
+  opex_text: $0.25M per year
+  prerequisites_text: At least one model in production
+  effect_text: No direct measure effect. Removes drift decay on I3, I6; halves probability of the subgroup-bias crisis; required for I9 full effect.
+  decay_text: None
+  synergies: [i3, i6, i8, i9]
+  reversible_text: "Yes"
+  reversibility: 0.8
+  payer_fit:
+    horizon: {level: high, note: "Thin history makes bias likely"}
+    heritage: {level: high, note: "Dual-eligible subgroup risk"}
+    communitycare: {level: medium, note: "Clinical governance already reviews models"}
+  risk: {tags: [], text: "Skills shortage; independence from the model builders"}
+
+- id: i13
+  code: I13
+  name: ADT feeds and transitions-of-care program
+  capability_class: data_foundation
+  class_label: Data foundation and operations (non-AI)
+  summary: Real-time admission, discharge and transfer feeds from health systems plus transition nurses for 48-hour follow-up.
+  cost_musd: 1.5
+  cost_text: $1.5M
+  duration_quarters: 2
+  capacity_points: 2
+  opex_musd_per_year: 0.4
+  opex_text: $0.4M per year (transition nurses)
+  prerequisites_text: Health system data-sharing agreements (1 quarter)
+  lead_quarters: {"*": 1}   # agreements are signed before the feeds can be built
+  effect_text: M7 -1.5 at full coverage; 48-hour follow-up contact +35 pts; ADT latency to under 1 day.
+  decay_text: None
+  synergies: [i2, i8]
+  reversible_text: "Yes"
+  reversibility: 0.8
+  channel: phone
+  payer_fit:
+    horizon: {level: low, note: "Readmissions already 4 Stars"}
+    heritage: {level: high, note: "The readmission lever"}
+    communitycare: {level: medium, note: "Shared system covers most discharges already; gain is on the 18% outside it"}
+  effects:
+    - {measure: m7, base: -1.5}
+  kpi_effects:
+    - {kpi: adt_latency_days, set_to: 0.8}
+    - {kpi: followup_48h, delta: 35}
+  risk: {tags: [privacy], text: "Health systems decline to share; follow-up capacity"}
+  is_foundation: true
+
+- id: i14
+  code: I14
+  name: Pharmacy outreach capacity and 90-day fill program
+  capability_class: operations
+  class_label: Operations (non-AI)
+  summary: More pharmacists and outreach staff plus a 90-day fill conversion program.
+  cost_musd: 1.2
+  cost_basis: per_year
+  cost_text: $1.2M per year
+  duration_quarters: 1
+  capacity_points: 1
+  opex_musd_per_year: 0.0
+  opex_text: Included
+  prerequisites_text: None
+  effect_text: M1 +2.0, M2 +1.5 pts on its own; doubles the realized effect of I3. Reaches 45% of at-risk members per quarter instead of 15%.
+  decay_text: Effect stops if funding stops
+  synergies: [i3, i8]
+  reversible_text: "Yes"
+  reversibility: 0.9
+  channel: phone
+  payer_fit:
+    horizon: {level: medium, note: "Small at-risk list; new-county members hard to reach by phone"}
+    heritage: {level: high, note: "Capacity is the root cause (L-RC2)"}
+    communitycare: {level: medium, note: "Transport, not calls, is the barrier for rural members"}
+  effects:
+    - {measure: m1, base: 2.0}
+    - {measure: m2, base: 1.5}
+  kpi_effects:
+    - {kpi: at_risk_contacted, set_to: 45}
+    - {kpi: fill_90day, delta: 15}
+  risk: {tags: [], text: "Hiring time; pharmacist labor market"}
+
+- id: i15
+  code: I15
+  name: Provider quality incentive program
+  capability_class: operating_model
+  class_label: Operating model (non-AI)
+  summary: Quality-linked incentive pool and contract amendments that give providers a reason to act on gaps.
+  cost_musd: 2.0
+  cost_basis: per_year
+  cost_text: $2.0M per year (incentive pool and administration)
+  duration_quarters: 2
+  capacity_points: 1
+  opex_musd_per_year: 0.0
+  opex_text: Included
+  prerequisites_text: Contract amendments (2 quarters at Horizon; 1 quarter at CommunityCare via the system)
+  effect_text: M3 +3, M4 +2, M5 +2 pts; provider alert action rate +40 pts. Required for I5 and I6 to reach full effect at Horizon and CommunityCare.
+  decay_text: None while funded
+  synergies: [i5, i6, i11]
+  reversible_text: Contractually slow
+  reversibility: 0.3
+  channel: provider
+  payer_fit:
+    horizon: {level: high, note: "New-county contracts have no incentive today (H-RC3)"}
+    heritage: {level: low, note: "Already in place for 35%; marginal gain"}
+    communitycare: {level: high, note: "Salaried clinicians have nothing tied to Stars (C-RC3)"}
+  effects:
+    - {measure: m3, base: 3.0}
+    - {measure: m4, base: 2.0}
+    - {measure: m5, base: 2.0}
+  kpi_effects:
+    - {kpi: provider_action_rate, delta: 40}
+    - {kpi: bp_capture, delta: 20}
+  risk: {tags: [], text: "Providers game measures; cost grows with success"}
+
+- id: i16
+  code: I16
+  name: "Access expansion: extended hours, telehealth, NP visit slots"
+  capability_class: operations
+  class_label: Operations (non-AI)
+  summary: Extended clinic hours, telehealth and nurse-practitioner slots, plus imaging capacity where needed.
+  cost_musd: 2.5
+  cost_text: $2.5M
+  duration_quarters: 2
+  capacity_points: 2
+  opex_musd_per_year: 1.0
+  opex_text: $1.0M per year
+  prerequisites_text: Clinic or network agreement
+  effect_text: M9 +5 pts, M5 +3 pts (imaging slots), M11 -0.05 at CommunityCare; M9 +1.5 elsewhere. Third-next-available from 24 to 11 days.
+  decay_text: None while funded
+  synergies: [i7, i8]
+  reversible_text: "Yes"
+  reversibility: 0.8
+  channel: access
+  payer_fit:
+    horizon: {level: low, note: "Access is not the constraint"}
+    heritage: {level: low, note: "Broad network; access varies by county"}
+    communitycare: {level: high, note: "The root cause for appointments and screening (C-RC2)"}
+  effects:
+    - {measure: m9, base: 5.0}
+    - {measure: m5, base: 3.0, payers: [communitycare]}
+    - {measure: m11, base: -0.05, payers: [communitycare]}
+  kpi_effects:
+    - {kpi: third_next_available, set_to: 11, payers: [communitycare]}
+    - {kpi: third_next_available, delta: -3, not_payers: [communitycare]}
+  risk: {tags: [], text: "Clinician recruitment; system priorities"}
+
+- id: i17
+  code: I17
+  name: Member services knowledge base and IVR modernization
+  capability_class: automation
+  class_label: Automation
+  summary: Replace the lapsed or failing IVR and rebuild the member-services knowledge base.
+  cost_musd: 1.5
+  cost_text: $1.5M
+  duration_quarters: 2
+  capacity_points: 2
+  opex_musd_per_year: 0.2
+  opex_text: $0.2M per year
+  prerequisites_text: None
+  effect_text: Abandonment -7 pts; M10 +1.5 pts; M11 -0.08. Doubles the effect of I4.
+  decay_text: Low
+  synergies: [i4]
+  reversible_text: "Yes"
+  reversibility: 0.8
+  channel: phone
+  payer_fit:
+    horizon: {level: high, note: "Vendor IVR drops calls at 4 minutes (H-MS2)"}
+    heritage: {level: high, note: "Legacy IVR, lapsed contract (L-MS2)"}
+    communitycare: {level: low, note: "Abandonment is 6%"}
+  effects:
+    - {measure: m10, base: 1.5}
+    - {measure: m11, base: -0.08}
+  kpi_effects:
+    - {kpi: abandonment, delta: -7}
+  savings_musd_per_year: {horizon: 0.3, heritage: 1.2, communitycare: 0.1}
+  risk: {tags: [delivery], text: "Vendor transition; IVR cutover incidents"}
+
+- id: i18
+  code: I18
+  name: AI literacy and decision-rights program for leaders and managers
+  capability_class: adoption
+  class_label: Adoption
+  summary: Practical AI literacy plus explicit decision rights for leaders and managers who will own AI-enabled work.
+  cost_musd: 0.5
+  cost_text: $0.5M
+  duration_quarters: 1
+  capacity_points: 0.5
+  opex_musd_per_year: 0.1
+  opex_text: $0.1M per year
+  prerequisites_text: None
+  effect_text: No direct measure effect. Adds 10 pts adoption to every copilot and agent; counts toward AI Transformation Maturity; reduces crisis response time (one rubric point).
+  decay_text: Refresh every year
+  synergies: [i11, i10]
+  reversible_text: "Yes"
+  reversibility: 0.8
+  payer_fit:
+    horizon: {level: medium, note: "Lean leadership team; quick to train"}
+    heritage: {level: high, note: "Many managers, many hand-offs"}
+    communitycare: {level: medium, note: "Joint plan-system leadership needs shared language"}
+  risk: {tags: [], text: "Becomes a one-off training event"}

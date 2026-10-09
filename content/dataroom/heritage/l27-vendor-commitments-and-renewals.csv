@@ -1,0 +1,14 @@
+vendor,service,status,start_date,end_date,annual_value_usd_m,terms_and_risks,analyst_note
+Calloway Voice Systems,IVR and call routing,Lapsed,2021-02-01,2026-01-31,0.9,Break-fix only at time-and-materials rates; no menu or routing changes since February,"Simulated, fictional data for executive education. Not real PHI. Procurement contract register, 2026-08. Annual value in $ millions. IVR replacement RFP issued 2025-10, paused 2026-02 pending budget."
+ScriptBridge PBM,Pharmacy benefit manager,Active,2025-01-01,2027-12-31,n/a (pass-through),2 years remaining; adherence outreach data rights included; 90-day fill incentives negotiable at mid-term review (2026-Q4),
+MemberLink (SaaS CRM),"CRM, Heritage core",Active,2023-07-01,2027-06-30,2.4,Renewal notice due 2026-12-31,
+OutreachOne,"CRM, Lakeshore",Active (out of support),2019-04-01,2026-12-31,0.6,Vendor ended product support 2025; renewal decision overdue,
+CareConnect (SaaS CRM),"CRM, Pinecrest",Active,2024-10-01,2027-09-30,0.5,,
+Brookline Administrative Services,TPA claims hosting (Tessera),Active,2022-01-01,2027-12-31,8.2,Data extract changes require 90-day notice and change order,
+Halyard Systems,Core claims platform migration,Active,2025-09-01,2027-08-31,11.5 (2-year implementation),Fixed-fee milestones; penalties if Heritage delays integration testing,
+CareFlow Inc.,Care management platform,Active,2024-01-01,2028-12-31,1.8,ADT ingestion module licensed but used for 2 feeds only,
+LabLink Data Services,Lab results aggregation,Active,2023-01-01,2026-12-31,0.7,Renewal in progress,
+Keystone Print & Mail,Member mail house,Active,2024-04-01,2027-03-31,3.1,Address hygiene (NCOA) offered as add-on; not purchased for acquired books,
+Meridian Review Partners,Appeals clinical review overflow,Active,2025-01-01,2026-12-31,0.8,,
+Stratavant Consulting,OneView program integrator,Terminated,2023-01-15,2024-08-30,0,Termination settlement paid 2024-10,
+Clearpath Analytics,Adherence and gap prioritization models (hosting),Active,2024-07-01,2026-06-30,0.9,Auto-renewed 12 months,

@@ -1,0 +1,15 @@
+drug_class,tenure_band,members_on_drug_class,in_measure_denominator,excluded_from_denominator,pct_excluded,pct_pdc_80_plus,mean_pdc,avg_refill_gap_days,pct_90_day_fills,scored_by_adherence_risk_model,note
+M1 Diabetes medications,Under 6 months,1420,900,520,36.6%,76.0,0.79,24,22%,No,"Simulated, fictional data for executive education. Not real PHI. Measurement year 2026 to date (Jan to Jul fills, PBM feed of 12 Aug 2026). Tenure = months of continuous Horizon Part D enrollment. Excluded = on the drug class but not yet in the measure denominator (fewer than two fills in plan data or late enrollment)."
+M1 Diabetes medications,6 to 12 months,1990,1600,390,19.6%,80.2,0.83,19,29%,No,Adherence Risk Score v1 eligibility: 12 months continuous Part D claims history (see H-28)
+M1 Diabetes medications,12 months or more,4560,4450,110,2.4%,87.0,0.89,11,46%,Yes,
+M1 Diabetes medications,ALL TENURE,7970,6950,1020,12.8%,84.0,,,,Partial,
+M2 RAS antagonists,Under 6 months,1930,1250,680,35.2%,79.6,0.82,21,24%,No,
+M2 RAS antagonists,6 to 12 months,2690,2250,440,16.4%,83.0,0.85,17,31%,No,
+M2 RAS antagonists,12 months or more,6330,6210,120,1.9%,89.1,0.91,9,49%,Yes,
+M2 RAS antagonists,ALL TENURE,10950,9710,1240,11.3%,86.5,,,,Partial,
+Statins (not in game measure set),Under 6 months,2810,1800,1010,35.9%,74.5,0.78,26,21%,No,
+Statins (not in game measure set),6 to 12 months,3870,3200,670,17.3%,78.9,0.82,20,28%,No,
+Statins (not in game measure set),12 months or more,9080,8900,180,2.0%,87.8,0.9,11,45%,Yes,
+Statins (not in game measure set),ALL TENURE,15760,13900,1860,11.8%,84.0,,,,Partial,
+ALL THREE CLASSES (blended),12 months or more,19970,19560,410,2.1%,88.0,,,,Yes,
+ALL THREE CLASSES (blended),Under 12 months,14710,11000,3710,25.2%,79.0,,,,No,

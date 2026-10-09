@@ -1,0 +1,17 @@
+system_id,system,category,books_served,hosting,data_held,refresh_to_edw,latency_days,business_owner,known_issues,analyst_note
+S01,HCP Classic,Claims platform,Heritage core,On-premise,"Claims, enrollment (core)",Nightly batch,2,IT Claims Platforms,Being replaced by Halyard Claims Cloud (2026-Q4 to 2027-Q2),"Simulated, fictional data for executive education. Not real PHI. IT asset register, 2026-08. 14 source systems (S01-S14), 3 CRMs, 2 claims platforms, plus 2 analytics platforms (P1-P2)."
+S02,Tessera Claims (TPA-hosted),Claims platform,"Lakeshore, Pinecrest",Vendor-hosted,"Claims, enrollment (acquired books)",Weekly extract,14,Vendor-managed,Brookline Administrative Services hosts; extract schema changed 3 times since 2023,Feeds EDW 14 days after adjudication on average
+S03,EnrollPro,Eligibility and enrollment,"Heritage core, Pinecrest",On-premise,"CMS transaction reply reports, enrollment",Daily,1,Enrollment Operations,Pinecrest enrollment moved here 2024; Lakeshore still in Tessera,
+S04,ScriptBridge PBM feed,Pharmacy,All,Vendor feed,Prescription drug event (PDE) and claims,Daily,3,Pharmacy,PBM sends its own member key plus MBI,
+S05,MemberLink CRM,CRM,Heritage core,SaaS,"Contacts, cases, campaigns",Real time,0,Member Services,Campaign joins exact-key only,
+S06,OutreachOne CRM,CRM,Lakeshore,On-premise,"Contacts, outreach history",Weekly,7,Unassigned,Lakeshore legacy; version out of vendor support 2025,
+S07,CareConnect CRM,CRM,Pinecrest,SaaS,"Contacts, cases",Daily,1,Member Services (Pinecrest),,
+S08,CareFlow,Care management,All,SaaS,"Care plans, assessments, discharge tasks",Real time,0,Care Management,Discharge tasks created from ADT or claims,
+S09,AppealTrack,Appeals and grievances,Heritage core,On-premise,"Appeals, grievances, IRE case files",Real time,0,Appeals and Grievances,,
+S10,CaseBridge,Appeals and grievances,"Lakeshore, Pinecrest",On-premise,"Appeals, grievances",Real time,0,Appeals and Grievances,Acquired system; scanned documents stored as images,
+S11,LabLink aggregator,Clinical data,All,Vendor feed,Lab results,Weekly,9,Quality Analytics,Covers 3 national and 11 regional labs,
+S12,ProviderHub,Provider data,All,On-premise,"Provider directory, NPI, attribution",Monthly,30,Network Management,,
+S13,HL7 interface engine (ADT hub),Clinical data,"Heritage core, Pinecrest",On-premise,ADT messages from 2 health systems,Real time,0,IT Integration,Ashgrove and Tamarack only,
+S14,Calloway IVR and telephony logs,Contact center,All,Vendor-hosted,"Call routing, queue and abandonment data",Daily,1,Member Services,Vendor contract lapsed 2026-01-31; break-fix only,
+P1,Enterprise data warehouse (EDW),Analytics platform,All,On-premise,"Integrated claims, pharmacy, members, quality",Weekly full + nightly partial,11,IT Data Platforms,Average end-to-end latency 11 days from service to analytics-ready,
+P2,Cloud data lake (partial),Analytics platform,Heritage core,Cloud,Raw landing for 5 of 14 sources,Daily,3,IT Data Platforms,Built 2023-2024 under OneView; not used by HEDIS engine,

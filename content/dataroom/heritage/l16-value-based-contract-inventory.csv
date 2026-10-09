@@ -1,0 +1,14 @@
+provider_group,book,state,contract_type,attributed_members,group_stars_equivalent,contract_start,contract_end,note
+Buckeye Primary Partners,Heritage core,OH,Upside/downside shared savings + quality gates,31200,4.0,2024-01,2027-12,"Simulated, fictional data for executive education. Not real PHI. Attributed members as of 2026-07. Group Stars = simulated provider-level star equivalent on HEDIS/Part D measures, MY2025."
+Riverbend Medical Group,Heritage core,OH,Upside shared savings + quality bonus,22400,4.0,2023-07,2026-12,
+Allegheny Physicians Collaborative,Heritage core,PA,Quality bonus pool (P4P),18600,3.9,2024-01,2026-12,
+Hoosier Family Health Network,Heritage core,IN,Upside shared savings + quality bonus,16900,4.0,2025-01,2027-12,
+Ashgrove Health Physician Network,Heritage core,OH,Capitation with quality withhold,14800,4.1,2022-01,2027-12,
+Tamarack Regional Primary Care,Heritage core,PA,Quality bonus pool (P4P),11300,3.8,2023-01,2026-12,Contract renewal due; group asking for higher bonus pool
+Westfield Senior Care Clinics,Heritage core,IN,Full-risk capitation,9800,4.1,2024-07,2028-06,
+Great Lakes Independent Physicians,Lakeshore,MI,Quality bonus pool (P4P),7400,3.3,2025-01,2026-12,Scorecard disputes on attribution filed in 2025 and 2026
+Cobalt Bay Medical Associates,Lakeshore,WI,Quality bonus pool (P4P),4900,3.4,2025-07,2027-06,
+Hudson Highlands Primary Care,Pinecrest,NY,Upside shared savings + quality bonus,7100,3.8,2024-01,2026-12,
+Mohawk Valley Physicians,Pinecrest,NY,Quality bonus pool (P4P),6450,3.7,2024-07,2027-06,
+All value-based groups,All books,,,150850,3.9,,,"35% of 431,000 members"
+Fee-for-service network (no quality incentive),All books,,Fee-for-service,280150,3.3,,,"Approx. 9,800 contracted primary care clinicians"

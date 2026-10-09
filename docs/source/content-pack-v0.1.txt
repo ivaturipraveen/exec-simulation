@@ -1,0 +1,2705 @@
+CONTENT PACK v0.1
+Medicare Advantage AI
+Executive Simulation
+Payer bibles, measure model, investment catalog, data rooms, crisis packets, workflow exercise, run-of-show, scorecard, rubrics, model parameters and the assumptions behind them.
+Status
+Draft for review. Every number is an assumption until Girish Balsavar confirms or changes it.
+Based on
+Medicare Advantage AI Executive Simulation Requirements v0.1 (Aug 20, 2026)
+Prepared by
+Brightcone.ai for Girish Balsavar
+Date
+October 8, 2026
+Audience
+Girish (content owner and facilitator), Brightcone product and engineering, Stars SME reviewer
+How to use
+Sections 2 to 11 are the content pack entities in the order the schema lists them. Section 1 is the assumptions log; review it first. Section 12 is the review checklist.
+
+Contents
+1. Assumptions log
+2. Payer bibles (Horizon Health, Heritage Medicare, CommunityCare Alliance)
+3. Measure model (10 measures)
+4. Investment catalog (18 cards)
+5. Simulation model parameters and reference portfolios
+6. Data room inventories (30 artifacts per payer)
+7. Crisis and curveball events (7 events, response rubric)
+8. Human-versus-AI operating model exercise
+9. Run-of-show and facilitator console
+10. Scorecard and rubrics (board pitch, Opportunity Map)
+11. Simplification register
+12. Review checklist for Girish
+
+1. Assumptions log
+The requirements doc left twelve decisions open and all numeric values provisional. This pack resolves each with a stated assumption so that the content can be played and the engine can be built. Change any row and the dependent content changes with it.
+ID
+Decision
+Assumption taken
+OD-01
+Workshop duration
+180-minute core simulation plus an optional 25-minute real-company translation extension. The run-of-show is built to that boundary.
+OD-02
+Second-round capital mechanic
+Hybrid: $8.0M base per team plus up to $4.0M earned by the board pitch rubric. Playtests may test fixed and differentiated by changing the base.
+OD-03
+Payer baselines and names
+Names kept from v0.1. CommunityCare starting rating set at 3.5. Memberships, budgets and starting measure values set in this pack.
+OD-04
+Which measures
+Ten measures: M1, M2, M3, M4, M5, M7, M9, M10, M11, M12 from the twelve candidates. Colorectal screening and ED follow-up held in reserve.
+OD-05
+Formula transparency
+Participants see result drivers (which investments moved which leading KPIs and measures, and which multipliers applied). Formulas and parameters live in a facilitator appendix. Full model reveal is offered after the session on request.
+OD-06
+Competition fairness
+Normalized scoring: lift divided by headroom, benefit divided by 4-Star bonus value. Archetype-specific board mandates are shown but not scored.
+OD-07
+AI interaction boundaries
+Hybrid: a free-form grounded assistant limited to the team's data room, plus four scripted analyst roles (analyst, challenger, explainer, pitch coach). The assistant refuses to produce figures without a cited artifact.
+OD-08
+Board pitch adjudication
+Facilitator scores the rubric; an AI-assisted rubric produces a suggested score the facilitator can accept or override with a note.
+OD-09
+Opportunity Map ownership and privacy
+Per-participant capture, organization-level aggregate, named owners only on the organization's own map, 12-month retention, consent line on the form.
+OD-10
+Prototype form
+Paper-ready packets in this document first; Slice 1 browser prototype runs the playtests; Slice 2 adds the engine.
+OD-11
+Randomness
+Deterministic seed in V1 for comparability; variable mode available for replay.
+OD-12
+Participant prerequisites
+No pre-work. A two-page Stars primer is offered as optional pre-read and summarized in the 12-minute briefing. Roles are assigned at the table.
+A-13
+Measure thresholds
+Game constructs chosen to place each payer where the narrative needs it. Not CMS cut points.
+A-14
+Weight classes
+Outcome and intermediate outcome 3, patient experience and complaints/access 2, process 1, as understood for the 2026 Star Ratings. Verify before the pilot.
+A-15
+4-Star bonus value
+$600 per member per year illustrative for crossing 4.0 Stars. Used only for the financial dimension.
+A-16
+Capacity points
+An abstraction for implementation bandwidth. Investments carry a demand; payers carry a quarterly supply. Overrun slows progress proportionally.
+A-17
+Investment costs
+Two-year totals in the ranges from v0.1 where given; six non-AI operational cards added so that portfolios can mix technology with capacity, incentives and access.
+A-18
+Data room size
+30 artifacts per payer, 8 domains, each tagged to a root cause, misleading signal or neutral. Brightcone generates the artifact bodies from these specifications; Girish reviews.
+
+2. Payer bibles
+Three mechanically asymmetric payers. Each has visible advantages and constraints, three hidden root causes discoverable in the data room, two misleading surface signals, a signature trap, two viable strategies and two failure modes. Investment IDs refer to section 4.
+
+Horizon Health
+Heritage Medicare
+CommunityCare Alliance
+Archetype
+PE-backed challenger
+15-year legacy incumbent
+Provider-sponsored plan
+Members
+52,400
+431,000 (three books)
+94,800
+Starting rating
+3.0
+3.5 (Lakeshore 3.0)
+3.5
+Round 1 capital
+$18.0M
+$15.0M
+$12.0M
+Capacity per quarter
+10 points
+8 points
+6 points
+Data readiness
+3 of 5
+2 of 5
+3 of 5
+Dual share
+14%
+29%
+18%
+Signature trap
+Automate everything
+Modernize everything before value
+Assume affiliation guarantees adoption
+
+2.1 Horizon Health: PE-backed challenger
+Fast, modern, thin on history and relationships.
+Profile
+Members
+52,400 (grew from 19,000 in 30 months)
+Geography
+17 counties across Arizona, Texas and Florida; 9 counties entered in the last 18 months
+Product mix
+88% MA-PD HMO, 12% PPO; one D-SNP launched this year (3,100 members)
+Dual-eligible / LIS share
+14% dual, 21% LIS
+Average member age
+71.2 (younger than market)
+Starting overall rating
+3.0 Stars (simulated)
+Revenue
+$690M illustrative
+Round 1 capital
+$18.0M
+Round 2 capital
+$8.0M base plus up to $4.0M earned at the board pitch
+Implementation capacity
+10 capacity points per quarter
+Data readiness score
+3 of 5 (modern stack, 40% of members have under 12 months of history)
+Care management staff
+22 care managers, 4 pharmacists, 3 outreach coordinators
+Contact center
+68 agents, 2 vendors, abandonment 11%
+Technology
+Single cloud data platform (2 years old), one CRM, modern core admin; 4 source systems
+Provider network
+Mostly fee-for-service contracts in new counties; 2 risk-bearing groups in legacy counties
+Population
+Younger, faster-growing membership with incomplete longitudinal history. Digital engagement rates look strong but are concentrated among healthy members in legacy counties. New-county members skew older, more rural and less reachable by app or SMS.
+Board mandate
+Reach 4.0 Stars within two rating cycles to support the next funding round, without slowing county expansion. The board is comfortable with speed and uncomfortable with anything that looks like a two-year foundation program.
+Visible advantages
+	•	Modern cloud data platform; integrations take weeks, not quarters
+	•	Capital is available and the board decides quickly
+	•	Leadership appetite for AI is high; no legacy vendor contracts to unwind
+	•	Low readmission baseline because the population is younger
+Visible constraints
+	•	40% of members lack 12 months of claims and pharmacy history, so risk models and gap lists are unstable
+	•	No quality incentives in new-county provider contracts; alerts to those providers are ignored
+	•	Quality operations team is six people and has never run a full Stars cycle
+	•	Complaint rate is already at 2 Stars and rising with growth
+Hidden root causes (discoverable in the data room)
+ID
+Root cause
+What is actually happening
+H-RC1
+History gap mis-targets everything
+Members enrolled under 12 months are excluded from or mis-scored in adherence and gap models. Outreach lists over-represent legacy-county members who are already adherent and miss the new-county members driving the shortfall. Any predictive investment inherits this unless identity and history stitching from prior-plan data is funded first.
+H-RC2
+Digital-first engagement mis-segments
+The engagement platform defaults to app and SMS. 61% of new-county members over 75 have never opened the app. Outreach reports show high 'reach' because the message was sent, not because anyone read it. Complaints are rising from members who receive messages intended for other households (shared phone numbers, address churn).
+H-RC3
+Providers in new counties have no reason to act
+New-county contracts are fee-for-service with no quality incentive. Gap alerts go to a portal with 9% open rate. Blood pressure control sits at 2 Stars mainly because readings are not captured, not because members are uncontrolled.
+Misleading surface signals
+ID
+Signal
+Why it misleads
+H-MS1
+App engagement looks excellent
+A 44% monthly active rate is real but comes from healthy legacy-county members. Teams that invest in more digital engagement will see leading KPIs rise and measures barely move.
+H-MS2
+Call volume per member is low
+Low volume reads as low demand. It is actually 11% abandonment and a vendor IVR that drops calls after 4 minutes. Complaints and CAHPS customer service are the downstream cost.
+Signature AI trap
+Automate everything. Speed outpaces validation, governance and organizational readiness. The signature failure is a personalized engagement agent launched on bad identity data that sends inappropriate outreach to thousands of members.
+Starting scorecard (simulated)
+Measure
+Weight
+Start value
+Stars
+Two-year headroom
+Root-cause link
+M1 Medication Adherence for Diabetes Medications
+3
+84.0
+3
++4.5 pts
+H-RC1
+M2 Medication Adherence for Hypertension (RAS antagonists)
+3
+86.5
+3
++3.5 pts
+H-RC1
+M3 Controlling Blood Pressure
+3
+59.0
+2
++12 pts (mostly capture, not control)
+H-RC3
+M4 Glycemic Status Assessment for Patients with Diabetes
+3
+70.0
+3
++6 pts
+H-RC3
+M5 Breast Cancer Screening
+1
+62.0
+2
++10 pts
+H-RC2
+M7 Plan All-Cause Readmissions
+3
+9.0
+4
+-1.0
+none; younger population
+M9 Getting Appointments and Care Quickly (CAHPS)
+2
+80.0
+4
++2 pts
+none
+M10 Customer Service (CAHPS)
+2
+88.0
+3
++4 pts
+H-MS2
+M11 Complaints about the Health Plan
+2
+0.55
+2
+-0.30
+H-RC2, H-MS2
+M12 Reviewing Appeals Decisions
+2
+87.0
+3
++5 pts
+none
+Viable strategies (at least two must work)
+	•	Foundation-light: fund identity resolution and prior-plan history stitching (I1), then predictive adherence (I3) and pharmacy capacity (I14) with governance (I10). Slower Year 1, strong Year 2.
+	•	Provider-first: fund provider incentives (I15) and provider performance intelligence (I5) to unlock blood pressure and screening in new counties, with contact-center copilot (I4) to arrest complaints. Faster Year 1 on clinical measures.
+Failure modes
+	•	Engagement-heavy portfolio (I7 plus I8) without I1 or I10: triggers the eligibility crisis at high severity and complaints fall to 1 Star.
+	•	Modernization-heavy portfolio (I2 plus I1) consumes all capacity and shows nothing by the board pitch; Round 2 capital is cut.
+
+2.2 Heritage Medicare: 15-year legacy incumbent
+Scale, history and data everywhere, none of it joined up.
+Profile
+Members
+431,000 across three acquired books (Heritage core 268,000; Lakeshore 97,000; Pinecrest 66,000)
+Geography
+6 states in the Midwest and Northeast, 140 counties
+Product mix
+61% HMO, 27% PPO, 12% D-SNP
+Dual-eligible / LIS share
+29% dual, 38% LIS
+Average member age
+74.8
+Starting overall rating
+3.5 Stars (simulated); Lakeshore contract at 3.0
+Revenue
+$5.9B illustrative
+Round 1 capital
+$15.0M of a $25M to $27M two-year transformation envelope
+Round 2 capital
+$8.0M base plus up to $4.0M earned at the board pitch
+Implementation capacity
+8 capacity points per quarter (large teams, slow change control)
+Data readiness score
+2 of 5 (14 source systems, 3 CRMs, 11% member identity mismatch across books)
+Care management staff
+210 care managers, 6 pharmacists, 40 outreach staff
+Contact center
+540 agents in-house, legacy IVR, abandonment 14%
+Technology
+On-premise data warehouse plus a partial cloud lake; 14 source systems; 3 CRMs; 2 claims platforms
+Provider network
+Broad; 35% of members attributed to value-based contracts with quality incentives; rest fee-for-service
+Population
+Older, more complex, with a high dual-eligible share concentrated in the Lakeshore book. Social barriers (transport, housing instability) and fragmented care across many health systems reduce the lift any single intervention can produce. Longitudinal data is rich for the core book and poor for acquired books.
+Board mandate
+Hold 4.0 Stars on the core contract and lift Lakeshore to 3.5 within two cycles. The board has approved a $25M transformation envelope and expects visible progress at each quarterly review. A failed flagship program two years ago makes the board allergic to long foundation builds.
+Visible advantages
+	•	Scale: a one-point adherence lift is worth more here than anywhere
+	•	Ten years of clean history on 268,000 core members
+	•	Established value-based contracts covering 35% of members
+	•	Institutional knowledge of Stars operations; strong quality team of 38
+Visible constraints
+	•	Three member identity schemes; 11% of members cannot be matched confidently across pharmacy, medical and CRM data
+	•	Pharmacy outreach capacity reaches only the top 15% of at-risk members
+	•	Discharge (ADT) feeds cover 2 of 5 major health systems; the rest arrive 9 days late via claims
+	•	Change control cycle is 6 weeks; any system change competes with a core claims platform migration
+Hidden root causes (discoverable in the data room)
+ID
+Root cause
+What is actually happening
+L-RC1
+Identity mismatch poisons every list
+Acquired books use different member IDs and address standards. 11% of members are duplicated or unmatched. Gap lists are wrong for those members, outreach mail goes to old addresses, and predictive models train on fragmented records. The core-book numbers look fine, which hides the problem.
+L-RC2
+Adherence is capacity-capped, not insight-capped
+The pharmacy adherence program is well designed and already targets the right members. Six pharmacists reach 15% of the at-risk list per quarter. A better model adds nothing until outreach capacity or automation of refill reminders is funded.
+L-RC3
+Readmissions are a data latency problem
+Care managers learn of 60% of discharges from claims 9 days later, after the 7-day follow-up window. ADT integration with the three missing health systems would move the readmission measure more than any AI investment.
+Misleading surface signals
+ID
+Signal
+Why it misleads
+L-MS1
+Enterprise adherence looks like 4 Stars
+The blended number is 87.5%. Core book is 89.2%, Lakeshore is 82.1%. Teams that read the enterprise view under-invest in adherence and lose the Lakeshore contract rating.
+L-MS2
+CAHPS looks mid-pack and stable
+Customer Service at 87 reads as acceptable. Abandonment is 14% and rising since the IVR vendor contract lapsed. Complaints per 1,000 are at 3 Stars now and will drop a star within a year without action, regardless of AI investment.
+Signature AI trap
+Modernize everything before value. A $6M data modernization plus $5M identity program consumes all capacity for a year, shows no measure movement at the board pitch, and loses Round 2 capital. The lesson is to sequence foundations and near-term value: identity for Lakeshore only, ADT feeds, pharmacy capacity.
+Starting scorecard (simulated)
+Measure
+Weight
+Start value
+Stars
+Two-year headroom
+Root-cause link
+M1 Medication Adherence for Diabetes Medications
+3
+87.5 (core 89.2, Lakeshore 82.1)
+4
++2.0 pts enterprise, +5.0 pts Lakeshore
+L-RC1, L-RC2
+M2 Medication Adherence for Hypertension (RAS antagonists)
+3
+88.5 (core 90.0, Lakeshore 84.3)
+4
++1.5 pts enterprise, +4.5 pts Lakeshore
+L-RC1, L-RC2
+M3 Controlling Blood Pressure
+3
+66.0
+3
++7 pts
+L-RC1
+M4 Glycemic Status Assessment for Patients with Diabetes
+3
+72.0
+3
++6 pts
+L-RC1
+M5 Breast Cancer Screening
+1
+74.0
+4
++4 pts
+L-RC1 (wrong addresses)
+M7 Plan All-Cause Readmissions
+3
+11.8
+2
+-2.5 (ADT feeds are the lever)
+L-RC3
+M9 Getting Appointments and Care Quickly (CAHPS)
+2
+76.0
+3
++3 pts
+none
+M10 Customer Service (CAHPS)
+2
+87.0
+3
++4 pts
+L-MS2
+M11 Complaints about the Health Plan
+2
+0.30
+3
+-0.12 (or +0.25 if abandonment is not fixed)
+L-MS2
+M12 Reviewing Appeals Decisions
+2
+83.0
+2
++8 pts
+two appeals systems from acquisitions
+Viable strategies (at least two must work)
+	•	Sequenced foundation: identity resolution scoped to Lakeshore (I1 at partial scope), ADT feeds and transitions program (I13), pharmacy capacity (I14), governance (I10). Round 2 adds predictive adherence (I3) once identity is clean.
+	•	Operational value first: contact-center copilot (I4) with IVR modernization (I17) to stop the complaints slide, appeals intelligence (I9) to fix the 2-Star appeals measure, ADT feeds (I13). Foundations in Round 2 with earned credibility.
+Failure modes
+	•	Full modernization (I1 full scope plus I2) in Round 1: capacity overrun 160%, nothing live by the pitch, the data reconciliation crisis fires at high severity.
+	•	Predictive-heavy portfolio (I3, I5, I8) on unmatched identity: models look accurate in validation, outreach goes to the wrong members, complaints rise.
+
+2.3 CommunityCare Alliance: Provider-sponsored plan
+Rich clinical data, aligned on paper, not in the clinic.
+Profile
+Members
+94,800
+Geography
+One metropolitan region (Cascade Valley, 4 counties); 82% of members attributed to the sponsoring health system
+Product mix
+74% HMO, 18% PPO, 8% D-SNP
+Dual-eligible / LIS share
+18% dual, 26% LIS
+Average member age
+73.9
+Starting overall rating
+3.5 Stars (simulated)
+Revenue
+$1.3B illustrative
+Round 1 capital
+$12.0M
+Round 2 capital
+$8.0M base plus up to $4.0M earned at the board pitch
+Implementation capacity
+6 capacity points per quarter (plan IT is small; system IT has its own priorities)
+Data readiness score
+3 of 5 (excellent clinical data from the system EHR, weak payer-side operations data)
+Care management staff
+48 care managers (28 employed by the health system), 5 pharmacists
+Contact center
+95 agents, abandonment 6%
+Technology
+Shared EHR with the sponsoring system; plan runs a separate core admin and a small warehouse; 6 source systems
+Provider network
+Sponsoring system employs 70% of attributed PCPs (salaried, no Stars-linked compensation); 30% independent
+Population
+Geographically concentrated, well attributed, with rich clinical context from the shared EHR. Access is the binding constraint: primary care panels are full and third-next-available appointment is 24 days. Rural edges of the region have transport barriers.
+Board mandate
+Reach 4.0 Stars and prove the plan-provider model to the system board, which is weighing whether to keep the plan. Capital is modest and every dollar is compared against clinical investments the system could make instead.
+Visible advantages
+	•	Shared EHR: lab, vitals and encounter data are current and complete for 82% of members
+	•	Trusted clinical relationships; care managers sit inside clinics
+	•	Low complaint rate and strong customer service scores
+	•	Blood pressure and glycemic control already at 4 Stars
+Visible constraints
+	•	PCP panels are full; outreach generates demand the clinics cannot absorb
+	•	Employed clinicians are salaried with no quality compensation; plan quality is not on their scorecard
+	•	Clinical recommendations go to a plan portal; clinicians work in the EHR inbox
+	•	Plan IT depends on system IT for any EHR-facing change; queue is 2 quarters
+Hidden root causes (discoverable in the data room)
+ID
+Root cause
+What is actually happening
+C-RC1
+Recommendations land where nobody works
+The plan's gap and risk recommendations are delivered to a plan portal with a 6% clinician open rate. The sponsoring system's clinicians live in the EHR inbox. Until recommendations are delivered inside the EHR workflow with an agreed owner, insight quality is irrelevant.
+C-RC2
+Access, not awareness, caps screening and appointments
+Breast screening outreach already reaches 78% of eligible members. Third-next-available appointment is 24 days and imaging slots are booked 6 weeks out. Getting Appointments and Care Quickly sits at 2 Stars for the same reason. More outreach raises complaints, not screening.
+C-RC3
+Affiliation is assumed to mean alignment
+Plan and system leadership believe the shared ownership guarantees adoption. Clinicians receive no Stars-linked compensation and see plan requests as administrative burden. Care managers employed by the system report to clinic directors, not the plan.
+Misleading surface signals
+ID
+Signal
+Why it misleads
+C-MS1
+Clinical data completeness is best-in-class
+Predictive models validate beautifully on this data. Teams conclude that insight is the gap. It is not; action is.
+C-MS2
+Customer Service CAHPS at 4 Stars
+Members like the people they reach. The problem is the appointment they cannot get, which shows up in a different CAHPS measure and in disenrollment.
+Signature AI trap
+Assume affiliation guarantees adoption. Value comes from coordinated action (workflow placement, incentives, capacity), not from data possession. The signature failure is a provider copilot that produces excellent recommendations which clinicians ignore.
+Starting scorecard (simulated)
+Measure
+Weight
+Start value
+Stars
+Two-year headroom
+Root-cause link
+M1 Medication Adherence for Diabetes Medications
+3
+85.0
+3
++4.0 pts
+C-RC2 (transport to pharmacy)
+M2 Medication Adherence for Hypertension (RAS antagonists)
+3
+87.0
+3
++3.5 pts
+C-RC2
+M3 Controlling Blood Pressure
+3
+73.0
+4
++4 pts
+C-RC1
+M4 Glycemic Status Assessment for Patients with Diabetes
+3
+78.0
+4
++3 pts
+C-RC1
+M5 Breast Cancer Screening
+1
+75.0
+4
++5 pts (only if imaging capacity is added)
+C-RC2
+M7 Plan All-Cause Readmissions
+3
+10.5
+3
+-1.5
+C-RC3 (care managers report to clinics)
+M9 Getting Appointments and Care Quickly (CAHPS)
+2
+72.0
+2
++6 pts (only with access expansion)
+C-RC2
+M10 Customer Service (CAHPS)
+2
+91.0
+4
++1.5 pts
+none
+M11 Complaints about the Health Plan
+2
+0.20
+4
+-0.05
+C-RC2 (if outreach outpaces access)
+M12 Reviewing Appeals Decisions
+2
+88.0
+3
++4 pts
+none
+Viable strategies (at least two must work)
+	•	Adoption-first: provider incentives (I15), workflow redesign (I11), provider copilot embedded in the EHR (I6) and access expansion (I16). Slower to show in leading KPIs, large Year 2 effect on access and screening.
+	•	Capacity-first: access expansion (I16), pharmacy capacity (I14), personalized engagement tuned to transport barriers (I7), governance (I10). Lifts appointments and adherence without depending on system IT.
+Failure modes
+	•	Insight-heavy portfolio (I5, I6, I3) without I11 or I15: the ignored-recommendations crisis fires, adoption stays under 10%, measures flat.
+	•	Outreach-heavy portfolio (I7, I8) without I16: appointment demand rises, access measure falls a star, complaints rise.
+
+3. Measure model
+Ten selected measures covering pharmacy adherence, clinical outcomes, screening, readmissions, member experience, complaints and operations. Thresholds are game constructs that place each payer where the narrative needs it; they are not CMS cut points. Weight classes are as understood for the 2026 Star Ratings and must be verified against the current CMS Technical Notes.
+ID
+Measure
+Part
+Domain
+Weight
+Direction
+M1
+Medication Adherence for Diabetes Medications
+D
+Pharmacy adherence
+3
+Higher is better
+M2
+Medication Adherence for Hypertension (RAS antagonists)
+D
+Pharmacy adherence
+3
+Higher is better
+M3
+Controlling Blood Pressure
+C
+Clinical outcome
+3
+Higher is better
+M4
+Glycemic Status Assessment for Patients with Diabetes
+C
+Clinical outcome
+3
+Higher is better
+M5
+Breast Cancer Screening
+C
+Clinical process
+1
+Higher is better
+M7
+Plan All-Cause Readmissions
+C
+Outcome
+3
+Lower is better
+M9
+Getting Appointments and Care Quickly (CAHPS)
+C
+Member experience
+2
+Higher is better
+M10
+Customer Service (CAHPS)
+C and D
+Member experience
+2
+Higher is better
+M11
+Complaints about the Health Plan
+C and D
+Complaints and access
+2
+Lower is better
+M12
+Reviewing Appeals Decisions
+C
+Operations
+2
+Higher is better
+3.1 M1 Medication Adherence for Diabetes Medications
+Unit
+% of members with PDC 80% or higher
+Game thresholds
+2 Stars under 82.0 · 3 Stars 82.0 to 85.9 · 4 Stars 86.0 to 89.9 · 5 Stars 90.0 and above
+Data period
+Calendar year; measure year = Year 1 of play, reported in the following rating year
+Lag
+Leading KPIs move within 1 quarter of go-live; measure moves in the next rating year at 50% of full effect, full effect the year after
+Leading indicators
+At-risk members contacted per quarter (%) · 90-day fill rate (%) · Average refill gap days
+Causal pathway
+Risk identification → outreach capacity → refill behavior → PDC → measure → Part D summary rating
+Starting values
+Horizon 84.0 (3 Stars) · Heritage 87.5 (core 89.2, Lakeshore 82.1) (4 Stars) · CommunityCare 85.0 (3 Stars)
+Headroom
+Horizon +4.5 pts · Heritage +2.0 pts enterprise, +5.0 pts Lakeshore · CommunityCare +4.0 pts
+3.2 M2 Medication Adherence for Hypertension (RAS antagonists)
+Unit
+% of members with PDC 80% or higher
+Game thresholds
+2 Stars under 84.0 · 3 Stars 84.0 to 87.9 · 4 Stars 88.0 to 90.9 · 5 Stars 91.0 and above
+Data period
+Calendar year
+Lag
+Same as M1
+Leading indicators
+At-risk members contacted per quarter (%) · 90-day fill rate (%) · Mail-order conversion (%)
+Causal pathway
+Same as M1; dual-eligible members respond less to digital reminders and more to pharmacist calls
+Starting values
+Horizon 86.5 (3 Stars) · Heritage 88.5 (core 90.0, Lakeshore 84.3) (4 Stars) · CommunityCare 87.0 (3 Stars)
+Headroom
+Horizon +3.5 pts · Heritage +1.5 pts enterprise, +4.5 pts Lakeshore · CommunityCare +3.5 pts
+3.3 M3 Controlling Blood Pressure
+Unit
+% of members with hypertension whose most recent BP is under 140/90
+Game thresholds
+2 Stars under 62.0 · 3 Stars 62.0 to 70.9 · 4 Stars 71.0 to 78.9 · 5 Stars 79.0 and above
+Data period
+Calendar year; hybrid (chart) data allowed
+Lag
+Leading KPIs move within 1 to 2 quarters; measure moves next rating year at 60% of full effect
+Leading indicators
+% hypertensive members with a BP reading on file in last 6 months · Provider alert action rate (%) · Supplemental data submissions per month
+Causal pathway
+Reading capture (data) → provider action on uncontrolled members → control rate → measure
+Starting values
+Horizon 59.0 (2 Stars) · Heritage 66.0 (3 Stars) · CommunityCare 73.0 (4 Stars)
+Headroom
+Horizon +12 pts (mostly capture, not control) · Heritage +7 pts · CommunityCare +4 pts
+3.4 M4 Glycemic Status Assessment for Patients with Diabetes
+Unit
+% of diabetic members with most recent HbA1c (or GMI) under 8.0
+Game thresholds
+2 Stars under 68.0 · 3 Stars 68.0 to 75.9 · 4 Stars 76.0 to 82.9 · 5 Stars 83.0 and above
+Data period
+Calendar year
+Lag
+Same as M3
+Leading indicators
+HbA1c test completion rate (%) · Lab feed coverage (% of members with lab data in the warehouse) · Diabetic members in care management (%)
+Causal pathway
+Lab data availability → test completion → clinical management → control → measure
+Starting values
+Horizon 70.0 (3 Stars) · Heritage 72.0 (3 Stars) · CommunityCare 78.0 (4 Stars)
+Headroom
+Horizon +6 pts · Heritage +6 pts · CommunityCare +3 pts
+3.5 M5 Breast Cancer Screening
+Unit
+% of eligible women 50 to 74 with a mammogram in the measurement window
+Game thresholds
+2 Stars under 64.0 · 3 Stars 64.0 to 71.9 · 4 Stars 72.0 to 78.9 · 5 Stars 79.0 and above
+Data period
+27-month lookback
+Lag
+Leading KPIs move within 1 quarter; measure moves next rating year at 70% of full effect
+Leading indicators
+Outreach response rate (%) · Mammogram scheduling rate among outreached (%) · Imaging slot availability (days to next available)
+Causal pathway
+Outreach reach → response → appointment availability → completion → measure
+Starting values
+Horizon 62.0 (2 Stars) · Heritage 74.0 (4 Stars) · CommunityCare 75.0 (4 Stars)
+Headroom
+Horizon +10 pts · Heritage +4 pts · CommunityCare +5 pts (only if imaging capacity is added)
+3.6 M7 Plan All-Cause Readmissions
+Unit
+Game construct: readmissions per 100 index stays within 30 days (CMS uses a risk-adjusted observed-to-expected ratio)
+Game thresholds
+5 Stars under 7.5 · 4 Stars 7.5 to 9.4 · 3 Stars 9.5 to 11.4 · 2 Stars 11.5 and above
+Data period
+Calendar year
+Lag
+Leading KPIs move within 1 quarter of ADT feed go-live; measure moves next rating year at 50% of full effect
+Leading indicators
+% discharges with a care manager contact within 48 hours · ADT notification latency (days) · % discharges with medication reconciliation within 7 days
+Causal pathway
+Discharge notification latency → timely follow-up → medication reconciliation → readmission → measure
+Starting values
+Horizon 9.0 (4 Stars) · Heritage 11.8 (2 Stars) · CommunityCare 10.5 (3 Stars)
+Headroom
+Horizon -1.0 · Heritage -2.5 (ADT feeds are the lever) · CommunityCare -1.5
+3.7 M9 Getting Appointments and Care Quickly (CAHPS)
+Unit
+CAHPS composite score, 0 to 100
+Game thresholds
+2 Stars under 74.0 · 3 Stars 74.0 to 78.9 · 4 Stars 79.0 to 82.9 · 5 Stars 83.0 and above
+Data period
+Survey fielded in spring of the following year about the prior 6 months
+Lag
+Leading KPIs move within 1 to 2 quarters; measure moves next rating year at 50% of full effect. AI moves this measure least.
+Leading indicators
+Third-next-available appointment (days) · Telehealth share of primary care visits (%) · Member-reported wait complaints per 1,000
+Causal pathway
+Capacity and scheduling → wait time → member perception → survey → measure
+Starting values
+Horizon 80.0 (4 Stars) · Heritage 76.0 (3 Stars) · CommunityCare 72.0 (2 Stars)
+Headroom
+Horizon +2 pts · Heritage +3 pts · CommunityCare +6 pts (only with access expansion)
+3.8 M10 Customer Service (CAHPS)
+Unit
+CAHPS composite score, 0 to 100
+Game thresholds
+2 Stars under 86.0 · 3 Stars 86.0 to 89.9 · 4 Stars 90.0 to 92.9 · 5 Stars 93.0 and above
+Data period
+Survey, spring of following year
+Lag
+Leading KPIs move within 1 quarter; measure moves next rating year at 60% of full effect
+Leading indicators
+First-contact resolution (%) · Call abandonment (%) · Average handle time (minutes)
+Causal pathway
+Knowledge and routing → resolution and wait → member perception → survey → measure
+Starting values
+Horizon 88.0 (3 Stars) · Heritage 87.0 (3 Stars) · CommunityCare 91.0 (4 Stars)
+Headroom
+Horizon +4 pts · Heritage +4 pts · CommunityCare +1.5 pts
+3.9 M11 Complaints about the Health Plan
+Unit
+CTM complaints per 1,000 members (game construct uses a single rate)
+Game thresholds
+5 Stars under 0.10 · 4 Stars 0.10 to 0.24 · 3 Stars 0.25 to 0.49 · 2 Stars 0.50 and above
+Data period
+Calendar year, reported with a 1-year lag
+Lag
+Moves within 1 to 2 quarters of a cause; this is the measure that worsens fastest from a crisis
+Leading indicators
+Complaints per 1,000 (monthly) · Complaint root-cause mix (enrollment, access, outreach, billing) · Contact-center abandonment (%)
+Causal pathway
+Service failures and inappropriate outreach → complaints → CTM → measure. Crisis events land here first.
+Starting values
+Horizon 0.55 (2 Stars) · Heritage 0.30 (3 Stars) · CommunityCare 0.20 (4 Stars)
+Headroom
+Horizon -0.30 · Heritage -0.12 (or +0.25 if abandonment is not fixed) · CommunityCare -0.05
+3.10 M12 Reviewing Appeals Decisions
+Unit
+% of plan appeal decisions upheld by the Independent Review Entity
+Game thresholds
+2 Stars under 85.0 · 3 Stars 85.0 to 89.9 · 4 Stars 90.0 to 94.9 · 5 Stars 95.0 and above
+Data period
+Calendar year
+Lag
+Leading KPIs move within 1 quarter; measure moves next rating year at 70% of full effect
+Leading indicators
+Appeals cycle time (days) · Pre-IRE quality review coverage (%) · Overturn rate on internal audit (%)
+Causal pathway
+Document intake and summarization → reviewer accuracy and consistency → upheld rate → measure
+Starting values
+Horizon 87.0 (3 Stars) · Heritage 83.0 (2 Stars) · CommunityCare 88.0 (3 Stars)
+Headroom
+Horizon +5 pts · Heritage +8 pts · CommunityCare +4 pts
+
+4. Investment catalog
+Eighteen cards spanning AI, data foundations, workflow, operating model, adoption, governance and six non-AI operational levers, so that a portfolio can mix technology with capacity, incentives and access. No card has a fixed plus-points effect: every effect is conditional on prerequisites, adoption, capacity and payer context (section 5 gives the formula).
+ID
+Investment
+Class
+Cost
+Quarters
+Capacity
+Horizon
+Heritage
+CommunityCare
+I1
+Member 360 and identity resolution
+Data foundation
+$5.0M full scope; $2.5M scoped to one book or region
+3
+4
+Medium
+High
+Low
+I2
+Data modernization and integration
+Data foundation
+$6.0M
+4
+5
+Low
+High
+Medium
+I3
+Predictive adherence intelligence
+Predictive AI
+$1.75M
+2
+2
+Low
+Medium
+Medium
+I4
+AI contact-center copilot
+Copilot
+$2.0M
+2
+2
+Medium
+High
+Low
+I5
+Provider performance intelligence
+Predictive AI and analytics
+$3.0M
+2
+3
+Low
+High
+Medium
+I6
+Provider copilot at point of care
+Copilot
+$2.5M
+3
+3
+Low
+Medium
+High
+I7
+Personalized member engagement
+Generative AI and automation
+$2.25M
+2
+2
+Medium
+Medium
+Medium
+I8
+Quality-gap orchestration agent
+Agent
+$4.0M
+3
+4
+Medium
+Medium
+Low
+I9
+Appeals and document intelligence
+Generative AI and automation
+$1.25M
+2
+1
+Medium
+High
+Medium
+I10
+Enterprise AI governance and controls
+Governance
+$1.25M
+1
+1
+High
+High
+Medium
+I11
+Workflow redesign and change management
+Operating model
+$3.0M
+2
+2
+Medium
+Medium
+High
+I12
+Model validation and monitoring
+Governance
+$1.0M
+1
+1
+High
+High
+Medium
+I13
+ADT feeds and transitions-of-care program
+Data foundation and operations (non-AI)
+$1.5M
+2
+2
+Low
+High
+Medium
+I14
+Pharmacy outreach capacity and 90-day fill program
+Operations (non-AI)
+$1.2M per year
+1
+1
+Medium
+High
+Medium
+I15
+Provider quality incentive program
+Operating model (non-AI)
+$2.0M per year (incentive pool and administration)
+2
+1
+High
+Low
+High
+I16
+Access expansion: extended hours, telehealth, NP visit slots
+Operations (non-AI)
+$2.5M
+2
+2
+Low
+Low
+High
+I17
+Member services knowledge base and IVR modernization
+Automation
+$1.5M
+2
+2
+High
+High
+Low
+I18
+AI literacy and decision-rights program for leaders and managers
+Adoption
+$0.5M
+1
+0.5
+Medium
+High
+Medium
+4.1 I1 Member 360 and identity resolution
+Capability class
+Data foundation
+Cost
+$5.0M full scope; $2.5M scoped to one book or region
+Implementation time
+3 quarters; 4 capacity points per quarter while building
+Prerequisites
+None. Executive data owner named.
+Effect at full execution
+No direct measure effect. Multiplies I3, I7, I8 by 1.4 and removes the identity penalty (0.6) on outreach-based investments.
+Operating cost
+$0.4M per year stewardship
+Decay
+None if stewardship funded; identity drifts 2% per year otherwise
+Risk exposure
+Scope creep; match-rule errors create new duplicates; source-system owners resist
+Horizon effectiveness
+Medium: Few systems, but prior-plan history stitching is the real need
+Heritage effectiveness
+High: The binding constraint for Lakeshore and Pinecrest
+CommunityCare effectiveness
+Low: Identity is already clean on the shared EHR
+Synergies
+I2, I3, I7, I8
+Conflicts
+Competes with I2 for the same data engineers (capacity)
+Reversible
+Yes, but sunk cost
+4.2 I2 Data modernization and integration
+Capability class
+Data foundation
+Cost
+$6.0M
+Implementation time
+4 quarters; 5 capacity points per quarter while building
+Prerequisites
+None. Realistically needs I1 to deliver value.
+Effect at full execution
+No direct measure effect. Reduces data latency; multiplies I5, I6, I8 by 1.3 from the quarter after completion. Lab feed coverage +30 pts (M4 leading KPI).
+Operating cost
+$0.8M per year platform
+Decay
+None
+Risk exposure
+Time to value; scope creep; competes with core platform migrations
+Horizon effectiveness
+Low: Stack is already modern; this is money spent twice
+Heritage effectiveness
+High: But four quarters is longer than the board will wait
+CommunityCare effectiveness
+Medium: Payer-side data is weak, but system IT controls the EHR side
+Synergies
+I1, I5, I6, I8, I13
+Conflicts
+I1 (capacity); Heritage claims platform migration
+Reversible
+No
+4.3 I3 Predictive adherence intelligence
+Capability class
+Predictive AI
+Cost
+$1.75M
+Implementation time
+2 quarters; 2 capacity points per quarter while building
+Prerequisites
+12 months of pharmacy history for the target population; I12 recommended
+Effect at full execution
+M1 +2.5 pts, M2 +2.0 pts at full execution, only when outreach capacity (I14 or I8) exists. Without capacity, +0.5 pts.
+Operating cost
+$0.2M per year
+Decay
+Model drift: effect falls 25% per year without I12
+Risk exposure
+Bias against members with thin history; drift; targets the wrong members on bad identity data
+Horizon effectiveness
+Low: 40% of members lack history; mis-targets without I1
+Heritage effectiveness
+Medium: Right members are already known; capacity is the limit
+CommunityCare effectiveness
+Medium: Good data, transport barriers limit response
+Synergies
+I1, I12, I14, I8
+Conflicts
+None
+Reversible
+Yes
+4.4 I4 AI contact-center copilot
+Capability class
+Copilot
+Cost
+$2.0M
+Implementation time
+2 quarters; 2 capacity points per quarter while building
+Prerequisites
+Knowledge base current (I17 or 1 quarter of cleanup); human review of generated responses
+Effect at full execution
+M10 +2.5 pts; M11 -0.10; first-contact resolution +12 pts; handle time -15%. Halved without I17 or knowledge cleanup.
+Operating cost
+$0.35M per year
+Decay
+Effect falls 30% per year if knowledge base is not maintained
+Risk exposure
+Wrong answers to members on benefits; agent over-reliance; needs oversight sampling
+Horizon effectiveness
+Medium: Two vendors, two knowledge bases; abandonment is the IVR, not the agents
+Heritage effectiveness
+High: 540 agents, legacy knowledge, biggest leverage
+CommunityCare effectiveness
+Low: Service is already 4 Stars
+Synergies
+I17, I10
+Conflicts
+None
+Reversible
+Yes
+4.5 I5 Provider performance intelligence
+Capability class
+Predictive AI and analytics
+Cost
+$3.0M
+Implementation time
+2 quarters; 3 capacity points per quarter while building
+Prerequisites
+Attribution confidence above 85%; I2 improves latency
+Effect at full execution
+M3 +3 pts, M4 +2 pts, M5 +2 pts when paired with I15 or value-based contracts; +0.5 pts each without.
+Operating cost
+$0.3M per year
+Decay
+Low
+Risk exposure
+Attribution disputes; provider trust; data latency makes reports stale
+Horizon effectiveness
+Low: Fee-for-service providers have no reason to look
+Heritage effectiveness
+High: 35% of members under value-based contracts
+CommunityCare effectiveness
+Medium: Rich data, no incentive; needs I15
+Synergies
+I15, I6, I2
+Conflicts
+None
+Reversible
+Yes
+4.6 I6 Provider copilot at point of care
+Capability class
+Copilot
+Cost
+$2.5M
+Implementation time
+3 quarters; 3 capacity points per quarter while building
+Prerequisites
+EHR integration path (system IT at CommunityCare; vendor at others); I11 for adoption
+Effect at full execution
+M3 +4 pts, M4 +3 pts at full adoption. Adoption baseline 15%; 60% with I11; 85% with I11 plus I15. Effect scales with adoption.
+Operating cost
+$0.4M per year
+Decay
+Alert fatigue: effect falls 20% per year without tuning (I12)
+Risk exposure
+Alert fatigue; liability; clinicians ignore it; integration queue delays
+Horizon effectiveness
+Low: No EHR access to new-county providers
+Heritage effectiveness
+Medium: Works for value-based groups only
+CommunityCare effectiveness
+High: Shared EHR; the only payer where this can be embedded in the inbox
+Synergies
+I11, I15, I5, I12
+Conflicts
+CommunityCare system IT queue (2 quarters)
+Reversible
+Yes
+4.7 I7 Personalized member engagement
+Capability class
+Generative AI and automation
+Cost
+$2.25M
+Implementation time
+2 quarters; 2 capacity points per quarter while building
+Prerequisites
+Consent and channel preferences captured; I10 for message review; identity match above 95% or outreach misfires
+Effect at full execution
+M1 +1.0, M2 +1.0, M5 +4 pts at full execution. On identity match under 90%: effect halved and M11 +0.15 (complaints rise).
+Operating cost
+$0.3M per year plus channel costs
+Decay
+Response rates fall 15% per year without refresh
+Risk exposure
+Inappropriate outreach; consent violations; channel mismatch for older or dual members; reputational incidents
+Horizon effectiveness
+Medium: Strong platform, wrong channels for new-county members; dangerous without I1
+Heritage effectiveness
+Medium: Wrong addresses for 11% of members without I1
+CommunityCare effectiveness
+Medium: Reach is not the problem; access is
+Synergies
+I1, I10, I3
+Conflicts
+Raises demand that I16 must absorb at CommunityCare
+Reversible
+Yes
+4.8 I8 Quality-gap orchestration agent
+Capability class
+Agent
+Cost
+$4.0M
+Implementation time
+3 quarters; 4 capacity points per quarter while building
+Prerequisites
+Identity match above 95% (I1); defined decision rights (I10); integration to outreach and provider channels
+Effect at full execution
+M1 +1.5, M2 +1.5, M3 +2, M5 +3 pts at full execution with prerequisites. Without I1 or I10: 40% of effect and a crisis trigger.
+Operating cost
+$0.5M per year
+Decay
+Low with monitoring
+Risk exposure
+Acts on bad data at scale; unclear ownership; member harm if autonomy is set too high
+Horizon effectiveness
+Medium: Modern integrations help; identity and provider inaction hurt
+Heritage effectiveness
+Medium: Highest upside after I1; worst outcome before it
+CommunityCare effectiveness
+Low: Orchestrates outreach into clinics that have no capacity
+Synergies
+I1, I10, I12, I14
+Conflicts
+I7 (duplicate outreach if both run without coordination)
+Reversible
+Partly; member-facing actions are not
+4.9 I9 Appeals and document intelligence
+Capability class
+Generative AI and automation
+Cost
+$1.25M
+Implementation time
+2 quarters; 1 capacity point per quarter while building
+Prerequisites
+Human review on every decision; I12 for accuracy monitoring
+Effect at full execution
+M12 +5 pts; appeals cycle time -40%; admin cost -$0.6M per year at Heritage scale.
+Operating cost
+$0.15M per year
+Decay
+Low
+Risk exposure
+Extraction errors; privacy; over-automation of decisions
+Horizon effectiveness
+Medium: Small volume
+Heritage effectiveness
+High: Two appeals systems, 2-Star measure
+CommunityCare effectiveness
+Medium: Small volume
+Synergies
+I12, I10
+Conflicts
+None
+Reversible
+Yes
+4.10 I10 Enterprise AI governance and controls
+Capability class
+Governance
+Cost
+$1.25M
+Implementation time
+1 quarter; 1 capacity point per quarter while building
+Prerequisites
+Named accountable executive; otherwise the investment is ceremonial (effect zero)
+Effect at full execution
+No direct measure effect. Reduces crisis probability by 50% and severity by one level. Required for I8 full effect. Scores directly in Risk and Governance (15%).
+Operating cost
+$0.3M per year
+Decay
+None if owned
+Risk exposure
+Becomes a committee without authority
+Horizon effectiveness
+High: No controls exist today
+Heritage effectiveness
+High: Many systems, many owners
+CommunityCare effectiveness
+Medium: Fewer systems; clinical governance already exists
+Synergies
+Every AI investment
+Conflicts
+None
+Reversible
+Yes
+4.11 I11 Workflow redesign and change management
+Capability class
+Operating model
+Cost
+$3.0M
+Implementation time
+2 quarters; 2 capacity points per quarter while building
+Prerequisites
+Executive sponsor per redesigned workflow
+Effect at full execution
+No direct measure effect. Sets adoption to 60% for I4, I6, I8 (baseline 15 to 30%). Scores in AI Transformation Maturity (15%).
+Operating cost
+$0.2M per year
+Decay
+Adoption falls 10 pts per year without reinforcement
+Risk exposure
+Sponsorship fades; incentives conflict; treated as training instead of redesign
+Horizon effectiveness
+Medium: Small teams change fast; provider side untouched
+Heritage effectiveness
+Medium: Large, slow, but value-based groups respond
+CommunityCare effectiveness
+High: The missing piece for everything clinical
+Synergies
+I4, I6, I8, I15
+Conflicts
+None
+Reversible
+Yes
+4.12 I12 Model validation and monitoring
+Capability class
+Governance
+Cost
+$1.0M
+Implementation time
+1 quarter; 1 capacity point per quarter while building
+Prerequisites
+At least one model in production
+Effect at full execution
+No direct measure effect. Removes drift decay on I3, I6; halves probability of the subgroup-bias crisis; required for I9 full effect.
+Operating cost
+$0.25M per year
+Decay
+None
+Risk exposure
+Skills shortage; independence from the model builders
+Horizon effectiveness
+High: Thin history makes bias likely
+Heritage effectiveness
+High: Dual-eligible subgroup risk
+CommunityCare effectiveness
+Medium
+Synergies
+I3, I6, I8, I9
+Conflicts
+None
+Reversible
+Yes
+4.13 I13 ADT feeds and transitions-of-care program
+Capability class
+Data foundation and operations (non-AI)
+Cost
+$1.5M
+Implementation time
+2 quarters; 2 capacity points per quarter while building
+Prerequisites
+Health system data-sharing agreements (1 quarter)
+Effect at full execution
+M7 -1.5 at full coverage; 48-hour follow-up contact +35 pts; ADT latency to under 1 day.
+Operating cost
+$0.4M per year (transition nurses)
+Decay
+None
+Risk exposure
+Health systems decline to share; follow-up capacity
+Horizon effectiveness
+Low: Readmissions already 4 Stars
+Heritage effectiveness
+High: The readmission lever
+CommunityCare effectiveness
+Medium: Shared system covers most discharges already; gain is on the 18% outside it
+Synergies
+I2, I8
+Conflicts
+None
+Reversible
+Yes
+4.14 I14 Pharmacy outreach capacity and 90-day fill program
+Capability class
+Operations (non-AI)
+Cost
+$1.2M per year
+Implementation time
+1 quarter; 1 capacity point per quarter while building
+Prerequisites
+None
+Effect at full execution
+M1 +2.0, M2 +1.5 pts on its own; doubles the realized effect of I3. Reaches 45% of at-risk members per quarter instead of 15%.
+Operating cost
+Included
+Decay
+Effect stops if funding stops
+Risk exposure
+Hiring time; pharmacist labor market
+Horizon effectiveness
+Medium: Small at-risk list; new-county members hard to reach by phone
+Heritage effectiveness
+High: Capacity is the root cause (L-RC2)
+CommunityCare effectiveness
+Medium
+Synergies
+I3, I8
+Conflicts
+None
+Reversible
+Yes
+4.15 I15 Provider quality incentive program
+Capability class
+Operating model (non-AI)
+Cost
+$2.0M per year (incentive pool and administration)
+Implementation time
+2 quarters; 1 capacity point per quarter while building
+Prerequisites
+Contract amendments (2 quarters at Horizon; 1 quarter at CommunityCare via the system)
+Effect at full execution
+M3 +3, M4 +2, M5 +2 pts; provider alert action rate +40 pts. Required for I5 and I6 to reach full effect at Horizon and CommunityCare.
+Operating cost
+Included
+Decay
+None while funded
+Risk exposure
+Providers game measures; cost grows with success
+Horizon effectiveness
+High: New-county contracts have no incentive today (H-RC3)
+Heritage effectiveness
+Low: Already in place for 35%; marginal gain
+CommunityCare effectiveness
+High: Salaried clinicians have nothing tied to Stars (C-RC3)
+Synergies
+I5, I6, I11
+Conflicts
+None
+Reversible
+Contractually slow
+4.16 I16 Access expansion: extended hours, telehealth, NP visit slots
+Capability class
+Operations (non-AI)
+Cost
+$2.5M
+Implementation time
+2 quarters; 2 capacity points per quarter while building
+Prerequisites
+Clinic or network agreement
+Effect at full execution
+M9 +5 pts, M5 +3 pts (imaging slots), M11 -0.05 at CommunityCare; M9 +1.5 elsewhere. Third-next-available from 24 to 11 days.
+Operating cost
+$1.0M per year
+Decay
+None while funded
+Risk exposure
+Clinician recruitment; system priorities
+Horizon effectiveness
+Low: Access is not the constraint
+Heritage effectiveness
+Low: Broad network; access varies by county
+CommunityCare effectiveness
+High: The root cause for appointments and screening (C-RC2)
+Synergies
+I7, I8 (absorbs the demand they create)
+Conflicts
+None
+Reversible
+Yes
+4.17 I17 Member services knowledge base and IVR modernization
+Capability class
+Automation
+Cost
+$1.5M
+Implementation time
+2 quarters; 2 capacity points per quarter while building
+Prerequisites
+None
+Effect at full execution
+Abandonment -7 pts; M10 +1.5 pts; M11 -0.08. Doubles the effect of I4.
+Operating cost
+$0.2M per year
+Decay
+Low
+Risk exposure
+Vendor transition; IVR cutover incidents
+Horizon effectiveness
+High: Vendor IVR drops calls at 4 minutes (H-MS2)
+Heritage effectiveness
+High: Legacy IVR, lapsed contract (L-MS2)
+CommunityCare effectiveness
+Low: Abandonment is 6%
+Synergies
+I4
+Conflicts
+None
+Reversible
+Yes
+4.18 I18 AI literacy and decision-rights program for leaders and managers
+Capability class
+Adoption
+Cost
+$0.5M
+Implementation time
+1 quarter; 0.5 capacity points per quarter while building
+Prerequisites
+None
+Effect at full execution
+No direct measure effect. Adds 10 pts adoption to every copilot and agent; counts toward AI Transformation Maturity; reduces crisis response time (one rubric point).
+Operating cost
+$0.1M per year
+Decay
+Refresh every year
+Risk exposure
+Becomes a one-off training event
+Horizon effectiveness
+Medium
+Heritage effectiveness
+High: Many managers, many hand-offs
+CommunityCare effectiveness
+Medium
+Synergies
+I11, I10
+Conflicts
+None
+Reversible
+Yes
+
+5. Simulation model parameters
+The model is a quarterly state machine. It must be credible enough to support executive reasoning, transparent enough to debug, and simple enough to facilitate. These are the rules the spreadsheet model (WP6a) implements and the engine (WP6b) ports.
+Layer
+Rule
+State per payer
+For each measure: current value, leading KPI values; for each investment: status (not funded, building, live, paused, cancelled), progress 0 to 1, adoption 0 to 1; capacity used; identity match rate; cumulative spend; incident log; relationship penalty flags
+Quarterly transition
+Progress += 1 / duration for each building investment, scaled by min(1, capacity available / capacity demanded). Teams may stagger start quarters within a round (default: all start in Q1); the facilitator console records the schedule. Go-live when progress reaches 1. Leading KPIs respond the quarter after go-live. Measures respond in the following rating year per the lag column in the measure model.
+Realized effect
+effect = base_effect × payer_eff × prereq_mult × adoption × capacity_mult × diminishing × lag_share. payer_eff: High 1.0, Medium 0.6, Low 0.3. prereq_mult: 1.0 if prerequisites met, 0.5 otherwise, with the specific penalties on each card taking precedence. adoption: 0.15 to 0.30 baseline per card, 0.60 with I11, 0.85 with I11 plus I15, plus 0.10 with I18. capacity_mult as above.
+Dependency multipliers
+I1 live: ×1.4 on I3, I7, I8 and removes the identity penalty. I2 live: ×1.3 on I5, I6, I8 from the quarter after completion. I14 live: ×2.0 on realized I3 effect. I17 live: ×2.0 on I4. I15 live: unlocks full effect of I5 and I6 at Horizon and CommunityCare.
+Diminishing returns
+Second investment acting on the same measure realizes 60% of its base effect; third 30%. Effects never exceed the measure's stated headroom.
+Decay
+As stated per card; applied annually from go-live unless the named control (I12 or maintenance funding) is live.
+Crisis logic
+After Round 2, the engine evaluates each event's trigger against the team's state and recommends one event and a severity; facilitator confirms or overrides with an audit note. I10 halves probability and lowers severity one level. Severity sets the leading-KPI effects listed per event.
+Round 2 capital
+Hybrid: $8.0M base plus earned capital from the board pitch rubric. Facilitator may set a different base per team with an audit note.
+Uncertainty
+Each base effect is a range; the engine draws the midpoint in deterministic mode (seed fixed) or a uniform draw within the range in variable mode. V1 playtests use deterministic mode. Displayed values carry a 'simulated / projected' label and a confidence band of ±20% of effect.
+Regression suite
+At least 10 portfolios per payer (the two viable strategies, the two failure modes, do-nothing, all-foundation, all-AI, all-operations, max-capacity overrun, and a balanced portfolio) with expected directional outcomes recorded before software build.
+5.1 Payer effectiveness matrix
+Multipliers applied to each card's base effect. High 1.0, Medium 0.6, Low 0.3.
+ID
+Investment
+Horizon
+Heritage
+CommunityCare
+I1
+Member 360 and identity resolution
+Medium
+High
+Low
+I2
+Data modernization and integration
+Low
+High
+Medium
+I3
+Predictive adherence intelligence
+Low
+Medium
+Medium
+I4
+AI contact-center copilot
+Medium
+High
+Low
+I5
+Provider performance intelligence
+Low
+High
+Medium
+I6
+Provider copilot at point of care
+Low
+Medium
+High
+I7
+Personalized member engagement
+Medium
+Medium
+Medium
+I8
+Quality-gap orchestration agent
+Medium
+Medium
+Low
+I9
+Appeals and document intelligence
+Medium
+High
+Medium
+I10
+Enterprise AI governance and controls
+High
+High
+Medium
+I11
+Workflow redesign and change management
+Medium
+Medium
+High
+I12
+Model validation and monitoring
+High
+High
+Medium
+I13
+ADT feeds and transitions-of-care program
+Low
+High
+Medium
+I14
+Pharmacy outreach capacity and 90-day fill program
+Medium
+High
+Medium
+I15
+Provider quality incentive program
+High
+Low
+High
+I16
+Access expansion: extended hours, telehealth, NP visit slots
+Low
+Low
+High
+I17
+Member services knowledge base and IVR modernization
+High
+High
+Low
+I18
+AI literacy and decision-rights program for leaders and managers
+Medium
+High
+Medium
+5.2 Illustrative Year 1 and Year 2 outcomes for the reference portfolios
+Expected directional outcomes the spreadsheet model must reproduce. These seed the regression suite.
+Payer
+Portfolio
+Year 1 (leading KPIs)
+Year 2 (measures)
+Crisis
+Horizon
+Foundation-light: I1 $5.0M, I3 $1.75M, I14 $2.4M, I10 $1.25M, I17 $1.5M, I4 $2.0M, I12 $1.0M (total $14.9M)
+Identity match to 97%; abandonment -7; at-risk contacted 45%; little measure signal
+M1 +3.0, M2 +2.5, M10 +3, M11 -0.25; overall 3.5
+E1 low severity
+Horizon
+Provider-first: I15 $4.0M, I5 $3.0M, I4 $2.0M, I17 $1.5M, I10 $1.25M, I7 $2.25M, I12 $1.0M (total $15.0M)
+Provider action rate +40; BP readings captured +25; abandonment -7
+M3 +9, M4 +3, M5 +5, M10 +2.5, M11 -0.15; overall 3.5
+E1 medium (I7 without I1)
+Horizon
+Failure: I7 $2.25M, I8 $4.0M, I2 $6.0M, I3 $1.75M (total $14.0M)
+Capacity overrun 130%; outreach reach up; complaints up
+M11 +0.30 (1 Star), M1 +0.5; overall 2.5
+E1 high
+Heritage
+Sequenced foundation: I1 scoped $2.5M, I13 $1.5M, I14 $2.4M, I10 $1.25M, I17 $1.5M, I9 $1.25M, I12 $1.0M (total $11.4M)
+Lakeshore match to 96%; ADT latency under 1 day; 48-hr follow-up 58%; abandonment -7
+M7 -2.0, M1 Lakeshore +4, M12 +6, M11 -0.10; core holds 4.0, Lakeshore 3.5
+E2 low
+Heritage
+Operational value: I4 $2.0M, I17 $1.5M, I9 $1.25M, I13 $1.5M, I14 $2.4M, I10 $1.25M (total $9.9M)
+FCR +12, abandonment -7, appeals cycle -40%, follow-up 58%
+M10 +3.5, M11 -0.12, M12 +7, M7 -1.8; core holds 4.0; Lakeshore 3.0
+None or E5 if I2 added
+Heritage
+Failure: I1 full $5.0M, I2 $6.0M, I3 $1.75M, I8 $4.0M (total $16.75M, over budget by $1.75M: ledger blocks; team must drop I3)
+Capacity overrun 160%; nothing live by the pitch
+Flat; abandonment slide takes M11 to 2 Stars; core slips to 3.5
+E2 high
+CommunityCare
+Adoption-first: I15 $4.0M, I11 $3.0M, I6 $2.5M, I16 $2.5M (total $12.0M; I10 deferred to Round 2)
+Provider action rate +40; copilot adoption 60% by Q4; third-next-available to 11 days
+M9 +5, M5 +4, M3 +3, M4 +2; overall 4.0
+E3 low
+CommunityCare
+Capacity-first: I16 $2.5M, I14 $2.4M, I7 $2.25M, I10 $1.25M, I18 $0.5M, I12 $1.0M (total $9.9M)
+Third-next-available to 11 days; at-risk contacted 45%; outreach conversion up
+M9 +5, M1 +3, M2 +2.5, M5 +3; overall 4.0
+None
+CommunityCare
+Failure: I5 $3.0M, I6 $2.5M, I3 $1.75M, I2 $6.0M (total $13.25M, over budget: ledger blocks; team drops I3)
+Model validation excellent; adoption 7%
+Flat; overall 3.5
+E3 high
+Portfolio totals use the two-year costs on each card; per-year cards (I14, I15) are shown at two years.
+
+6. Data room inventories
+Thirty artifacts per payer across the eight domains in the requirements doc. Each is tagged to the root cause or misleading signal it supports, or marked neutral. Brightcone generates the artifact bodies (memos, tables, dashboards, logs) from these specifications with agents; Girish reviews for realism. The analyst agent may cite only these artifacts and must state when the data room does not answer a question.
+Design rules: at least three artifacts per root cause, from at least two domains, so no single file gives the answer; each misleading signal has one artifact that looks good and one that undermines it; neutral artifacts carry budget, staffing and vendor facts every team needs.
+6.1 Horizon Health data room
+ID
+Artifact
+Format
+Domain
+What it shows
+Supports
+H-01
+Stars scorecard, last 3 cycles
+dashboard
+Stars / quality
+Overall 2.5 → 3.0 → 3.0; BP control and complaints flat at 2 Stars; breast screening slipped
+Neutral
+H-02
+Measure performance by county cohort
+table
+Stars / quality
+Legacy counties average 3.6; counties entered in last 18 months average 2.4
+H-RC1
+H-03
+Quality team initiative log 2024 to 2026
+log
+Stars / quality
+Nine initiatives, six abandoned mid-year; no owner named on four
+Neutral
+H-04
+Provider gap-alert portal statistics
+dashboard
+Stars / quality
+Alerts sent 38,000; opened 9%; acted on 3%; legacy-county risk groups open 61%
+H-RC3
+H-05
+Membership growth and tenure distribution
+table
+Members
+40% of members have under 12 months tenure; 22% under 6 months
+H-RC1
+H-06
+Segmentation model output
+table
+Members
+Four segments; 'digitally engaged' segment is 71% legacy-county members under 72
+H-RC2
+H-07
+Member demographics by county
+table
+Members
+New-county members: median age 76, 31% rural, 24% dual
+H-RC2
+H-08
+D-SNP launch readiness memo
+memo
+Members
+3,100 D-SNP members enrolled in 4 months; care model staffing 'to follow'
+Neutral
+H-09
+Adherence PDC distribution by tenure
+table
+Pharmacy
+Members with 12+ months history: PDC 88%; under 12 months: 79% or excluded
+H-RC1
+H-10
+Pharmacy outreach results, Q1 to Q2
+table
+Pharmacy
+1,900 calls, 62% to legacy-county members already above 80% PDC
+H-RC1
+H-11
+PBM refill reminder program summary
+memo
+Pharmacy
+SMS reminders: 48% delivered, 9% opened; mail: 91% delivered
+H-RC2
+H-12
+Contact-center vendor scorecard
+dashboard
+Experience / service
+Calls per member low; abandonment 11%; IVR disconnects after 4 minutes (footnote)
+H-MS2
+H-13
+CAHPS results and verbatims
+survey
+Experience / service
+Appointments 80 (good), customer service 88; verbatims mention 'could not get through'
+H-MS2
+H-14
+Complaint log with root-cause coding
+log
+Experience / service
+Complaints per 1,000 at 0.55; 34% coded 'outreach received in error' or 'wrong household'
+H-RC2
+H-15
+App engagement dashboard
+dashboard
+Experience / service
+44% monthly active; 86% of actives are in legacy counties
+H-MS1
+H-16
+Provider contract inventory by county
+table
+Providers
+New-county contracts: 100% fee-for-service, no quality terms; legacy: 2 risk groups
+H-RC3
+H-17
+Blood pressure reading capture analysis
+table
+Providers
+Only 54% of hypertensive members have a BP reading in plan data; chart review suggests 71% controlled
+H-RC3
+H-18
+Provider relations call notes, new counties
+log
+Providers
+'We don't know who you are'; 'portal login never worked'
+H-RC3
+H-19
+Attribution confidence report
+table
+Providers
+Attribution confidence 68% in new counties, 91% legacy
+H-RC1
+H-20
+Application and data inventory
+table
+Technology / data
+4 source systems, one cloud platform, one CRM; integration backlog 3 weeks
+Neutral
+H-21
+Identity match rate report
+table
+Technology / data
+Match rate 93% overall; 84% in new counties; 2,400 households share a phone number
+H-RC2
+H-22
+Prior-plan history ingestion proposal
+memo
+Technology / data
+Vendor offers claims history for 70% of switchers; not funded
+H-RC1
+H-23
+Data quality exception report
+log
+Technology / data
+Address churn 18% per year; 3,100 members with undeliverable mail
+H-RC2
+H-24
+Transformation budget and board expectations
+memo
+Finance / operations
+$18M Round 1; board wants a visible Stars signal in 12 months
+Neutral
+H-25
+Staffing plan: quality and care management
+table
+Finance / operations
+6 quality staff, 22 care managers, 4 pharmacists; 11 open requisitions
+Neutral
+H-26
+4-Star bonus value estimate
+memo
+Finance / operations
+Crossing 4.0 Stars worth $31M per year (illustrative $600 PMPY)
+Neutral
+H-27
+Vendor commitments
+table
+Finance / operations
+Engagement platform 3-year contract; contact-center vendors annual
+Neutral
+H-28
+AI inventory and model cards
+model card
+Risk / governance
+Two models in production, no validation, no owner; segmentation model trained on legacy counties
+H-RC2
+H-29
+Privacy incident log
+log
+Risk / governance
+Two near-misses: outreach to wrong household; no formal process
+H-RC2
+H-30
+Compliance audit observations
+audit
+Risk / governance
+Consent capture for SMS outreach incomplete for 28% of members
+H-RC2
+6.2 Heritage Medicare data room
+ID
+Artifact
+Format
+Domain
+What it shows
+Supports
+L-01
+Stars scorecard by contract, last 3 cycles
+dashboard
+Stars / quality
+Core 4.0 → 3.5; Lakeshore 3.0 flat; appeals and readmissions at 2 Stars
+Neutral
+L-02
+Measure performance by book of business
+table
+Stars / quality
+Adherence: core 89.2, Lakeshore 82.1, Pinecrest 86.0; blended 87.5
+L-MS1
+L-03
+Prior initiative post-mortem: 'OneView' program
+memo
+Stars / quality
+$9M data program cancelled after 18 months with no measure movement
+Neutral
+L-04
+Gap-closure campaign results
+table
+Stars / quality
+Mail outreach 14% returned undeliverable, concentrated in Lakeshore
+L-RC1
+L-05
+Membership by book, age, dual status
+table
+Members
+Lakeshore: 41% dual, median age 77; core: 22% dual
+Neutral
+L-06
+Member barriers survey
+survey
+Members
+Transport and housing instability top barriers for Lakeshore members
+Neutral
+L-07
+Member identity reconciliation study
+memo
+Members
+11% of members duplicated or unmatched across books; 46,000 records
+L-RC1
+L-08
+Disenrollment analysis
+table
+Members
+Voluntary disenrollment rising in Lakeshore; top reason 'could not reach plan'
+L-MS2
+L-09
+Pharmacy adherence program design and results
+memo
+Pharmacy
+Targeting model precision 0.71; outreach reaches 15% of at-risk list per quarter
+L-RC2
+L-10
+Pharmacist staffing and call capacity
+table
+Pharmacy
+6 pharmacists, 2,100 calls per quarter against 14,000 at-risk members
+L-RC2
+L-11
+Refill gap analysis by book
+table
+Pharmacy
+Lakeshore refill gaps 2.3x core; 90-day fill share 31% vs 58%
+L-MS1
+L-12
+Contact-center operations report
+dashboard
+Experience / service
+Abandonment 14%, up from 9%; IVR vendor contract lapsed; AHT 11.2 minutes
+L-MS2
+L-13
+CAHPS trend and verbatims
+survey
+Experience / service
+Customer service 87, flat; verbatims: 'kept getting transferred'
+L-MS2
+L-14
+Complaint log with root-cause coding
+log
+Experience / service
+0.30 per 1,000; 'wrong information' and 'mail to old address' rising
+L-RC1
+L-15
+Appeals operations review
+memo
+Experience / service
+Two appeals systems; 17% of cases miss IRE documentation; upheld rate 83%
+Neutral
+L-16
+Value-based contract inventory
+table
+Providers
+35% of members under quality-incentive contracts; those groups average 3.9 Stars
+Neutral
+L-17
+ADT feed coverage by health system
+table
+Providers
+Feeds live for 2 of 5 systems; 60% of discharges known only via claims (9 days)
+L-RC3
+L-18
+Transitions of care audit
+audit
+Providers
+48-hour follow-up contact achieved for 23% of discharges
+L-RC3
+L-19
+Provider data quality: attribution and NPI mismatches
+table
+Providers
+Attribution confidence 88% core, 74% Lakeshore
+L-RC1
+L-20
+Application and data inventory
+table
+Technology / data
+14 source systems, 3 CRMs, 2 claims platforms; warehouse latency 11 days
+Neutral
+L-21
+Identity match rate report by source pair
+table
+Technology / data
+Pharmacy-to-medical match 86% in Lakeshore; 97% core
+L-RC1
+L-22
+Claims platform migration plan
+deck
+Technology / data
+Core claims migration consumes 60% of integration capacity for 3 quarters
+Neutral
+L-23
+Data ownership matrix
+table
+Technology / data
+Nine data owners; Lakeshore data has none
+L-RC1
+L-24
+Transformation envelope and board minutes
+memo
+Finance / operations
+$25M over two years; board wants quarterly evidence; 'no more OneViews'
+Neutral
+L-25
+Operating cost by function
+table
+Finance / operations
+Contact center $41M per year; appeals $6M; care management $24M
+Neutral
+L-26
+4-Star bonus value by contract
+memo
+Finance / operations
+Core at 4.0 worth $160M per year; Lakeshore reaching 4.0 worth $58M (illustrative)
+Neutral
+L-27
+Vendor commitments and renewals
+table
+Finance / operations
+IVR vendor lapsed; CRM renewals staggered; PBM contract 2 years
+Neutral
+L-28
+AI inventory and model cards
+model card
+Risk / governance
+Five models; adherence model validated; no subgroup analysis for dual-eligible members
+Neutral
+L-29
+Privacy and data-sharing agreements
+contract
+Risk / governance
+Agreements in place with 2 health systems; 3 pending for 14 months
+L-RC3
+L-30
+Internal audit: data governance
+audit
+Risk / governance
+No enterprise data owner; identity rules differ by book
+L-RC1
+6.3 CommunityCare Alliance data room
+ID
+Artifact
+Format
+Domain
+What it shows
+Supports
+C-01
+Stars scorecard, last 3 cycles
+dashboard
+Stars / quality
+Overall 3.5 flat; clinical measures 4 Stars; appointments 2 Stars
+Neutral
+C-02
+Measure performance: employed vs independent PCPs
+table
+Stars / quality
+Employed PCPs equal or worse than independents on screening despite better data
+C-RC3
+C-03
+Quality initiative log
+log
+Stars / quality
+Portal-based gap program launched twice; 'low clinician uptake' both times
+C-RC1
+C-04
+Gap recommendation delivery statistics
+dashboard
+Stars / quality
+Recommendations delivered to plan portal; 6% opened; 2% acted on
+C-RC1
+C-05
+Membership by county and attribution
+table
+Members
+82% attributed to the sponsoring system; 18% independent
+Neutral
+C-06
+Member access survey
+survey
+Members
+Top complaint: appointment wait; 38% report waiting over 3 weeks
+C-RC2
+C-07
+Transport and rural access analysis
+table
+Members
+Rural edge members miss 2.1x more appointments; pharmacy desert in 2 zip codes
+C-RC2
+C-08
+Disenrollment reasons
+table
+Members
+'Could not get an appointment' leads; service satisfaction high
+C-MS2
+C-09
+Adherence program summary
+memo
+Pharmacy
+PDC 85%; outreach reaches 40% of at-risk; rural members cite transport
+C-RC2
+C-10
+Pharmacy network and mail-order usage
+table
+Pharmacy
+Mail-order 19%; two zip codes with no retail pharmacy within 15 miles
+C-RC2
+C-11
+Refill reminder results
+table
+Pharmacy
+Reminders reach 88%; conversion 12%; 'can't get a refill appointment' in free text
+C-RC2
+C-12
+Contact-center operations report
+dashboard
+Experience / service
+Abandonment 6%; FCR 78%; CSAT 4.4 of 5
+C-MS2
+C-13
+CAHPS results and verbatims
+survey
+Experience / service
+Customer service 91; appointments 72; 'nice people, no appointments'
+C-MS2
+C-14
+Complaint log with root-cause coding
+log
+Experience / service
+0.20 per 1,000; 58% access-related
+C-RC2
+C-15
+Member outreach volume and response
+table
+Experience / service
+Outreach reach 78% of eligible; scheduling conversion 22%
+C-RC2
+C-16
+Clinician compensation summary (system HR)
+memo
+Providers
+Employed PCPs salaried; productivity bonus only; no Stars or quality component
+C-RC3
+C-17
+Third-next-available appointment by clinic
+table
+Providers
+Median 24 days; imaging 6 weeks; 3 clinics over 35 days
+C-RC2
+C-18
+Clinician survey on plan requests
+survey
+Providers
+71% describe plan gap lists as 'administrative burden'; 9% use the portal
+C-RC1
+C-19
+EHR inbox workflow study
+memo
+Providers
+Clinicians act on 84% of inbox items within 48 hours; portal items never reach the inbox
+C-RC1
+C-20
+Application and data inventory
+table
+Technology / data
+Shared EHR; plan warehouse 6 sources; clinical data current to 24 hours
+C-MS1
+C-21
+Clinical data completeness report
+table
+Technology / data
+Labs 96%, vitals 94%, meds 91% for attributed members
+C-MS1
+C-22
+System IT change request queue
+log
+Technology / data
+Plan requests wait 2 quarters; EHR changes require system CMIO approval
+C-RC1
+C-23
+Predictive model validation report
+model card
+Technology / data
+Risk model AUC 0.84; 'deployment pending clinician workflow'
+C-MS1
+C-24
+Capital request and system board memo
+memo
+Finance / operations
+$12M approved; system board questions keeping the plan
+Neutral
+C-25
+Care management staffing and reporting lines
+table
+Finance / operations
+48 care managers; 28 report to clinic directors, not the plan
+C-RC3
+C-26
+4-Star bonus value estimate
+memo
+Finance / operations
+Crossing 4.0 Stars worth $57M per year (illustrative)
+Neutral
+C-27
+Telehealth and extended-hours pilot results
+table
+Finance / operations
+One clinic pilot cut third-next-available to 9 days; not scaled
+C-RC2
+C-28
+AI inventory and model cards
+model card
+Risk / governance
+Three models; clinical governance committee reviews them; no plan-side owner
+Neutral
+C-29
+Joint governance charter (plan and system)
+contract
+Risk / governance
+Charter names shared goals; no decision rights or escalation path
+C-RC3
+C-30
+Compliance review of outreach volume
+audit
+Risk / governance
+Warns that outreach exceeding appointment capacity drives complaints
+C-RC2
+
+7. Crisis and curveball events
+Crises are partly endogenous: the engine evaluates each trigger against the team's state after Round 2 and recommends one event and a severity; the facilitator confirms or overrides with an audit note. Teams receive the packet text, incomplete by design, and 10 to 16 minutes. Scoring uses the rubric in 7.8. Concealment and cosmetic communications score zero.
+7.1 E1 Eligibility assumption drives inappropriate outreach to 11,400 members
+Applies to
+Horizon Health
+Trigger
+Fires at high severity if I7 or I8 is live and neither I1 nor I10 is funded. Medium severity if one of I1 or I10 is funded. Low severity (facilitator optional) otherwise.
+Severity levels
+High: 11,400 members contacted, 420 complaints in 3 weeks, local news story, state regulator inquiry. Medium: 3,200 members, 90 complaints, no press. Low: 600 members, internal catch.
+Packet text (read to the team)
+Monday 8:10 am. The engagement platform sent a 'your diabetes medication refill is overdue' message to 11,400 members over the weekend. Early analysis: a segmentation rule used a prior-plan eligibility flag that was never validated for new-county members. At least 2,900 recipients have no diabetes diagnosis. The contact center has 1,100 calls in queue. A member's daughter posted the message on social media; a local TV station has called. Nobody is sure whether the platform is still sending. You have 15 minutes.
+Leadership test
+Speed versus containment; member communication; validation; kill switch; accountability.
+Effect on the simulation
+M11 +0.20 to +0.35 within the quarter at high severity; M10 -2 pts; engagement response rates fall 30% for two quarters.
+7.2 E2 Acquired-plan member data cannot be reconciled; flagship initiative slips six months
+Applies to
+Heritage Medicare
+Trigger
+Fires at high severity if I3, I5 or I8 is funded before or without I1. Medium severity if I1 is funded at partial scope. Low severity if I1 is funded at full scope in Round 1.
+Severity levels
+High: flagship initiative 6 months late, $2.1M written off, Lakeshore outreach suspended for a quarter, board disclosure required. Medium: 3 months late, no write-off. Low: internal rescope.
+Packet text (read to the team)
+Quarterly review prep, two days out. The data team reports that the Lakeshore identity crosswalk fails validation: 19% of matches are wrong, including 1,400 members matched to deceased records. The predictive adherence model has been scoring the wrong people for two months. Outreach lists for Q3 are frozen. The CIO proposes a six-month identity remediation; the CFO wants to know what the board hears on Thursday. The Lakeshore contract loses a quarter of adherence outreach. You have 15 minutes.
+Leadership test
+Scope, sequencing, data ownership, salvage path, board disclosure.
+Effect on the simulation
+Lakeshore M1 and M2 leading KPIs flat for 2 quarters; capacity -3 points for 2 quarters; financial dimension -$2.1M at high severity.
+7.3 E3 Clinically sound recommendations are ignored by providers
+Applies to
+CommunityCare Alliance
+Trigger
+Fires at high severity if I5 or I6 is live and neither I11 nor I15 is funded. Medium if one is funded. Low if both are funded.
+Severity levels
+High: adoption 7% after two quarters, clinicians request the tool be switched off, system CMIO escalates to the system board. Medium: adoption 25%, friction. Low: adoption 55%, tuning needed.
+Packet text (read to the team)
+The system CMIO has asked for a meeting. The provider copilot has generated 41,000 recommendations in two quarters; clinicians have acted on 2,900. A clinic director survey calls it 'another plan portal'. Three clinics have disabled alerts. The system board meets in two weeks and the plan's future is on the agenda. Your own data shows the recommendations are accurate: members flagged for uncontrolled blood pressure were right 83% of the time. You have 15 minutes.
+Leadership test
+Workflow redesign, incentives, capacity, shared ownership, adoption measurement.
+Effect on the simulation
+M3 and M4 leading KPIs flat; AI Transformation Maturity -10 at high severity; relationship penalty on all provider-facing investments for one quarter.
+7.4 E4 Model underperforms for a subgroup
+Applies to
+Cross-cutting
+Trigger
+Available to any team with I3 or I6 live and no I12. Facilitator picks one team per session at most.
+Severity levels
+Medium: the adherence model's precision for dual-eligible members is 0.41 versus 0.74 overall; outreach has been going disproportionately to non-dual members for two quarters.
+Packet text (read to the team)
+A quality analyst notices that dual-eligible members are 29% of the at-risk list but 9% of completed outreach. The model was trained on core-book data. The compliance officer asks whether this is a Health Equity Index exposure. You have 12 minutes.
+Leadership test
+Bias detection, subgroup reporting, validation independence, equity reward exposure.
+Effect on the simulation
+Equity modifier -1 on scorecard; dual-eligible adherence lift halved for the year.
+7.5 E5 Sensitive data sent to the wrong system
+Applies to
+Cross-cutting
+Trigger
+Available to any team with I2 live and no I10.
+Severity levels
+Medium: a nightly job replicated 60,000 member records including diagnoses to a vendor sandbox that was not covered by the data-sharing agreement.
+Packet text (read to the team)
+The security team found the replication during a routine review. The vendor says the sandbox is isolated. Legal wants to know whether notification is required. The data engineering lead says the job 'has always done this'. You have 12 minutes.
+Leadership test
+Privacy, verification, escalation, communications, recovery.
+Effect on the simulation
+Risk and Governance dimension -8; one capacity point for a quarter on remediation.
+7.6 E6 Hallucinated financial assumption reaches the board pack
+Applies to
+Cross-cutting
+Trigger
+Facilitator may apply to a team whose board pitch cited a figure not present in the data room.
+Severity levels
+Low to medium: the board pack states a $14M benefit that the AI assistant generated; no data-room source supports it.
+Packet text (read to the team)
+The CFO's office traces the $14M line in your board pitch to a chat transcript. The assistant produced it when asked for 'a reasonable estimate'. The board chair has asked who checked it. You have 10 minutes.
+Leadership test
+Evidence discipline, AI-use controls, accountability.
+Effect on the simulation
+Board pitch score -3 retroactively; Risk and Governance -4.
+7.7 E7 Automated member message creates a reputational issue
+Applies to
+Cross-cutting
+Trigger
+Available to any team with I7 live and no human review step in the operating model exercise.
+Severity levels
+Medium: a generated message to members with a recent cancer diagnosis used a cheerful tone and an incorrect benefit reference.
+Packet text (read to the team)
+Two members' families have written to the CEO. The message was generated from a template and approved by nobody. The engagement vendor says tone controls were 'available but not configured'. You have 10 minutes.
+Leadership test
+Human review design, consequence-based controls, communications.
+Effect on the simulation
+M11 +0.08; M10 -1 pt; engagement response -15% for a quarter.
+7.8 Crisis response rubric (0 to 3 per row, 18 maximum)
+Criterion
+What a good answer contains
+Scoring
+Stop or continue decision
+Decides within the time box whether to pause the capability, with a stated reason
+0 none · 1 late or unclear · 2 decided · 3 decided with criteria for restart
+Owner
+Names one accountable executive and an operational lead
+0 none · 1 committee · 2 named · 3 named with authority to act
+Investigation
+Defines what to verify first and how (scope, data, timeline)
+0 none · 1 vague · 2 scoped · 3 scoped with hypotheses
+Stakeholder communication
+Members, providers, regulator, board, press: who hears what, when, from whom
+0 none · 1 internal only · 2 external plan · 3 sequenced, honest, member-first
+Member and provider protection
+Concrete steps to limit harm (callbacks, corrections, refunds, provider notice)
+0 none · 1 generic · 2 specific · 3 specific and resourced
+Corrective action
+Durable remediation: control, validation, process change, not just an apology
+0 none · 1 cosmetic · 2 control added · 3 control added and monitored
+
+8. Human-versus-AI operating model exercise
+Process: Quality-gap closure. Teams assign one of four options to each step and answer the six decision dimensions for any step given to an agent.
+Step
+Activity
+Facilitator note
+1
+Ingest data (claims, pharmacy, labs, ADT, CRM)
+Automation is low-risk here; the question is data quality thresholds and who owns exceptions
+2
+Identify gap (member meets measure denominator, numerator open)
+Rules-based; agent may run it; human owns the rules
+3
+Prioritize member (risk, headroom, reachability, equity)
+Predictive model; human sets weights; subgroup monitoring required
+4
+Select intervention (channel, message, provider route)
+Highest-consequence decision for member experience; human review of new templates
+5
+Initiate outreach (call, SMS, mail, app, pharmacist)
+Bounded autonomy possible for low-risk reminders with consent; human for sensitive conditions
+6
+Notify provider (alert, copilot, incentive report)
+Must land in the clinician's workflow; agent may route, human owns the relationship
+7
+Follow up (second contact, barrier resolution, scheduling)
+Agent can schedule; care manager owns barrier conversations
+8
+Capture evidence (supplemental data, chart retrieval)
+Automation with audit trail; human spot check
+9
+Close gap (numerator event confirmed, member record updated)
+Deterministic; audit log mandatory
+Assignment options
+	•	Human-owned
+	•	AI-assisted (human acts, AI recommends)
+	•	Agent-executed with approval
+	•	Bounded autonomous execution (within thresholds, with monitoring)
+Decision dimensions teams must answer
+	•	Authority: who may recommend, approve, act, pause, override, shut down
+	•	Accountability: executive and operational owner
+	•	Controls: validation, confidence threshold, human review, audit log, exception handling
+	•	Data: sources, permissions, lineage, quality thresholds, retention
+	•	Adoption: whose job changes, incentive conflicts, capacity needed
+	•	Monitoring: performance, drift, bias, complaints, safety, realized value
+Scoring
+Dimension
+Question
+Scale
+Value
+Does the design move leading KPIs faster than the status quo?
+0 to 3
+Control adequacy
+Are controls proportionate to consequence and autonomy at each step?
+0 to 3
+Adoption feasibility
+Will the named humans actually do this given incentives and capacity?
+0 to 3
+Recoverability
+Can a wrong action be detected and reversed before member harm?
+0 to 3
+Autonomy level does not score. A fully human design with no capacity scores low on value; a fully autonomous design at step 4 scores low on control and recoverability.
+
+9. Run-of-show
+180-minute core simulation plus an optional 25-minute real-company translation extension (OD-01). Lecture time totals about 24 minutes (briefing, result reveals, debrief framing). Everything else is decisions, analysis, discussion and debrief.
+Start
+End
+Stage
+What happens
+Transition script
+Output
+0:00
+0:12
+Executive setup and briefing
+Facilitator frames the challenge, rules, scoring, AI as analytical workforce
+'You are the leadership team. You have real money, imperfect data, and a board that wants a number. Everything you do today is a hypothesis.'
+Shared mandate and roles
+0:12
+0:27
+Meet your company
+Teams read the payer brief and the first data-room layer
+'Your briefing is honest but incomplete. Three things are wrong with your company that nobody has written down.'
+Initial situation map
+0:27
+0:52
+Diagnose
+Data room open; analyst agent available; teams pick top 3 priorities with cited evidence
+'The AI will find anything you ask for. It will not tell you what to ask.'
+Top 3 priorities with evidence
+0:52
+1:10
+Investment Round 1
+Allocate Round 1 capital across the catalog; submit a one-paragraph thesis
+'Place your bets. Write down what you believe will happen and why.'
+Portfolio and thesis
+1:10
+1:18
+Simulate Year 1 (break)
+Engine runs; facilitator releases the performance review
+
+Year 1 performance review
+1:18
+1:32
+Analyze
+Teams interrogate variance with the explainer and challenger agents
+'Ask the AI why. Then ask it what it is not sure about.'
+Updated causal model
+1:32
+1:50
+Investment Round 2 and board pitch
+90-second pitch per team; rubric sets earned capital; teams reallocate
+'The board funds learning, not loyalty to last year's projects.'
+Revised portfolio and capital case
+1:50
+1:58
+Simulate Year 2
+Engine runs; Year 2 results released
+
+Year 2 results
+1:58
+2:16
+Agent operating model
+Teams assign human / AI / agent roles across the 9-step gap-closure workflow
+'Where should a person decide, where should AI assist, and where should an agent act? Defend each line.'
+Workflow and decision-rights design
+2:16
+2:32
+Crisis
+Facilitator applies the event determined by the team's choices; timed response
+'It is Monday morning. Here is what happened.'
+Response, controls, communications
+2:32
+2:40
+Final results
+Scorecard with dimension profile and causal story; cross-team comparison
+'Who created sustainable value, and how do we know?'
+Executive scorecard
+2:40
+3:00
+Debrief
+Lessons by dimension; what each archetype teaches; facilitator closes the core simulation
+'Three things you believed at 9 am that you no longer believe.'
+Shared lessons
+3:00
+3:25
+Real-company translation (optional extension)
+Each participant captures 2 to 3 opportunities; synthesizer agent builds the Opportunity Map
+'Now your company. Same questions, real constraints.'
+AI Opportunity Map and next steps
+9.1 Contingency cuts
+Condition
+Cut
+Behind by 10 minutes or more at 1:10
+Cut Analyze to 8 minutes; facilitator reads the key variance aloud instead of free interrogation
+Behind by 10 minutes or more at 1:58
+Compress the operating model exercise to steps 3 to 6 only (12 minutes)
+Behind by 10 minutes or more at 2:16
+Run the crisis as a single team-wide event with one shared response (10 minutes)
+Any time
+Drop the cross-team comparison discussion; show the scorecards and move to debrief
+Technology failure
+Paper fallback: printed payer briefs, decision forms, pre-computed results packets for the four most likely portfolios per payer
+9.2 Facilitator console actions by stage
+Stage
+Console action
+Setup
+Start session; assign teams to payers; start the stage clock
+Diagnose
+Open the data room; monitor query log; nudge teams that have not cited evidence by minute 15
+Round 1
+Confirm submissions; ledger shows committed, available; lock at the timebox
+Simulate
+Run engine (or upload spreadsheet results in Slice 1); review before release; release the performance review
+Round 2
+Score pitches on the rubric; set earned capital; reopen the ledger; lock
+Crisis
+Accept or override the engine's recommended event and severity (audit note); start the response timer; score the rubric
+Results
+Release scorecards; show the dimension profiles side by side
+Any time
+Pause clock; adjust capital with a note; apply a curveball; capture observations
+
+10. Scorecard and rubrics
+10.1 Executive scorecard
+Dimension
+Weight
+What it captures
+Normalization
+Stars trajectory
+30%
+Weighted average star movement across the 10 measures after Year 2, plus projected path to 4.0; measure weights apply (3, 2, 1)
+Normalized by payer: score = achieved lift divided by available headroom
+Member outcomes and experience
+20%
+M3, M4, M7 outcomes; M9, M10, M11 experience; equity modifier (dual-eligible lift relative to overall)
+Equity modifier -1 to +1
+Financial performance
+20%
+Capital spent vs committed; run-rate benefit realized; distance to the 4-Star bonus; write-offs
+Benefit expressed as a share of the payer's 4-Star bonus value
+AI transformation maturity
+15%
+Reusable foundations live (I1, I2, I13), adoption rates achieved, operating model score, decision rights defined
+Operating model exercise contributes 40% of this dimension
+Risk and governance
+15%
+Controls in place (I10, I12), crisis response rubric score, incidents, subgroup monitoring, privacy
+Crisis rubric contributes 50% of this dimension
+Teams are compared on normalized scores (lift divided by headroom, benefit divided by bonus value), so a Horizon team and a Heritage team can be judged side by side. The debrief shows the five-dimension profile and the causal story, never only the total.
+Guardrails and penalties
+Condition
+Effect
+Critical incident not contained (crisis rubric under 6 of 18)
+-10 points on the total score
+Member harm event with no corrective action
+Risk and governance dimension capped at 20% of available points
+Capacity overrun above 150% in any quarter
+AI transformation maturity capped at 50%; all investments in that quarter progress at half speed
+Overspend
+Not possible; the ledger blocks it
+Board pitch cites a figure absent from the data room
+Event E6 becomes available; pitch score -3
+10.2 Board pitch rubric (0 to 3 per row, 15 maximum)
+Criterion
+What earns full marks
+Scale
+Evidence cited
+Round 1 results and at least two data-room artifacts referenced correctly
+0 to 3
+Causal explanation
+Explains why results differed from the thesis in terms of the causal chain
+0 to 3
+Decision quality
+Scales, modifies, pauses or cancels something specific, with a reason
+0 to 3
+Risk acknowledged
+Names at least one risk the portfolio creates and a control for it
+0 to 3
+Clarity under time
+Delivered in 90 seconds; a board member could repeat the ask
+0 to 3
+Earned Round 2 capital:
+Pitch score
+Earned capital added to the $8.0M base
+13 to 15
++$4.0M
+10 to 12
++$2.0M
+7 to 9
++$1.0M
+6 or below
++$0
+10.3 AI Opportunity Map
+Captured per participant in the translation segment; the synthesizer agent aggregates to an organizational map.
+Capture fields
+	•	Opportunity (one line)
+	•	Capability class (GenAI, predictive, copilot, automation, agent, foundation)
+	•	Value hypothesis (what moves, by how much, for whom)
+	•	Readiness (data, workflow, owner, controls: each 1 to 5)
+	•	Dependencies
+	•	Risks
+	•	Owner
+	•	First 90-day step
+Quadrant rules
+Quadrant
+Interpretation and output
+High value / high readiness (value 4+, readiness 4+)
+Act now: prioritized pilot or productivity win
+High value / low readiness (value 4+, readiness 3 or under)
+Strategic initiative: foundation, operating model or phased roadmap
+Low value / high readiness
+Selective quick win, only if learning or capacity benefit is clear
+Low value / low readiness
+Defer
+Foundational (enables 3 or more opportunities)
+Shown as a band under the grid: data integration, governance, knowledge architecture, adoption capability
+Opportunities are captured per participant, aggregated per organization. Named owners appear only on the organization's own map. Retention 12 months unless the organization asks for deletion. Consent line on the capture form.
+
+11. Simplification register
+Each row maps a real Stars construct to its game representation, the reason, the risk of misunderstanding and the line the facilitator says. Date-stamped to this pack; the owner reviews it before every commercial season (CMS-003).
+Actual concept
+V1 representation
+Reason
+Risk of misunderstanding
+Facilitator disclosure
+Full CMS measure set (40+ measures)
+10 selected measures
+Enough levers for distinct strategies without a full replica
+Participants may over-weight the selected measures
+'We use 10 of 40-plus measures. The lessons transfer; the arithmetic does not.'
+Cut points set annually from national distribution
+Fixed game thresholds per measure
+Comparability between runs
+Participants may treat thresholds as real cut points
+'Thresholds are game constructs. Real cut points move every year.'
+Improvement measures (weight 5)
+Excluded
+Complexity; double counts movement
+Under-states the value of year-over-year improvement
+'In the real system, improving also pays. We left that out.'
+Readmissions as a risk-adjusted observed-to-expected ratio
+Readmissions per 100 index stays
+Readable at workshop pace
+Not the CMS construct
+'Direction and lag are faithful; the statistic is simplified.'
+CAHPS sampling, case-mix adjustment, survey timing
+Composite score with a one-year lag
+Readable
+Timing of survey effects is approximate
+'Survey results arrive late and reflect the prior six months.'
+Tukey outlier deletion, guardrails, reward factor mechanics
+Omitted; Health Equity Index represented as a subgroup modifier
+Executive learning, not rating calculation
+Participants may expect a reward factor
+'We model equity as a modifier; the actual reward mechanics are more detailed.'
+Contract-level ratings and enrollment weighting
+One rating per payer; Heritage shows a Lakeshore sub-rating
+Simplicity
+Multi-contract plans are more complex
+'Heritage has one contract that matters for this exercise.'
+Quality bonus payment and rebate arithmetic
+Single illustrative 4-Star bonus value per payer ($600 PMPY)
+Order of magnitude for decisions
+Not a payment calculation
+'The number is illustrative. The cliff is real.'
+Multi-year investment amortization and operating budgets
+Two-year capital envelope plus stated run costs
+Decision focus
+Simplifies finance
+'Treat the envelope as the board did: one number, two years.'
+Real PHI and real provider data
+Fictional data generated from specified root causes
+Privacy; replayability
+None
+'Everything in the data room is invented.'
+
+12. Review checklist for Girish
+Items in the order they unblock the build. Each needs a confirm or a change; silence is read as confirm at gate G1.
+	•	Assumptions log (section 1): confirm or change each of the 18 rows, especially OD-01 duration, OD-02 capital mechanic and OD-07 AI boundaries.
+	•	Measure list (section 3): confirm the ten measures, the weight classes and the measure names against the current CMS Technical Notes. Decide whether colorectal screening or ED follow-up replaces any of them.
+	•	Game thresholds and starting values: adjust so that each payer sits where you want it narratively. The engine does not care about the absolute numbers, only the distance to the next star.
+	•	Payer bibles (section 2): check that the root causes ring true to a payer executive and that no archetype is obviously superior.
+	•	Investment effects and payer multipliers (sections 4 and 5): sanity-check magnitudes against your experience. The reference portfolios in 5.2 show what the numbers produce.
+	•	Crisis packets (section 7): adjust tone and realism; add any event you have seen in practice that is missing.
+	•	Run-of-show (section 9): rehearse the transition scripts; cut what does not sound like you.
+	•	Name the independent Stars reviewer for CMS-005.
+	•	Approve the data room specifications (section 6) so Brightcone can generate the artifact bodies.

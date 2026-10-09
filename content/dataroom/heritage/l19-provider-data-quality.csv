@@ -1,0 +1,16 @@
+book,segment,clinicians,attributed_members,attribution_confidence_pct,npi_mismatch_pct,practice_address_mismatch_pct,note
+Heritage core,Value-based groups,150,124000,92.4,1.1,2.0,"Simulated, fictional data for executive education. Not real PHI. Provider data management (ProviderHub) extract 2026-07. Confidence = share of attributed members with a qualifying visit to that clinician in 24 months."
+Heritage core,Fee-for-service PCPs,4100,144000,84.1,3.4,4.6,
+Heritage core,All core,4250,268000,88.0,2.4,3.4,"Attribution by plurality of E&M visits, 24-month lookback"
+Lakeshore,Value-based groups,38,12300,79.6,6.8,8.9,Groups dispute 1 in 6 attributed members as 'never seen'
+Lakeshore,Fee-for-service PCPs,1460,84700,73.2,9.9,12.7,
+Lakeshore,All Lakeshore,1498,97000,74.0,9.5,12.2,PCP of record from enrollment form; not refreshed since 2021 conversion
+Pinecrest,Value-based groups,22,13550,85.0,4.2,6.1,
+Pinecrest,Fee-for-service PCPs,980,52450,80.0,6.0,8.8,
+Pinecrest,All Pinecrest,1002,66000,81.0,5.6,8.2,
+All books,All,6750,431000,84.0,4.5,6.1,Enterprise view in network scorecard
+Lakeshore,Issue sample: PCP NPI deactivated in NPPES,,2140,,,,Members still attributed to retired or deactivated clinicians
+Lakeshore,Issue sample: member attributed to two PCPs,,3870,,,,Same person under two member IDs with different PCPs
+Pinecrest,Issue sample: member attributed to two PCPs,,1910,,,,
+Heritage core,Issue sample: member attributed to two PCPs,,1250,,,,
+All books,Gap lists sent to providers Q2 2026,,61400,,,,"Gap list rows for members with attribution confidence under 70%: 7,900"

@@ -1,0 +1,14 @@
+snapshot_month,total_members,legacy_county_members,new_county_members,counties_active,new_enrollees_in_month,disenrollees_in_month,members_tenure_under_6m,members_tenure_6_to_12m,members_tenure_12m_plus,pct_under_12m,pct_under_6m,dsnp_members,note
+2024-03,19000,19000,0,8,610,240,2850,3420,12730,33.0%,15.0%,0,"Simulated, fictional data for executive education. Not real PHI. Tenure = months of continuous Horizon enrollment; prior-plan history is not counted."
+2024-06,20900,20900,0,8,640,250,3140,3580,14180,32.1%,15.0%,0,
+2024-09,22600,22600,0,8,580,260,2940,3810,15850,29.9%,13.0%,0,
+2024-12,24100,24100,0,8,520,410,2650,3900,17550,27.2%,11.0%,0,Annual Election Period effective January
+2025-03,31700,26800,4900,12,3400,330,9510,2650,19540,38.4%,30.0%,0,First 4 of the 9 new counties launch; first enrollments effective March 2025
+2025-06,34300,28100,6200,13,1050,360,6170,5260,22870,33.3%,18.0%,0,
+2025-09,37000,29400,7600,14,980,380,5550,6690,24760,33.1%,15.0%,0,
+2025-12,39400,30300,9100,14,900,620,4730,6430,28240,28.3%,12.0%,0,
+2026-03,47800,31600,16200,17,4900,410,11950,4740,31110,34.9%,25.0%,2600,"3 more new counties go live January 2026; D-SNP launches January 2026 and reaches 3,100 members by end of April"
+2026-06,50600,32100,18500,17,1310,420,10630,8240,31730,37.3%,21.0%,3100,
+2026-08,52400,32500,19900,17,1180,350,11528,9432,31440,40.0%,22.0%,3100,"Current: 20,960 members under 12 months tenure; 11,528 under 6 months"
+2026-08-NEW,19900,0,19900,9,n/a,n/a,6370,7160,6370,68.0%,32.0%,2700,New-county breakdown of current snapshot
+2026-08-LEGACY,32500,32500,0,8,n/a,n/a,5158,2272,25070,22.9%,15.9%,400,Legacy-county breakdown of current snapshot

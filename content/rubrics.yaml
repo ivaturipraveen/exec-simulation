@@ -1,0 +1,77 @@
+# Rubrics — Content Pack v0.1 sections 7.8 (crisis), 8 (operating model) and 10.2 (board pitch).
+# Every row is scored 0 to 3. The engine suggests a score; the facilitator decides (OD-08).
+
+crisis:
+  - id: stop_continue
+    criterion: Stop or continue decision
+    good_answer: Decides within the time box whether to pause the capability, with a stated reason
+    levels: ["none", "late or unclear", "decided", "decided with criteria for restart"]
+  - id: owner
+    criterion: Owner
+    good_answer: Names one accountable executive and an operational lead
+    levels: ["none", "committee", "named", "named with authority to act"]
+  - id: investigation
+    criterion: Investigation
+    good_answer: Defines what to verify first and how (scope, data, timeline)
+    levels: ["none", "vague", "scoped", "scoped with hypotheses"]
+  - id: communication
+    criterion: Stakeholder communication
+    good_answer: "Members, providers, regulator, board, press: who hears what, when, from whom"
+    levels: ["none", "internal only", "external plan", "sequenced, honest, member-first"]
+  - id: protection
+    criterion: Member and provider protection
+    good_answer: Concrete steps to limit harm (callbacks, corrections, refunds, provider notice)
+    levels: ["none", "generic", "specific", "specific and resourced"]
+  - id: corrective
+    criterion: Corrective action
+    good_answer: "Durable remediation: control, validation, process change, not just an apology"
+    levels: ["none", "cosmetic", "control added", "control added and monitored"]
+
+pitch:
+  - id: evidence
+    criterion: Evidence cited
+    good_answer: Round 1 results and at least two data-room artifacts referenced correctly
+    levels: ["no evidence", "results or one artifact", "results and two artifacts", "results and two or more artifacts, used precisely"]
+  - id: causal
+    criterion: Causal explanation
+    good_answer: Explains why results differed from the thesis in terms of the causal chain
+    levels: ["none", "restates results", "partial causal chain", "clear causal chain"]
+  - id: decision
+    criterion: Decision quality
+    good_answer: Scales, modifies, pauses or cancels something specific, with a reason
+    levels: ["none", "vague intent", "specific action", "specific action with a reason"]
+  - id: risk
+    criterion: Risk acknowledged
+    good_answer: Names at least one risk the portfolio creates and a control for it
+    levels: ["none", "generic risk", "specific risk", "specific risk with a control"]
+  - id: clarity
+    criterion: Clarity under time
+    good_answer: Delivered in 90 seconds; a board member could repeat the ask
+    levels: ["unclear", "long or muddled", "clear", "crisp; the ask is repeatable"]
+
+opmodel:
+  - id: value
+    criterion: Value
+    good_answer: Does the design move leading KPIs faster than the status quo?
+    levels: ["no", "marginally", "yes", "clearly, with capacity to act"]
+  - id: control
+    criterion: Control adequacy
+    good_answer: Are controls proportionate to consequence and autonomy at each step?
+    levels: ["no", "gaps at high-risk steps", "mostly", "proportionate everywhere"]
+  - id: adoption
+    criterion: Adoption feasibility
+    good_answer: Will the named humans actually do this given incentives and capacity?
+    levels: ["no", "doubtful", "likely", "yes, with owners and incentives"]
+  - id: recoverability
+    criterion: Recoverability
+    good_answer: Can a wrong action be detected and reversed before member harm?
+    levels: ["no", "partly", "mostly", "yes, before harm"]
+
+# Earned Round 2 capital added to the $8.0M base (section 10.2)
+pitch_capital:
+  - {min_score: 13, earned_musd: 4.0}
+  - {min_score: 10, earned_musd: 2.0}
+  - {min_score: 7, earned_musd: 1.0}
+  - {min_score: 0, earned_musd: 0.0}
+
+critical_crisis_threshold: 6

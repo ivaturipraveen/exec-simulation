@@ -1,0 +1,18 @@
+book,period,avg_members,voluntary_disenrollment_rate_pct,top_exit_reason,top_reason_share_pct,second_reason,analyst_note
+Heritage core,2024,268900,7.1,n/a (exit survey started Jan 2026),,,"Simulated, fictional data for executive education. Not real PHI. Voluntary disenrollment only (excludes deaths and involuntary). Exit survey via outbound call vendor; response 31%."
+Heritage core,2025,267400,7.0,n/a (exit survey started Jan 2026),,,
+Heritage core,2026 YTD Aug (annualized),268000,7.3,Premium or cost-sharing change,24,Provider left network (19%),"Core exit survey n=1,960"
+Lakeshore,2024,99100,9.8,n/a (exit survey started Jan 2026),,,
+Lakeshore,2025,98200,11.6,n/a (exit survey started Jan 2026),,,
+Lakeshore,2026 YTD Aug (annualized),97000,13.9,Could not reach plan,27,Provider left network (15%),Lakeshore exit survey n=842. 'Could not reach plan' up from 9% in Jan-Mar to 34% in Jun-Aug; 61% of those cite hold time or being disconnected
+Pinecrest,2024,66800,8.4,n/a (exit survey started Jan 2026),,,
+Pinecrest,2025,66300,8.9,n/a (exit survey started Jan 2026),,,
+Pinecrest,2026 YTD Aug (annualized),66000,9.6,Provider left network,21,Could not reach plan (18%),Pinecrest exit survey n=412
+Lakeshore,2026-01 (annualized),97000,11.2,Could not reach plan,9,,
+Lakeshore,2026-02 (annualized),97000,11.9,Could not reach plan,13,,
+Lakeshore,2026-03 (annualized),97000,12.6,Could not reach plan,17,,
+Lakeshore,2026-04 (annualized),97000,13.4,Could not reach plan,22,,
+Lakeshore,2026-05 (annualized),97000,14.1,Could not reach plan,26,,
+Lakeshore,2026-06 (annualized),97000,15.0,Could not reach plan,31,,
+Lakeshore,2026-07 (annualized),97000,15.6,Could not reach plan,33,,
+Lakeshore,2026-08 (annualized),97000,16.3,Could not reach plan,34,,Retention team flagged trend to VP Member Services on 2026-08-19

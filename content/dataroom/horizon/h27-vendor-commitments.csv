@@ -1,0 +1,14 @@
+vendor,service,contract_type,term_start,term_end,annual_value_usd,termination_terms,renewal_notice_days,owner,note
+Pulsewise Inc. (Pulsewise Engage),Member engagement platform: app; SMS; push; email; segmentation,3-year fixed term,2025-07-01,2028-06-30,1900000,Early termination fee of 75% of remaining fees,180,"Nadia Farrokh, Digital Member Experience","Simulated, fictional data for executive education. Not real PHI. Includes a minimum of 1.2 million messages per year; unused volume is not credited."
+VoxBridge Contact Solutions,IVR platform plus 40 contact-center agents,Annual,2026-04-01,2027-03-31,3600000,Termination for convenience with 90 days notice,90,"Carla Brandt, Member Experience",IVR configuration changes billed as change orders at $185 per hour
+Meridian CX,28 contact-center agents,Annual,2026-01-01,2026-12-31,2400000,Termination for convenience with 60 days notice,60,"Carla Brandt, Member Experience",Renewal decision due by 2 November 2026
+ClearRx Pharmacy Benefit Services,Pharmacy benefit manager including RefillReady reminders,3-year term,2025-01-01,2027-12-31,Pass-through plus admin fee,For cause only,180,"Dr. Samuel Osei, Pharmacy",Pharmacist outreach add-on available at $4.10 per completed call
+Apex Health Systems,Core administration (SaaS),5-year term,2024-01-01,2028-12-31,4100000,For cause only,365,Operations,
+Relay Cloud CRM,CRM and appeals module,Annual auto-renew,2025-10-01,2026-09-30,620000,30 days notice before auto-renewal,30,"Carla Brandt, Member Experience",Renews automatically for one year on 1 October 2026; the 31 August notice date has passed
+Commercial cloud provider,Cloud data platform hosting,Consumption with annual commit,2026-01-01,2026-12-31,1350000,Commit is non-refundable,60,"Arjun Mehta, CIO",
+QualiMetric Analytics,Certified HEDIS engine,3-year term,2025-01-01,2027-12-31,380000,For cause only,120,"Jordan Whitaker, Quality",
+RecordPath Retrieval,Medical record retrieval for HEDIS hybrid review,Annual,2026-01-01,2026-12-31,210000,30 days notice,30,"Jordan Whitaker, Quality",
+LabBridge Clinical Data Exchange,Lab results feed,2-year term,2025-07-01,2027-06-30,240000,For cause only,90,"Jordan Whitaker, Quality",
+Northgate Survey Research,CAHPS survey administration,Annual,2026-01-01,2026-12-31,95000,30 days notice,30,"Carla Brandt, Member Experience",
+Continuum Claims Exchange,Prior-plan claims and pharmacy history,Proposal only (not contracted),n/a,n/a,n/a,n/a,n/a,"Dr. Hannah Lindqvist, Data Science",See H-22; not funded
+TOTAL (fixed-fee contracts with stated value),n/a,n/a,n/a,n/a,14895000,n/a,n/a,"Tom Rasmussen, CFO",Excludes PBM pass-through; engagement platform is the only multi-year commitment in member engagement

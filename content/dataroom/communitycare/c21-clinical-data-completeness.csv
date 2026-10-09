@@ -1,0 +1,13 @@
+data_element,attributed_members_completeness_pct,independent_members_completeness_pct,attributed_source,independent_source,analyst_note
+"Lab results (any, 12 months)",96,58,Shared EHR (Meridian),Claims plus supplemental files,"Simulated, fictional data for executive education. Not real PHI. Completeness = % of members in the relevant population with the element present in the plan warehouse, Aug 2026. Attributed = 77,736 system-attributed members; independent = 17,064. Labs 96%, vitals 94%, meds 91% for attributed members, top decile among provider-sponsored plans in the Northfield 2026 benchmark."
+HbA1c result on file (diabetic members),97,62,Shared EHR (Meridian),Claims plus supplemental files,
+Lipid panel (12 months),95,55,Shared EHR (Meridian),Claims plus supplemental files,
+Vitals: blood pressure reading (6 months),94,39,Shared EHR (Meridian),Claims plus supplemental files,Most recent BP within 6 months for hypertensive members.
+Vitals: weight / BMI (12 months),93,30,Shared EHR (Meridian),Claims plus supplemental files,
+Medication list reconciled (12 months),91,44,Shared EHR (Meridian),Claims plus supplemental files,
+Active problem list,95,71,Shared EHR (Meridian),Claims plus supplemental files,
+Encounter data (professional),99,97,Shared EHR (Meridian),Claims plus supplemental files,
+Mammogram result or order (27 months),98,88,Shared EHR (Meridian),Claims plus supplemental files,
+Immunization history,88,52,Shared EHR (Meridian),Claims plus supplemental files,
+Social needs screening (12 months),61,9,Shared EHR (Meridian),Claims plus supplemental files,
+Advance care planning document,47,12,Shared EHR (Meridian),Claims plus supplemental files,

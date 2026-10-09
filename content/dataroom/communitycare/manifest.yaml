@@ -1,0 +1,272 @@
+payer_id: communitycare
+artifacts:
+  - id: C-01
+    title: "Stars scorecard, last 3 cycles"
+    format: dashboard
+    domain: stars_quality
+    file: c01-stars-scorecard.md
+    summary: "Overall rating flat at 3.5 for three cycles; clinical outcome measures at 4 Stars while Getting Appointments and Care Quickly sits at 2 Stars."
+    supports: neutral
+    release: company
+    tags: [stars, trend, scorecard]
+  - id: C-02
+    title: "Measure performance: employed vs independent PCPs"
+    format: table
+    domain: stars_quality
+    file: c02-employed-vs-independent-pcps.csv
+    summary: "Measure rates split by system-employed and independent PCPs, with EHR data completeness and quality-bonus contract status for each group."
+    supports: C-RC3
+    release: diagnose
+    tags: [providers, measures, variation]
+  - id: C-03
+    title: "Quality initiative log"
+    format: log
+    domain: stars_quality
+    file: c03-quality-initiative-log.md
+    summary: "Dated log of quality programs since 2024, including two portal-based gap programs closed for low clinician uptake."
+    supports: C-RC1
+    release: diagnose
+    tags: [initiatives, history, portal]
+  - id: C-04
+    title: "Gap recommendation delivery statistics"
+    format: dashboard
+    domain: stars_quality
+    file: c04-gap-recommendation-delivery.md
+    summary: "Recommendations delivered to the plan portal over four quarters; 6% opened and 2% acted on, by type and clinician group."
+    supports: C-RC1
+    release: diagnose
+    tags: [recommendations, portal, adoption]
+  - id: C-05
+    title: "Membership by county and attribution"
+    format: table
+    domain: members
+    file: c05-membership-by-county-attribution.csv
+    summary: "94,800 members by county and product; 82% attributed to Cascade Valley Health and 18% to independent PCPs."
+    supports: neutral
+    release: company
+    tags: [membership, attribution, geography]
+  - id: C-06
+    title: "Member access survey"
+    format: survey
+    domain: members
+    file: c06-member-access-survey.md
+    summary: "Spring 2026 member pulse survey; appointment wait is the top problem and 38% report waiting over 3 weeks."
+    supports: C-RC2
+    release: diagnose
+    tags: [survey, access, members]
+  - id: C-07
+    title: "Transport and rural access analysis"
+    format: table
+    domain: members
+    file: c07-transport-rural-access.csv
+    summary: "Drive distances, transit and missed-appointment rates by zone; rural edge members miss 2.1x more appointments and two ZIPs lack a pharmacy within 15 miles."
+    supports: C-RC2
+    release: diagnose
+    tags: [rural, transport, access]
+  - id: C-08
+    title: "Disenrollment reasons"
+    format: table
+    domain: members
+    file: c08-disenrollment-reasons.csv
+    summary: "Exit survey of 2025 voluntary leavers; 'could not get an appointment' is the leading reason while ratings of plan service stay high."
+    supports: C-MS2
+    release: diagnose
+    tags: [disenrollment, retention, service]
+  - id: C-09
+    title: "Adherence program summary"
+    format: memo
+    domain: pharmacy
+    file: c09-adherence-program-summary.md
+    summary: "Pharmacy director's memo on Part D adherence at 85% PDC; pharmacist outreach reaches 40% of at-risk members and rural members cite transport."
+    supports: C-RC2
+    release: diagnose
+    tags: [adherence, pharmacy, capacity]
+  - id: C-10
+    title: "Pharmacy network and mail-order usage"
+    format: table
+    domain: pharmacy
+    file: c10-pharmacy-network-mail-order.csv
+    summary: "Pharmacy access, mail-order share (19% overall), 90-day fills and refill gaps by zone, including two ZIPs with no retail pharmacy within 15 miles."
+    supports: C-RC2
+    release: diagnose
+    tags: [pharmacy, mail-order, network]
+  - id: C-11
+    title: "Refill reminder results"
+    format: table
+    domain: pharmacy
+    file: c11-refill-reminder-results.csv
+    summary: "Monthly and channel results for automated refill reminders: 88% reach, 12% conversion, with free-text themes."
+    supports: C-RC2
+    release: diagnose
+    tags: [adherence, reminders, outreach]
+  - id: C-12
+    title: "Contact-center operations report"
+    format: dashboard
+    domain: experience
+    file: c12-contact-center-operations.md
+    summary: "Member Services KPIs: 6% abandonment, 78% first-contact resolution and CSAT 4.4 of 5, with call-reason mix."
+    supports: C-MS2
+    release: diagnose
+    tags: [contact-center, service, kpis]
+  - id: C-13
+    title: "CAHPS results and verbatims"
+    format: survey
+    domain: experience
+    file: c13-cahps-results-verbatims.md
+    summary: "CAHPS composites with Customer Service at 91 and Getting Appointments at 72, plus member verbatims."
+    supports: C-MS2
+    release: diagnose
+    tags: [cahps, experience, verbatims]
+  - id: C-14
+    title: "Complaint log with root-cause coding"
+    format: log
+    domain: experience
+    file: c14-complaint-log.md
+    summary: "Twelve months of complaints at 0.20 per 1,000 members, coded by root cause (58% access-related), with sample entries."
+    supports: C-RC2
+    release: diagnose
+    tags: [complaints, ctm, access]
+  - id: C-15
+    title: "Member outreach volume and response"
+    format: table
+    domain: experience
+    file: c15-outreach-volume-response.csv
+    summary: "Outreach campaigns with reach and scheduling conversion; breast screening outreach reaches 78% of eligible members and converts 22% to appointments."
+    supports: C-RC2
+    release: diagnose
+    tags: [outreach, screening, conversion]
+  - id: C-16
+    title: "Clinician compensation summary (system HR)"
+    format: memo
+    domain: providers
+    file: c16-clinician-compensation-summary.md
+    summary: "System HR memo on employed PCP pay: salary plus productivity bonus, with no Stars or quality component."
+    supports: C-RC3
+    release: diagnose
+    tags: [compensation, incentives, providers]
+  - id: C-17
+    title: "Third-next-available appointment by clinic"
+    format: table
+    domain: providers
+    file: c17-third-next-available-by-clinic.csv
+    summary: "Third-next-available days for 22 clinics (median 24, three over 35) and screening mammography sites (about 6 weeks)."
+    supports: C-RC2
+    release: diagnose
+    tags: [access, capacity, clinics]
+  - id: C-18
+    title: "Clinician survey on plan requests"
+    format: survey
+    domain: providers
+    file: c18-clinician-survey-plan-requests.md
+    summary: "Survey of 188 PCPs; 71% call plan gap lists administrative burden and 9% use the portal monthly."
+    supports: C-RC1
+    release: diagnose
+    tags: [survey, clinicians, portal]
+  - id: C-19
+    title: "EHR inbox workflow study"
+    format: memo
+    domain: providers
+    file: c19-ehr-inbox-workflow-study.md
+    summary: "CMIO study of clinician inbox work: 84% of inbox items acted on within 48 hours; items from outside the EHR do not enter the inbox."
+    supports: C-RC1
+    release: diagnose
+    tags: [ehr, workflow, inbox]
+  - id: C-20
+    title: "Application and data inventory"
+    format: table
+    domain: technology
+    file: c20-application-data-inventory.csv
+    summary: "Applications and data flows: shared EHR, a plan warehouse fed by 6 sources, and clinical data current to 24 hours."
+    supports: C-MS1
+    release: company
+    tags: [systems, data, integration]
+  - id: C-21
+    title: "Clinical data completeness report"
+    format: table
+    domain: technology
+    file: c21-clinical-data-completeness.csv
+    summary: "Completeness by data element; labs 96%, vitals 94% and medications 91% for system-attributed members."
+    supports: C-MS1
+    release: diagnose
+    tags: [data-quality, ehr, completeness]
+  - id: C-22
+    title: "System IT change request queue"
+    format: log
+    domain: technology
+    file: c22-system-it-change-queue.md
+    summary: "Log of plan change requests to system IT; plan requests wait about 2 quarters and EHR changes need system CMIO approval."
+    supports: C-RC1
+    release: diagnose
+    tags: [it, queue, ehr]
+  - id: C-23
+    title: "Predictive model validation report"
+    format: model_card
+    domain: technology
+    file: c23-predictive-model-validation.md
+    summary: "Model card for the clinical deterioration risk model, AUC 0.84 on holdout, status 'deployment pending clinician workflow'."
+    supports: C-MS1
+    release: diagnose
+    tags: [model, validation, ai]
+  - id: C-24
+    title: "Capital request and system board memo"
+    format: memo
+    domain: finance
+    file: c24-capital-request-board-memo.md
+    summary: "CFO memo recording the $12.0M approved envelope, Round 2 terms, capacity limits and the system board's question about keeping the plan."
+    supports: neutral
+    release: company
+    tags: [capital, board, budget]
+  - id: C-25
+    title: "Care management staffing and reporting lines"
+    format: table
+    domain: finance
+    file: c25-care-management-staffing.csv
+    summary: "48 care managers and 5 pharmacists by team, employer and reporting line; 28 report to clinic directors, with discharge follow-up rates."
+    supports: C-RC3
+    release: diagnose
+    tags: [staffing, care-management, org]
+  - id: C-26
+    title: "4-Star bonus value estimate"
+    format: memo
+    domain: finance
+    file: c26-four-star-bonus-estimate.md
+    summary: "CFO estimate that crossing 4.0 Stars is worth about $57M a year at $600 per member per year (illustrative), with timing and sensitivity."
+    supports: neutral
+    release: company
+    tags: [finance, bonus, value]
+  - id: C-27
+    title: "Telehealth and extended-hours pilot results"
+    format: table
+    domain: finance
+    file: c27-telehealth-extended-hours-pilot.csv
+    summary: "Monthly results of a one-clinic pilot that cut third-next-available to 9 days, then ended without being scaled."
+    supports: C-RC2
+    release: diagnose
+    tags: [pilot, access, telehealth]
+  - id: C-28
+    title: "AI inventory and model cards"
+    format: model_card
+    domain: risk
+    file: c28-ai-inventory-model-cards.md
+    summary: "Three models touching plan members, reviewed by the system Clinical Governance Committee, with no plan-side business owner named."
+    supports: neutral
+    release: diagnose
+    tags: [ai-governance, models, inventory]
+  - id: C-29
+    title: "Joint governance charter (plan and system)"
+    format: contract
+    domain: risk
+    file: c29-joint-governance-charter.md
+    summary: "Plan-system charter naming shared goals and a consensus council, annotated by Plan Legal on decision rights and escalation."
+    supports: C-RC3
+    release: diagnose
+    tags: [governance, charter, partnership]
+  - id: C-30
+    title: "Compliance review of outreach volume"
+    format: audit
+    domain: risk
+    file: c30-compliance-review-outreach.md
+    summary: "Internal audit of outreach campaigns warning that outreach exceeding appointment capacity drives complaints."
+    supports: C-RC2
+    release: diagnose
+    tags: [compliance, outreach, complaints]

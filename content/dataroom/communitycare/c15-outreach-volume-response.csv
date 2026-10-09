@@ -1,0 +1,12 @@
+campaign,period,denominator_definition,eligible_members,members_reached,reach_pct,appointments_scheduled,scheduling_conversion_pct_of_reached,median_days_to_first_slot,analyst_note
+Breast cancer screening (M5),2025-Q4,Open-gap members at start of measurement window,7420,1980,26.7,440,22.2,44,"Simulated, fictional data for executive education. Not real PHI. Outreach by Engagement team (IVR, SMS, letter, live call) via CareReach outreach platform. Scheduled = appointment booked within 30 days of contact, from shared EHR scheduling. Days-to-slot = median days to first slot offered."
+Breast cancer screening (M5),2026-Q1,Open-gap members at start of measurement window,7420,1720,23.2,372,21.6,46,
+Breast cancer screening (M5),2026-Q2,Open-gap members at start of measurement window,7420,2088,28.1,461,22.1,42,
+Breast cancer screening (M5),Cumulative Q4 2025 to Q2 2026,Open-gap members at start of measurement window,7420,5788,78.0,1273,22.0,44,Reach 78% of eligible; scheduling conversion 22%. Median wait to first mammography slot offered: 6 weeks.
+HbA1c test due (M4),Cumulative Q4 2025 to Q2 2026,Members eligible for campaign,5310,4090,77.0,1350,33.0,24,
+Blood pressure recheck visit (M3),Cumulative Q4 2025 to Q2 2026,Members eligible for campaign,6880,5160,75.0,1290,25.0,24,
+Annual wellness visit,Cumulative Q4 2025 to Q2 2026,Members eligible for campaign,31200,23710,76.0,4980,21.0,27,
+Colorectal screening FIT kit (reserve measure),Cumulative Q4 2025 to Q2 2026,Members eligible for campaign,9150,7140,78.0,3070,43.0,0,Mailed kit; no appointment needed. Conversion = kit returned.
+Diabetes medication refill gap (M1),Cumulative Q4 2025 to Q2 2026,Members eligible for campaign,6900,2760,40.0,1060,38.4,24,Pharmacist calls; reach limited to calls completed by the 5-pharmacist team.
+Post-discharge follow-up visit (M7),Cumulative Q4 2025 to Q2 2026,Members eligible for campaign,3410,2420,71.0,1430,59.1,6,Transitions team; hospital follow-up slots held by system.
+All appointment-dependent campaigns,Cumulative Q4 2025 to Q2 2026,,54220,,,,,,Outreach-attributed calls to the contact center about 'no available appointment' rose from 410 (Q4 2025) to 655 (Q2 2026).

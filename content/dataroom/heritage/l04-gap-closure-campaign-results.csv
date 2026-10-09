@@ -1,0 +1,17 @@
+campaign_id,campaign,measure,drop_date,book,letters_mailed,returned_undeliverable,undeliverable_pct,members_responded,response_pct,gaps_closed_90d,gap_closure_pct_of_mailed,analyst_note
+BCS-26Q1,Mammogram reminder letter,M5,2026-02-09,Heritage core,14200,724,5.1,2584,18.2,1874,13.2,"Simulated, fictional data for executive education. Not real PHI. Mail house: Keystone Print & Mail. Returns scanned 45 days post-drop. Gap closure measured 90 days post-drop from claims and supplemental data."
+BCS-26Q1,Mammogram reminder letter,M5,2026-02-09,Lakeshore,7400,2205,29.8,525,7.1,414,5.6,
+BCS-26Q1,Mammogram reminder letter,M5,2026-02-09,Pinecrest,4100,582,14.2,545,13.3,420,10.2,
+A1C-26Q1,HbA1c test reminder letter,M4,2026-03-02,Heritage core,11800,566,4.8,1900,16.1,1404,11.9,
+A1C-26Q1,HbA1c test reminder letter,M4,2026-03-02,Lakeshore,6900,2104,30.5,442,6.4,335,4.9,Returns mostly 'forwarding order expired' and 'no such number'
+A1C-26Q1,HbA1c test reminder letter,M4,2026-03-02,Pinecrest,3700,514,13.9,448,12.1,348,9.4,
+CBP-26Q2,Blood pressure check reminder letter,M3,2026-04-13,Heritage core,16500,858,5.2,2360,14.3,1411,8.6,
+CBP-26Q2,Blood pressure check reminder letter,M3,2026-04-13,Lakeshore,9100,2830,31.1,528,5.8,337,3.7,
+CBP-26Q2,Blood pressure check reminder letter,M3,2026-04-13,Pinecrest,5200,759,14.6,582,11.2,361,6.9,
+ADH-26Q2,"Refill reminder letter (diabetes, RAS antagonists)",M1/M2,2026-05-04,Heritage core,12600,592,4.7,2621,20.8,1896,15.0,
+ADH-26Q2,"Refill reminder letter (diabetes, RAS antagonists)",M1/M2,2026-05-04,Lakeshore,8200,2427,29.6,681,8.3,517,6.3,Undeliverable letters were re-mailed to the same address in the next wave
+ADH-26Q2,"Refill reminder letter (diabetes, RAS antagonists)",M1/M2,2026-05-04,Pinecrest,4600,649,14.1,722,15.7,534,11.6,
+ALL-H1,All four campaigns,all,2026-02 to 2026-05,Heritage core,55100,2740,5.0,9465,17.2,6585,12.0,
+ALL-H1,All four campaigns,all,2026-02 to 2026-05,Lakeshore,31600,9566,30.3,2176,6.9,1603,5.1,
+ALL-H1,All four campaigns,all,2026-02 to 2026-05,Pinecrest,17600,2504,14.2,2297,13.1,1663,9.4,
+ALL-H1,All four campaigns,all,2026-02 to 2026-05,All books,104300,14810,14.2,13938,13.4,9851,9.4,"Vendor invoice billed on letters mailed, not delivered"

@@ -1,0 +1,17 @@
+measure_id,measure,weight,pcp_group,pcps,attributed_members,group_rate,plan_rate,plan_star_level,ehr_lab_completeness_pct,plan_quality_bonus_in_contract,analyst_note
+M1,Medication Adherence for Diabetes Medications,3,Cascade Valley Health employed PCPs,210,77736,84.9,85.0,3,96,No,"Simulated, fictional data for executive education. Not real PHI. Measurement year 2025 final rates. Group rates weighted 82/18 by attributed members reproduce the plan rate."
+M1,Medication Adherence for Diabetes Medications,3,Independent network PCPs,90,17064,85.5,85.0,3,41,"Yes (Quality Partnership addendum, $4 PMPM at target)",
+M2,Medication Adherence for Hypertension (RAS antagonists),3,Cascade Valley Health employed PCPs,210,77736,86.9,87.0,3,96,No,
+M2,Medication Adherence for Hypertension (RAS antagonists),3,Independent network PCPs,90,17064,87.5,87.0,3,41,"Yes (Quality Partnership addendum, $4 PMPM at target)",
+M3,Controlling Blood Pressure,3,Cascade Valley Health employed PCPs,210,77736,73.4,73.0,4,96,No,Employed group benefits from in-office BP capture flowing directly from the shared EHR.
+M3,Controlling Blood Pressure,3,Independent network PCPs,90,17064,71.2,73.0,4,41,"Yes (Quality Partnership addendum, $4 PMPM at target)",
+M4,Glycemic Status Assessment for Patients with Diabetes,3,Cascade Valley Health employed PCPs,210,77736,78.2,78.0,4,96,No,
+M4,Glycemic Status Assessment for Patients with Diabetes,3,Independent network PCPs,90,17064,77.1,78.0,4,41,"Yes (Quality Partnership addendum, $4 PMPM at target)",
+M5,Breast Cancer Screening,1,Cascade Valley Health employed PCPs,210,77736,74.7,75.0,4,96,No,Employed group has the higher open-gap count despite complete EHR data; 81% of employed-group members had a PCP visit in the window vs 84% independent.
+M5,Breast Cancer Screening,1,Independent network PCPs,90,17064,76.4,75.0,4,41,"Yes (Quality Partnership addendum, $4 PMPM at target)",
+M7,Plan All-Cause Readmissions (per 100 index stays; lower is better),3,Cascade Valley Health employed PCPs,210,77736,10.6,10.5,3,96,No,Index stays assigned by attributed PCP at admission.
+M7,Plan All-Cause Readmissions (per 100 index stays; lower is better),3,Independent network PCPs,90,17064,10.0,10.5,3,41,"Yes (Quality Partnership addendum, $4 PMPM at target)",
+M9,Getting Appointments and Care Quickly (CAHPS composite),2,Cascade Valley Health employed PCPs,210,77736,71.6,72.0,2,96,No,"CAHPS respondents assigned to group by attributed PCP; independent n=412, employed n=1,318."
+M9,Getting Appointments and Care Quickly (CAHPS composite),2,Independent network PCPs,90,17064,73.8,72.0,2,41,"Yes (Quality Partnership addendum, $4 PMPM at target)",
+M10,Customer Service (CAHPS composite),2,Cascade Valley Health employed PCPs,210,77736,91.0,91.0,4,96,No,
+M10,Customer Service (CAHPS composite),2,Independent network PCPs,90,17064,91.1,91.0,4,41,"Yes (Quality Partnership addendum, $4 PMPM at target)",

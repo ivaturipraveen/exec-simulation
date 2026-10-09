@@ -1,0 +1,32 @@
+# Human-versus-AI operating model exercise — Content Pack v0.1 section 8.
+# Process: quality-gap closure. Teams assign one of four options to each step and answer the six
+# decision dimensions for any step given to an agent. value_by_mode is the relative speed/value
+# of each mode for the step (used for the Value score only; autonomy itself never scores).
+
+steps:
+  - {id: ingest, number: 1, name: Ingest data, description: "Claims, pharmacy, labs, ADT, CRM", facilitator_note: "Automation is low-risk here; the question is data quality thresholds and who owns exceptions", risk_level: low, member_facing: false, value_by_mode: {human: 0.1, ai_assist: 0.5, agent_approval: 0.8, autonomous: 0.9}}
+  - {id: identify_gap, number: 2, name: Identify gap, description: "Member meets measure denominator, numerator open", facilitator_note: "Rules-based; agent may run it; human owns the rules", risk_level: low, member_facing: false, value_by_mode: {human: 0.2, ai_assist: 0.6, agent_approval: 0.85, autonomous: 0.9}}
+  - {id: prioritize, number: 3, name: Prioritize member, description: "Risk, headroom, reachability, equity", facilitator_note: "Predictive model; human sets weights; subgroup monitoring required", risk_level: medium, member_facing: false, value_by_mode: {human: 0.3, ai_assist: 0.85, agent_approval: 0.85, autonomous: 0.8}}
+  - {id: select_intervention, number: 4, name: Select intervention, description: "Channel, message, provider route", facilitator_note: "Highest-consequence decision for member experience; human review of new templates", risk_level: high, member_facing: true, sensitive: true, value_by_mode: {human: 0.4, ai_assist: 0.85, agent_approval: 0.8, autonomous: 0.6}}
+  - {id: initiate_outreach, number: 5, name: Initiate outreach, description: "Call, SMS, mail, app, pharmacist", facilitator_note: "Bounded autonomy possible for low-risk reminders with consent; human for sensitive conditions", risk_level: high, member_facing: true, sensitive: true, value_by_mode: {human: 0.3, ai_assist: 0.6, agent_approval: 0.8, autonomous: 0.85}}
+  - {id: notify_provider, number: 6, name: Notify provider, description: "Alert, copilot, incentive report", facilitator_note: "Must land in the clinician's workflow; agent may route, human owns the relationship", risk_level: medium, member_facing: false, value_by_mode: {human: 0.3, ai_assist: 0.75, agent_approval: 0.8, autonomous: 0.7}}
+  - {id: follow_up, number: 7, name: Follow up, description: "Second contact, barrier resolution, scheduling", facilitator_note: "Agent can schedule; care manager owns barrier conversations", risk_level: medium, member_facing: true, value_by_mode: {human: 0.35, ai_assist: 0.75, agent_approval: 0.85, autonomous: 0.75}}
+  - {id: capture_evidence, number: 8, name: Capture evidence, description: "Supplemental data, chart retrieval", facilitator_note: "Automation with audit trail; human spot check", risk_level: low, member_facing: false, value_by_mode: {human: 0.3, ai_assist: 0.7, agent_approval: 0.85, autonomous: 0.85}}
+  - {id: close_gap, number: 9, name: Close gap, description: "Numerator event confirmed, member record updated", facilitator_note: "Deterministic; audit log mandatory", risk_level: medium, member_facing: false, value_by_mode: {human: 0.4, ai_assist: 0.75, agent_approval: 0.85, autonomous: 0.85}}
+
+controls:
+  - {id: validation, name: Validation, description: "Data quality thresholds and rule validation before any action"}
+  - {id: confidence_threshold, name: Confidence threshold, description: "Low-confidence cases route to a human"}
+  - {id: human_review, name: Human review, description: "A named role reviews outputs before action (e.g. new templates, sensitive conditions)"}
+  - {id: audit_log, name: Audit log, description: "Every action and decision is logged and traceable"}
+  - {id: exception_handling, name: Exception handling, description: "Defined path for errors, edge cases and member complaints"}
+  - {id: kill_switch, name: Pause / kill switch, description: "A named owner can pause, override or shut down immediately"}
+  - {id: subgroup_monitoring, name: Subgroup monitoring, description: "Performance, drift and bias tracked by population subgroup"}
+
+decision_dimensions:
+  - {id: authority, name: Authority, prompt: "Who may recommend, approve, act, pause, override, shut down"}
+  - {id: accountability, name: Accountability, prompt: "Executive and operational owner"}
+  - {id: controls, name: Controls, prompt: "Validation, confidence threshold, human review, audit log, exception handling"}
+  - {id: data, name: Data, prompt: "Sources, permissions, lineage, quality thresholds, retention"}
+  - {id: adoption, name: Adoption, prompt: "Whose job changes, incentive conflicts, capacity needed"}
+  - {id: monitoring, name: Monitoring, prompt: "Performance, drift, bias, complaints, safety, realized value"}

@@ -1,0 +1,181 @@
+# Run-of-show — Content Pack v0.1 section 9 (OD-01): 180-minute core simulation plus an
+# optional 25-minute real-company translation extension. Lecture ≈ 24 minutes.
+
+stages:
+  - id: setup
+    kind: briefing
+    title: Executive setup and briefing
+    start: "0:00"
+    duration_minutes: 12
+    lecture_minutes: 10
+    what_happens: Facilitator frames the challenge, rules, scoring, AI as analytical workforce
+    executive_question: What challenge and rules govern us?
+    primary_output: Shared mandate and roles
+    transition_script: "You are the leadership team. You have real money, imperfect data, and a board that wants a number. Everything you do today is a hypothesis."
+    console_actions: [Start session, Assign teams to payers, Start the stage clock]
+    facilitator_script: >-
+      Frame the challenge in one minute per idea: Stars economics (the 4-Star cliff), the five AI
+      capability classes, the scorecard (five dimensions, normalized by payer) and the rule that
+      AI is an analyst, not an answer key. Stress that everything is simulated.
+
+  - id: company
+    kind: company
+    title: Meet your company
+    start: "0:12"
+    duration_minutes: 15
+    what_happens: Teams read the payer brief and the first data-room layer
+    executive_question: What organization did we inherit?
+    primary_output: Initial situation map
+    transition_script: "Your briefing is honest but incomplete. Three things are wrong with your company that nobody has written down."
+    console_actions: [Confirm every team has joined and opened its briefing]
+    facilitator_script: Teams read their briefing, board mandate and the five orientation artifacts. Ask each role to name one worry.
+
+  - id: diagnose
+    kind: diagnose
+    title: Diagnose
+    start: "0:27"
+    duration_minutes: 25
+    what_happens: Data room open; analyst agent available; teams pick top 3 priorities with cited evidence
+    executive_question: What is actually preventing 4+ Stars?
+    primary_output: Top 3 priorities with evidence
+    transition_script: "The AI will find anything you ask for. It will not tell you what to ask."
+    console_actions: [Open the data room, Monitor the query log, Nudge teams that have not cited evidence by minute 15]
+    facilitator_script: >-
+      Probe: "What evidence would change your mind?" At minute 15, nudge any team without cited
+      evidence (the console flags them).
+
+  - id: invest_r1
+    kind: invest_r1
+    title: Investment Round 1
+    start: "0:52"
+    duration_minutes: 18
+    what_happens: Allocate Round 1 capital across the catalog; submit a one-paragraph thesis
+    executive_question: Where do we place our first bets?
+    primary_output: Portfolio and thesis
+    transition_script: "Place your bets. Write down what you believe will happen and why."
+    console_actions: [Confirm submissions, "Ledger shows committed and available", Lock at the timebox]
+    facilitator_script: Enforce the capital limit and the capacity warning. Each team states its thesis in one sentence before submitting.
+
+  - id: simulate_y1
+    kind: simulate_y1
+    title: Simulate Year 1 (break)
+    start: "1:10"
+    duration_minutes: 8
+    lecture_minutes: 3
+    what_happens: Engine runs; facilitator releases the performance review
+    executive_question: What happened over the first period?
+    primary_output: Year 1 performance review
+    console_actions: [Run engine, Review before release, Release the performance review]
+    facilitator_script: Run Year 1, review the results panel, then release. Remind teams that Year 1 shows leading KPIs; measures lag.
+
+  - id: analyze
+    kind: analyze
+    title: Analyze
+    start: "1:18"
+    duration_minutes: 14
+    what_happens: Teams interrogate variance with the explainer and challenger agents
+    executive_question: Why did outcomes differ from plan?
+    primary_output: Updated causal model
+    transition_script: "Ask the AI why. Then ask it what it is not sure about."
+    console_actions: [Release analyze-layer evidence if needed]
+    facilitator_script: Ask "Which of your beliefs did the evidence contradict?" Teams draft their board pitch.
+
+  - id: invest_r2
+    kind: invest_r2
+    title: Investment Round 2 and board pitch
+    start: "1:32"
+    duration_minutes: 18
+    lecture_minutes: 0
+    what_happens: 90-second pitch per team; rubric sets earned capital; teams reallocate
+    executive_question: What will we change now?
+    primary_output: Revised portfolio and capital case
+    transition_script: "The board funds learning, not loyalty to last year's projects."
+    console_actions: [Score pitches on the rubric, Set earned capital, Reopen the ledger, Lock]
+    facilitator_script: >-
+      Each team pitches for 90 seconds. Score the 15-point rubric (the console shows a suggested
+      score); earned capital is $8.0M base plus up to $4.0M. Then teams scale, modify, pause,
+      cancel or fund.
+
+  - id: simulate_y2
+    kind: simulate_y2
+    title: Simulate Year 2
+    start: "1:50"
+    duration_minutes: 8
+    lecture_minutes: 3
+    what_happens: Engine runs; Year 2 results released
+    executive_question: Did adaptation improve the trajectory?
+    primary_output: Year 2 results
+    console_actions: [Run engine, Review before release, Release Year 2 results]
+    facilitator_script: Run Year 2 and release. Point to the projected path to 4.0 and the confidence band.
+
+  - id: operating_model
+    kind: operating_model
+    title: Agent operating model
+    start: "1:58"
+    duration_minutes: 18
+    what_happens: Teams assign human / AI / agent roles across the 9-step gap-closure workflow
+    executive_question: Where should humans decide, AI assist, or agents act?
+    primary_output: Workflow and decision-rights design
+    transition_script: "Where should a person decide, where should AI assist, and where should an agent act? Defend each line."
+    console_actions: [Monitor submissions, Score value, control, adoption and recoverability]
+    facilitator_script: Autonomy level does not score. Controls proportionate to consequence, adoption feasibility and recoverability do.
+
+  - id: crisis
+    kind: crisis
+    title: Crisis
+    start: "2:16"
+    duration_minutes: 16
+    what_happens: Facilitator applies the event determined by the team's choices; timed response
+    executive_question: Can we manage the consequences?
+    primary_output: Response, controls, communications
+    transition_script: "It is Monday morning. Here is what happened."
+    console_actions: [Accept or override the recommended event and severity (audit note), Start the response timer, Score the rubric]
+    facilitator_script: Read the packet. The information is incomplete by design. Concealment and cosmetic communications score zero.
+
+  - id: results
+    kind: results
+    title: Final results
+    start: "2:32"
+    duration_minutes: 8
+    lecture_minutes: 3
+    what_happens: Scorecard with dimension profile and causal story; cross-team comparison
+    executive_question: Who created sustainable value, and how do we know?
+    primary_output: Executive scorecard
+    transition_script: "Who created sustainable value, and how do we know?"
+    console_actions: [Release scorecards, Show the dimension profiles side by side]
+    facilitator_script: Show the five-dimension profile and the causal story, never only the total.
+
+  - id: debrief
+    kind: debrief
+    title: Debrief
+    start: "2:40"
+    duration_minutes: 20
+    lecture_minutes: 5
+    what_happens: Lessons by dimension; what each archetype teaches; facilitator closes the core simulation
+    executive_question: What do we now believe?
+    primary_output: Shared lessons
+    transition_script: "Three things you believed at 9 am that you no longer believe."
+    console_actions: [Reveal hidden root causes (answer key), Walk the simplification register]
+    facilitator_script: >-
+      Walk lessons by dimension, then by archetype (automate everything, modernize everything,
+      affiliation assumed). Close with the simplification register disclosures.
+
+  - id: translate
+    kind: translate
+    title: Real-company translation (optional extension)
+    start: "3:00"
+    duration_minutes: 25
+    optional: true
+    what_happens: Each participant captures 2 to 3 opportunities; synthesizer agent builds the Opportunity Map
+    executive_question: What does this mean for us?
+    primary_output: AI Opportunity Map and next steps
+    transition_script: "Now your company. Same questions, real constraints."
+    console_actions: [Show the aggregate Opportunity Map, Export the map]
+    facilitator_script: Each participant captures 2 to 3 real opportunities with readiness scores and a first 90-day step. Consent line is on the form.
+
+contingency_cuts:
+  - {id: cut-analyze, condition: "Behind by 10 minutes or more at 1:10", checkpoint_stage: simulate_y1, cut: "Cut Analyze to 8 minutes; facilitator reads the key variance aloud instead of free interrogation"}
+  - {id: cut-opmodel, condition: "Behind by 10 minutes or more at 1:58", checkpoint_stage: operating_model, cut: "Compress the operating model exercise to steps 3 to 6 only (12 minutes)"}
+  - {id: cut-crisis, condition: "Behind by 10 minutes or more at 2:16", checkpoint_stage: crisis, cut: "Run the crisis as a single team-wide event with one shared response (10 minutes)"}
+  - {id: cut-compare, condition: "Any time", cut: "Drop the cross-team comparison discussion; show the scorecards and move to debrief", behind_minutes: 15}
+  - {id: paper-fallback, condition: "Technology failure", cut: "Paper fallback: printed payer briefs, decision forms, pre-computed results packets for the four most likely portfolios per payer", behind_minutes: 0}

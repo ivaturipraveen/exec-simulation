@@ -1,0 +1,21 @@
+county,state,cohort,first_enrollment,members,median_age,pct_age_75_plus,pct_rural,pct_dual_eligible,pct_lis,pct_spanish_preferred,pct_75plus_never_opened_app,note
+Saguaro County,AZ,Legacy,2019,7400,68,22%,5%,6%,15%,9%,24%,"Simulated, fictional data for executive education. Not real PHI. County names are fictional. Legacy; Sonoran Physician Partners (risk-bearing)"
+Copper Ridge County,AZ,Legacy,2019,4900,69,24%,9%,8%,16%,7%,22%,Legacy; Sonoran Physician Partners (risk-bearing)
+Desert Bloom County,AZ,Legacy,2020,3600,70,27%,14%,9%,17%,14%,27%,Legacy
+Live Oak Bend County,TX,Legacy,2020,5800,68,21%,6%,7%,15%,21%,23%,Legacy; Lone Oak Medical Group (risk-bearing)
+Brazos Hollow County,TX,Legacy,2021,3900,70,27%,12%,10%,18%,18%,26%,Legacy
+Palmetto Shores County,FL,Legacy,2021,3300,70,28%,4%,8%,16%,12%,25%,Legacy
+Gulfview County,FL,Legacy,2022,2100,71,30%,8%,9%,17%,9%,28%,Legacy
+Cypress Key County,FL,Legacy,2022,1500,71,31%,10%,11%,19%,11%,29%,Legacy
+Yavapine County,AZ,New,2025-03,1900,75,52%,34%,18%,24%,6%,57%,New
+Cochise Wells County,AZ,New,2025-03,1400,77,58%,46%,21%,27%,24%,66%,New
+Pecos Ridge County,TX,New,2025-03,2600,76,55%,35%,27%,32%,38%,63%,New; D-SNP service area
+Caddo Prairie County,TX,New,2025-06,2200,77,57%,39%,26%,31%,11%,64%,New; D-SNP service area
+Llano Vista County,TX,New,2025-09,1700,77,58%,44%,22%,28%,29%,68%,New
+Sabine Crossing County,TX,New,2026-01,2900,76,54%,22%,28%,33%,19%,62%,New; D-SNP service area
+Suwannee Bend County,FL,New,2025-03,2400,76,55%,29%,23%,28%,8%,60%,New; D-SNP service area
+Okeechee Lake County,FL,New,2026-01,2300,76,54%,27%,25%,30%,26%,59%,New; D-SNP service area
+Hernando Pines County,FL,New,2026-01,2500,75,51%,18%,22%,27%,7%,55%,New; D-SNP service area
+LEGACY COHORT,AZ/TX/FL,Legacy,,32500,69,25%,8%,7.9%,16.0%,13%,25%,Average age 68.9
+NEW-COUNTY COHORT,AZ/TX/FL,New-County,,19900,76,55%,31%,24.0%,29.2%,19%,61%,Average age 75.0
+PLAN TOTAL,AZ/TX/FL,All,,52400,71,36%,17%,14.0%,21.0%,15%,46%,Average age 71.2; never-opened share weighted by members 75+

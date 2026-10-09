@@ -1,0 +1,17 @@
+# Leading KPIs (pack sections 3 and 5): operational signals that move the quarter after a
+# card goes live, before the measures move. Baselines per payer live in payers/*.yaml.
+
+- {id: identity_match, name: Member identity match rate, unit: "%", measures: [m1, m2, m5], description: "Members matched confidently across pharmacy, medical and CRM data"}
+- {id: at_risk_contacted, name: At-risk members contacted per quarter, unit: "%", measures: [m1, m2]}
+- {id: fill_90day, name: 90-day fill rate, unit: "%", measures: [m1, m2]}
+- {id: bp_capture, name: Hypertensive members with a BP reading on file, unit: "%", measures: [m3]}
+- {id: provider_action_rate, name: Provider alert action rate, unit: "%", measures: [m3, m4, m5]}
+- {id: lab_feed_coverage, name: Lab feed coverage, unit: "%", measures: [m4]}
+- {id: outreach_response, name: Outreach response rate, unit: "%", measures: [m5]}
+- {id: adt_latency_days, name: ADT notification latency, unit: days, higher_is_better: false, measures: [m7]}
+- {id: followup_48h, name: Discharges with a care manager contact within 48 hours, unit: "%", measures: [m7]}
+- {id: third_next_available, name: Third-next-available appointment, unit: days, higher_is_better: false, measures: [m9, m5]}
+- {id: abandonment, name: Contact-center abandonment, unit: "%", higher_is_better: false, measures: [m10, m11]}
+- {id: fcr, name: First-contact resolution, unit: "%", measures: [m10]}
+- {id: appeals_cycle_days, name: Appeals cycle time, unit: days, higher_is_better: false, measures: [m12]}
+- {id: copilot_adoption, name: Copilot and agent adoption, unit: "%", description: "Average adoption of live copilots and agents (I4, I6, I8)"}

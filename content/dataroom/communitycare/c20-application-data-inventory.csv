@@ -1,0 +1,13 @@
+application,owner,function,warehouse_source,integration_method,data_latency,notes,analyst_note
+Meridian EHR (shared instance),Cascade Valley Health IT,"Clinical record, orders, scheduling, EHR inbox",Yes,Nightly extract plus 4-hour lab and vitals feed,Under 24 hours,"All CVH employed PCPs, hospitals and imaging","Simulated, fictional data for executive education. Not real PHI. Inventory as of Aug 2026, Plan IT and CVH IT. Clinical data current to 24 hours for system-attributed members."
+Keystone Core Admin,Plan IT,"Enrollment, eligibility, claims adjudication",Yes,Nightly batch,24 hours,,
+ClearPath PBM feed,ClearPath PBM (vendor),Pharmacy claims and refill-gap file,Yes,Weekly file,7 days,PDC calculated in warehouse from this feed.,
+CareTrack Care Management,Plan IT,Plan care manager case records,Yes,Nightly batch,24 hours,Used by 20 plan-employed care managers; clinic-embedded staff document in Meridian EHR.,
+CareReach Outreach Platform,Brightwave Engagement (vendor),"IVR, SMS and letter campaigns",Yes,Daily file,24 hours,,
+Contact center telephony and CRM,Plan IT,"Call routing, call notes, complaint intake",Yes,Nightly batch,24 hours,Complaint coding in CRM; CTM cases loaded monthly.,
+CommunityCare Data Warehouse,Plan IT,Integration of the 6 sources above; measure engine,n/a,n/a,n/a,"2 data engineers, 3 analysts. On-premises; migration not funded.",
+GapConnect provider portal,Plan IT,Delivers gap and risk recommendations to clinicians,No (consumes warehouse),Monthly refresh,30 days,Separate login from Meridian EHR; not linked to EHR inbox.,
+HEDIS measure engine (certified),Northfield Quality Software (vendor),HEDIS rate calculation and supplemental data,No (consumes warehouse),Monthly,30 days,,
+CAHPS and HOS survey vendor files,Ridgeline Survey Partners (vendor),Survey results,No (manual load),Annual,Annual,,
+Appeals and grievances tracker,Plan IT,"Appeals case management, IRE submissions",No (spreadsheet extract),Monthly manual,30 days,Not yet integrated.,
+Clinical risk model service,Cascade Valley Health analytics,Hosts plan risk model scoring,No,Weekly scoring,7 days,See model card C-23.,

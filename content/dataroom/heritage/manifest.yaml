@@ -1,0 +1,335 @@
+# Data room inventory — Content Pack v0.1 section 6. Simulated, fictional data.
+payer_id: heritage
+artifacts:
+- id: L-01
+  title: Stars scorecard by contract, last 3 cycles
+  format: dashboard
+  domain: stars_quality
+  file: l01-stars-scorecard-by-contract.md
+  summary: Core 4.0 → 3.5; Lakeshore 3.0 flat; appeals and readmissions at 2 Stars
+  supports: neutral
+  release: company
+  tags:
+  - dashboard
+  - stars
+- id: L-02
+  title: Measure performance by book of business
+  format: table
+  domain: stars_quality
+  file: l02-measure-performance-by-book.csv
+  summary: 'Adherence: core 89.2, Lakeshore 82.1, Pinecrest 86.0; blended 87.5'
+  supports: L-MS1
+  release: diagnose
+  tags:
+  - stars
+  - table
+- id: L-03
+  title: 'Prior initiative post-mortem: ''OneView'' program'
+  format: memo
+  domain: stars_quality
+  file: l03-oneview-post-mortem.md
+  summary: $9M data program cancelled after 18 months with no measure movement
+  supports: neutral
+  release: diagnose
+  tags:
+  - memo
+  - stars
+- id: L-04
+  title: Gap-closure campaign results
+  format: table
+  domain: stars_quality
+  file: l04-gap-closure-campaign-results.csv
+  summary: Mail outreach 14% returned undeliverable, concentrated in Lakeshore
+  supports: L-RC1
+  release: diagnose
+  tags:
+  - stars
+  - table
+- id: L-05
+  title: Membership by book, age, dual status
+  format: table
+  domain: members
+  file: l05-membership-by-book-age-dual.csv
+  summary: 'Lakeshore: 41% dual, median age 77; core: 22% dual'
+  supports: neutral
+  release: diagnose
+  tags:
+  - members
+  - table
+- id: L-06
+  title: Member barriers survey
+  format: survey
+  domain: members
+  file: l06-member-barriers-survey.md
+  summary: Transport and housing instability top barriers for Lakeshore members
+  supports: neutral
+  release: diagnose
+  tags:
+  - members
+  - survey
+- id: L-07
+  title: Member identity reconciliation study
+  format: memo
+  domain: members
+  file: l07-member-identity-reconciliation-study.md
+  summary: 11% of members duplicated or unmatched across books; 46,000 records
+  supports: L-RC1
+  release: diagnose
+  tags:
+  - members
+  - memo
+- id: L-08
+  title: Disenrollment analysis
+  format: table
+  domain: members
+  file: l08-disenrollment-analysis.csv
+  summary: Voluntary disenrollment rising in Lakeshore; top reason 'could not reach plan'
+  supports: L-MS2
+  release: diagnose
+  tags:
+  - members
+  - table
+- id: L-09
+  title: Pharmacy adherence program design and results
+  format: memo
+  domain: pharmacy
+  file: l09-pharmacy-adherence-program.md
+  summary: Targeting model precision 0.71; outreach reaches 15% of at-risk list per quarter
+  supports: L-RC2
+  release: diagnose
+  tags:
+  - memo
+  - pharmacy
+- id: L-10
+  title: Pharmacist staffing and call capacity
+  format: table
+  domain: pharmacy
+  file: l10-pharmacist-staffing-call-capacity.csv
+  summary: 6 pharmacists, 2,100 calls per quarter against 14,000 at-risk members
+  supports: L-RC2
+  release: diagnose
+  tags:
+  - pharmacy
+  - table
+- id: L-11
+  title: Refill gap analysis by book
+  format: table
+  domain: pharmacy
+  file: l11-refill-gap-analysis-by-book.csv
+  summary: Lakeshore refill gaps 2.3x core; 90-day fill share 31% vs 58%
+  supports: L-MS1
+  release: diagnose
+  tags:
+  - pharmacy
+  - table
+- id: L-12
+  title: Contact-center operations report
+  format: dashboard
+  domain: experience
+  file: l12-contact-center-operations.md
+  summary: Abandonment 14%, up from 9%; IVR vendor contract lapsed; AHT 11.2 minutes
+  supports: L-MS2
+  release: diagnose
+  tags:
+  - dashboard
+  - service
+- id: L-13
+  title: CAHPS trend and verbatims
+  format: survey
+  domain: experience
+  file: l13-cahps-trend-and-verbatims.md
+  summary: 'Customer service 87, flat; verbatims: ''kept getting transferred'''
+  supports: L-MS2
+  release: diagnose
+  tags:
+  - service
+  - survey
+- id: L-14
+  title: Complaint log with root-cause coding
+  format: log
+  domain: experience
+  file: l14-complaint-log.md
+  summary: 0.30 per 1,000; 'wrong information' and 'mail to old address' rising
+  supports: L-RC1
+  release: diagnose
+  tags:
+  - log
+  - service
+- id: L-15
+  title: Appeals operations review
+  format: memo
+  domain: experience
+  file: l15-appeals-operations-review.md
+  summary: Two appeals systems; 17% of cases miss IRE documentation; upheld rate 83%
+  supports: neutral
+  release: diagnose
+  tags:
+  - memo
+  - service
+- id: L-16
+  title: Value-based contract inventory
+  format: table
+  domain: providers
+  file: l16-value-based-contract-inventory.csv
+  summary: 35% of members under quality-incentive contracts; those groups average 3.9 Stars
+  supports: neutral
+  release: diagnose
+  tags:
+  - providers
+  - table
+- id: L-17
+  title: ADT feed coverage by health system
+  format: table
+  domain: providers
+  file: l17-adt-feed-coverage-by-health-system.csv
+  summary: Feeds live for 2 of 5 systems; 60% of discharges known only via claims (9 days)
+  supports: L-RC3
+  release: diagnose
+  tags:
+  - providers
+  - table
+- id: L-18
+  title: Transitions of care audit
+  format: audit
+  domain: providers
+  file: l18-transitions-of-care-audit.md
+  summary: 48-hour follow-up contact achieved for 23% of discharges
+  supports: L-RC3
+  release: diagnose
+  tags:
+  - audit
+  - providers
+- id: L-19
+  title: 'Provider data quality: attribution and NPI mismatches'
+  format: table
+  domain: providers
+  file: l19-provider-data-quality.csv
+  summary: Attribution confidence 88% core, 74% Lakeshore
+  supports: L-RC1
+  release: diagnose
+  tags:
+  - providers
+  - table
+- id: L-20
+  title: Application and data inventory
+  format: table
+  domain: technology
+  file: l20-application-and-data-inventory.csv
+  summary: 14 source systems, 3 CRMs, 2 claims platforms; warehouse latency 11 days
+  supports: neutral
+  release: company
+  tags:
+  - data
+  - table
+- id: L-21
+  title: Identity match rate report by source pair
+  format: table
+  domain: technology
+  file: l21-identity-match-rate-by-source-pair.csv
+  summary: Pharmacy-to-medical match 86% in Lakeshore; 97% core
+  supports: L-RC1
+  release: diagnose
+  tags:
+  - data
+  - table
+- id: L-22
+  title: Claims platform migration plan
+  format: deck
+  domain: technology
+  file: l22-claims-platform-migration-plan.md
+  summary: Core claims migration consumes 60% of integration capacity for 3 quarters
+  supports: neutral
+  release: diagnose
+  tags:
+  - data
+  - deck
+- id: L-23
+  title: Data ownership matrix
+  format: table
+  domain: technology
+  file: l23-data-ownership-matrix.csv
+  summary: Nine data owners; Lakeshore data has none
+  supports: L-RC1
+  release: diagnose
+  tags:
+  - data
+  - table
+- id: L-24
+  title: Transformation envelope and board minutes
+  format: memo
+  domain: finance
+  file: l24-transformation-envelope-board-minutes.md
+  summary: $25M over two years; board wants quarterly evidence; 'no more OneViews'
+  supports: neutral
+  release: company
+  tags:
+  - finance
+  - memo
+- id: L-25
+  title: Operating cost by function
+  format: table
+  domain: finance
+  file: l25-operating-cost-by-function.csv
+  summary: Contact center $41M per year; appeals $6M; care management $24M; pharmacy clinical programs $3.4M
+  # R-03 draft (pending content-owner review): the cost view shows adherence runs on 6 pharmacists,
+  # a second domain of evidence that L-RC2 is capacity-capped. Was: neutral.
+  supports: L-RC2
+  release: company
+  tags:
+  - finance
+  - table
+- id: L-26
+  title: 4-Star bonus value by contract
+  format: memo
+  domain: finance
+  file: l26-four-star-bonus-value-by-contract.md
+  summary: Core at 4.0 worth $160M per year; Lakeshore reaching 4.0 worth $58M (illustrative)
+  supports: neutral
+  release: company
+  tags:
+  - finance
+  - memo
+- id: L-27
+  title: Vendor commitments and renewals
+  format: table
+  domain: finance
+  file: l27-vendor-commitments-and-renewals.csv
+  summary: IVR vendor lapsed; CRM renewals staggered; PBM contract 2 years
+  supports: neutral
+  release: diagnose
+  tags:
+  - finance
+  - table
+- id: L-28
+  title: AI inventory and model cards
+  format: model_card
+  domain: risk
+  file: l28-ai-inventory-and-model-cards.md
+  summary: Five models; adherence model validated; no subgroup analysis for dual-eligible members
+  supports: neutral
+  release: diagnose
+  tags:
+  - governance
+  - model-card
+- id: L-29
+  title: Privacy and data-sharing agreements
+  format: contract
+  domain: risk
+  file: l29-privacy-and-data-sharing-agreements.md
+  summary: Agreements in place with 2 health systems; 3 pending for 14 months
+  supports: L-RC3
+  release: diagnose
+  tags:
+  - contract
+  - governance
+- id: L-30
+  title: 'Internal audit: data governance'
+  format: audit
+  domain: risk
+  file: l30-internal-audit-data-governance.md
+  summary: No enterprise data owner; identity rules differ by book
+  supports: L-RC1
+  release: diagnose
+  tags:
+  - audit
+  - governance

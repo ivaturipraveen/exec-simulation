@@ -1,0 +1,185 @@
+# Payer bible — Content Pack v0.1 section 2.2. Simulated, fictional organization.
+id: heritage
+name: Heritage Medicare
+archetype: 15-year legacy incumbent
+tagline: Scale, history and data everywhere, none of it joined up.
+members: 431000
+starting_stars: 3.5
+starting_stars_text: 3.5 Stars (simulated); Lakeshore contract at 3.0
+# The pack's starting measure values compute to a 3.08 summary (3.0 Stars). The +0.20 stands in
+# for the ~30 measures not modelled so the baseline matches the stated 3.5 (review item R-02).
+rating_adjustment: 0.20
+capital_round1_musd: 15.0
+capacity_per_quarter: 8
+data_readiness: 2
+dual_share: 0.29
+flags: [value_based_contracts]
+profile:
+  - {label: Members, value: "431,000 across three acquired books (Heritage core 268,000; Lakeshore 97,000; Pinecrest 66,000)"}
+  - {label: Geography, value: "6 states in the Midwest and Northeast, 140 counties"}
+  - {label: Product mix, value: "61% HMO, 27% PPO, 12% D-SNP"}
+  - {label: Dual-eligible / LIS share, value: "29% dual, 38% LIS"}
+  - {label: Average member age, value: "74.8"}
+  - {label: Starting overall rating, value: "3.5 Stars (simulated); Lakeshore contract at 3.0"}
+  - {label: Revenue, value: "$5.9B illustrative"}
+  - {label: Round 1 capital, value: "$15.0M of a $25M to $27M two-year transformation envelope"}
+  - {label: Round 2 capital, value: "$8.0M base plus up to $4.0M earned at the board pitch"}
+  - {label: Implementation capacity, value: "8 capacity points per quarter (large teams, slow change control)"}
+  - {label: Data readiness score, value: "2 of 5 (14 source systems, 3 CRMs, 11% member identity mismatch across books)"}
+  - {label: Care management staff, value: "210 care managers, 6 pharmacists, 40 outreach staff"}
+  - {label: Contact center, value: "540 agents in-house, legacy IVR, abandonment 14%"}
+  - {label: Technology, value: "On-premise data warehouse plus a partial cloud lake; 14 source systems; 3 CRMs; 2 claims platforms"}
+  - {label: Provider network, value: "Broad; 35% of members attributed to value-based contracts with quality incentives; rest fee-for-service"}
+population: >-
+  Older, more complex, with a high dual-eligible share concentrated in the Lakeshore book. Social
+  barriers (transport, housing instability) and fragmented care across many health systems reduce
+  the lift any single intervention can produce. Longitudinal data is rich for the core book and
+  poor for acquired books.
+board_mandate: >-
+  Hold 4.0 Stars on the core contract and lift Lakeshore to 3.5 within two cycles. The board has
+  approved a $25M transformation envelope and expects visible progress at each quarterly review.
+  A failed flagship program two years ago makes the board allergic to long foundation builds.
+briefing: >-
+  Heritage Medicare is a 15-year incumbent with 431,000 members across three books: the Heritage
+  core (268,000) plus the acquired Lakeshore (97,000) and Pinecrest (66,000) books. It has scale,
+  ten years of clean history on the core book, value-based contracts covering 35% of members and a
+  strong 38-person quality team. It also runs 14 source systems, 3 CRMs and 2 claims platforms,
+  and 11% of members cannot be matched confidently across them. The enterprise sits at 3.5 Stars;
+  the Lakeshore contract is at 3.0. You have $15.0M of Round 1 capital from a $25M two-year
+  envelope and 8 capacity points a quarter. A $9M data program was cancelled two years ago with
+  nothing to show, and the board has not forgotten it.
+advantages:
+  - "Scale: a one-point adherence lift is worth more here than anywhere"
+  - Ten years of clean history on 268,000 core members
+  - Established value-based contracts covering 35% of members
+  - Institutional knowledge of Stars operations; strong quality team of 38
+constraints:
+  - Three member identity schemes; 11% of members cannot be matched confidently across pharmacy, medical and CRM data
+  - Pharmacy outreach capacity reaches only the top 15% of at-risk members
+  - Discharge (ADT) feeds cover 2 of 5 major health systems; the rest arrive 9 days late via claims
+  - Change control cycle is 6 weeks; any system change competes with a core claims platform migration
+hidden_root_causes:
+  - id: L-RC1
+    title: Identity mismatch poisons every list
+    description: >-
+      Acquired books use different member IDs and address standards. 11% of members are
+      duplicated or unmatched. Gap lists are wrong for those members, outreach mail goes to old
+      addresses, and predictive models train on fragmented records. The core-book numbers look
+      fine, which hides the problem.
+    affected_measures: [m1, m2, m3, m4, m5]
+    clue: >-
+      Mail outreach comes back undeliverable far more often in Lakeshore, and gap lists for
+      acquired-book members do not reconcile with pharmacy data.
+    addressed_by: [i1]
+  - id: L-RC2
+    title: Adherence is capacity-capped, not insight-capped
+    description: >-
+      The pharmacy adherence program is well designed and already targets the right members. Six
+      pharmacists reach 15% of the at-risk list per quarter. A better model adds nothing until
+      outreach capacity or automation of refill reminders is funded.
+    affected_measures: [m1, m2]
+    clue: >-
+      The adherence targeting model is already precise, yet only about one in seven at-risk
+      members is contacted each quarter.
+    addressed_by: [i14, i8]
+  - id: L-RC3
+    title: Readmissions are a data latency problem
+    description: >-
+      Care managers learn of 60% of discharges from claims 9 days later, after the 7-day
+      follow-up window. ADT integration with the three missing health systems would move the
+      readmission measure more than any AI investment.
+    affected_measures: [m7]
+    clue: >-
+      Most discharges reach care managers nine days after the fact; 48-hour follow-up happens for
+      fewer than a quarter of discharges.
+    addressed_by: [i13]
+misleading_signals:
+  - id: L-MS1
+    title: Enterprise adherence looks like 4 Stars
+    why_misleading: >-
+      The blended number is 87.5%. Core book is 89.2%, Lakeshore is 82.1%. Teams that read the
+      enterprise view under-invest in adherence and lose the Lakeshore contract rating.
+  - id: L-MS2
+    title: CAHPS looks mid-pack and stable
+    why_misleading: >-
+      Customer Service at 87 reads as acceptable. Abandonment is 14% and rising since the IVR
+      vendor contract lapsed. Complaints per 1,000 are at 3 Stars now and will drop a star within a
+      year without action, regardless of AI investment.
+trap_title: Modernize everything before value
+trap_description: >-
+  A $6M data modernization plus $5M identity program consumes all capacity for a year, shows no
+  measure movement at the board pitch, and loses Round 2 capital. The lesson is to sequence
+  foundations and near-term value: identity for Lakeshore only, ADT feeds, pharmacy capacity.
+measures:
+  m1: {value: 87.5, headroom: 2.0, headroom_text: "+2.0 pts enterprise, +5.0 pts Lakeshore", root_cause_link: "L-RC1, L-RC2"}
+  m2: {value: 88.5, headroom: 1.5, headroom_text: "+1.5 pts enterprise, +4.5 pts Lakeshore", root_cause_link: "L-RC1, L-RC2"}
+  m3: {value: 66.0, headroom: 7.0, headroom_text: "+7 pts", root_cause_link: L-RC1}
+  m4: {value: 72.0, headroom: 6.0, headroom_text: "+6 pts", root_cause_link: L-RC1}
+  m5: {value: 74.0, headroom: 4.0, headroom_text: "+4 pts", root_cause_link: "L-RC1 (wrong addresses)"}
+  m7: {value: 11.8, headroom: 2.5, headroom_text: "-2.5 (ADT feeds are the lever)", root_cause_link: L-RC3}
+  m9: {value: 76.0, headroom: 3.0, headroom_text: "+3 pts", root_cause_link: none}
+  m10: {value: 87.0, headroom: 4.0, headroom_text: "+4 pts", root_cause_link: L-MS2}
+  m11: {value: 0.30, headroom: 0.12, headroom_text: "-0.12 (or +0.25 if abandonment is not fixed)", root_cause_link: L-MS2}
+  m12: {value: 83.0, headroom: 8.0, headroom_text: "+8 pts", root_cause_link: two appeals systems from acquisitions}
+kpis:
+  identity_match: 89
+  at_risk_contacted: 15
+  fill_90day: 50
+  bp_capture: 68
+  provider_action_rate: 24
+  lab_feed_coverage: 58
+  outreach_response: 14
+  adt_latency_days: 9.0
+  followup_48h: 23
+  third_next_available: 13
+  abandonment: 14
+  fcr: 66
+  appeals_cycle_days: 38
+  copilot_adoption: 0
+drifts:
+  - measure: m11
+    delta_per_year: 0.125
+    unless: {any_live: [i17, i4]}
+    note: Abandonment keeps rising since the IVR vendor contract lapsed; complaints drop a star within a year
+  - measure: m10
+    delta_per_year: -0.75
+    unless: {any_live: [i17, i4]}
+    note: Customer Service erodes while abandonment rises
+segments:
+  - id: lakeshore
+    name: Lakeshore contract
+    members: 97000
+    starting_stars: 3.0
+    target_stars: 3.5
+    target_cycles: 2
+    measure_overrides:
+      m1: {value: 82.1, headroom: 5.0, headroom_text: "+5.0 pts", root_cause_link: "L-RC1, L-RC2"}
+      m2: {value: 84.3, headroom: 4.5, headroom_text: "+4.5 pts", root_cause_link: "L-RC1, L-RC2"}
+viable_strategies:
+  - title: Sequenced foundation
+    description: >-
+      Identity resolution scoped to Lakeshore (I1 at partial scope), ADT feeds and transitions
+      program (I13), pharmacy capacity (I14), governance (I10). Round 2 adds predictive adherence
+      (I3) once identity is clean.
+    round1: [i1, i13, i14, i10, i17, i9, i12]
+    round2: [i3]
+    scopes: {i1: scoped}
+  - title: Operational value first
+    description: >-
+      Contact-center copilot (I4) with IVR modernization (I17) to stop the complaints slide,
+      appeals intelligence (I9) to fix the 2-Star appeals measure, ADT feeds (I13). Foundations in
+      Round 2 with earned credibility.
+    round1: [i4, i17, i9, i13, i14, i10]
+    round2: [i1, i12]
+failure_modes:
+  - title: Full modernization
+    description: "Full modernization (I1 full scope plus I2) in Round 1: capacity overrun 160%, nothing live by the pitch, the data reconciliation crisis fires at high severity."
+  - title: Predictive-heavy
+    description: "Predictive-heavy portfolio (I3, I5, I8) on unmatched identity: models look accurate in validation, outreach goes to the wrong members, complaints rise."
+conflict_hooks:
+  - roles: [CIO, CFO]
+    tension: Fund the platform the CIO has wanted for years vs. show the board value this year.
+  - roles: [Chief Quality Officer, COO]
+    tension: Protect the core contract's 4 Stars vs. rescue Lakeshore.
+  - roles: [Chief Medical Officer, Head of Member Services]
+    tension: Clinical programs vs. fixing the contact center that drives complaints.

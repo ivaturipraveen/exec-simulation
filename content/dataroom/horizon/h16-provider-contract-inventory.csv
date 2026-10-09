@@ -1,0 +1,21 @@
+county,state,cohort,members,contracted_pcp_practices,contract_model,quality_terms,risk_bearing_group,pct_members_in_risk_group,contract_template,next_renewal,note
+Saguaro County,AZ,Legacy,7400,72,"Risk-bearing (shared risk with quality gate) for 4,300 members; remainder fee-for-service","Yes: CBP, HbA1c control, breast cancer screening, adherence; 1.5% of capitation at risk",Sonoran Physician Partners,58%,Group agreement 2023,2026-12-31,"Simulated, fictional data for executive education. Not real PHI. Primary care contracts only. Specialist and hospital contracts are fee-for-service in all counties."
+Copper Ridge County,AZ,Legacy,4900,48,"Risk-bearing (shared risk with quality gate) for 2,400 members; remainder fee-for-service","Yes: CBP, HbA1c control, breast cancer screening, adherence; 1.5% of capitation at risk",Sonoran Physician Partners,49%,Group agreement 2023,2026-12-31,
+Desert Bloom County,AZ,Legacy,3600,40,100% fee-for-service,None,None,0%,2022 Horizon standard FFS,2027-06-30,
+Live Oak Bend County,TX,Legacy,5800,66,"Risk-bearing (shared risk with quality gate) for 3,100 members; remainder fee-for-service","Yes: CBP, HbA1c control, breast cancer screening, adherence; 1.5% of capitation at risk",Lone Oak Medical Group,53%,Group agreement 2023,2026-12-31,
+Brazos Hollow County,TX,Legacy,3900,44,"Risk-bearing (shared risk with quality gate) for 1,400 members; remainder fee-for-service","Yes: CBP, HbA1c control, breast cancer screening, adherence; 1.5% of capitation at risk",Lone Oak Medical Group,36%,Group agreement 2023,2026-12-31,
+Palmetto Shores County,FL,Legacy,3300,46,100% fee-for-service,None,None,0%,2022 Horizon standard FFS,2027-06-30,
+Gulfview County,FL,Legacy,2100,32,100% fee-for-service,None,None,0%,2022 Horizon standard FFS,2027-06-30,
+Cypress Key County,FL,Legacy,1500,24,100% fee-for-service,None,None,0%,2022 Horizon standard FFS,2027-06-30,
+Yavapine County,AZ,New,1900,28,100% fee-for-service,None,None,0%,2025 Horizon standard FFS (Medicare rate + 2%),2027-12-31,New-county contracts were signed by the expansion team to meet network adequacy; template has no quality or data-sharing clause
+Cochise Wells County,AZ,New,1400,19,100% fee-for-service,None,None,0%,2025 Horizon standard FFS (Medicare rate + 2%),2027-12-31,
+Pecos Ridge County,TX,New,2600,34,100% fee-for-service,None,None,0%,2025 Horizon standard FFS (Medicare rate + 2%),2027-12-31,
+Caddo Prairie County,TX,New,2200,30,100% fee-for-service,None,None,0%,2025 Horizon standard FFS (Medicare rate + 2%),2027-12-31,
+Llano Vista County,TX,New,1700,22,100% fee-for-service,None,None,0%,2025 Horizon standard FFS (Medicare rate + 2%),2027-12-31,
+Sabine Crossing County,TX,New,2900,38,100% fee-for-service,None,None,0%,2025 Horizon standard FFS (Medicare rate + 2%),2027-12-31,
+Suwannee Bend County,FL,New,2400,32,100% fee-for-service,None,None,0%,2025 Horizon standard FFS (Medicare rate + 2%),2027-12-31,
+Okeechee Lake County,FL,New,2300,31,100% fee-for-service,None,None,0%,2025 Horizon standard FFS (Medicare rate + 2%),2027-12-31,
+Hernando Pines County,FL,New,2500,34,100% fee-for-service,None,None,0%,2025 Horizon standard FFS (Medicare rate + 2%),2027-12-31,
+LEGACY TOTAL,AZ/TX/FL,Legacy,32500,372,2 risk-bearing groups plus fee-for-service,Quality terms in 2 group agreements only,2 groups,34%,,,"11,200 members attributed to risk groups"
+NEW-COUNTY TOTAL,AZ/TX/FL,New,19900,268,100% fee-for-service,No quality terms in any contract,None,0%,,,No supplemental data-sharing obligation
+PLAN TOTAL,AZ/TX/FL,All,52400,640,,,2 groups,21%,,,

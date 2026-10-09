@@ -1,0 +1,81 @@
+/* Layout refinements and responsive behaviour. Imported last so it wins over earlier rules. */
+
+.select {
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-right: 28px;
+  line-height: normal;
+}
+
+.grid-split {
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+}
+
+.timeline__step .t {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.fac__top {
+  height: auto;
+  min-height: var(--topbar-h);
+  flex-wrap: wrap;
+}
+
+@media (max-width: 1600px) {
+  .timeline {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 960px) {
+  .shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .sidebar {
+    min-width: 0;
+  }
+  .sidebar__footer {
+    display: none;
+  }
+  .nav-item {
+    white-space: nowrap;
+    flex: none;
+  }
+  .topbar {
+    height: auto;
+    min-height: var(--topbar-h);
+    flex-wrap: wrap;
+    padding: 10px 16px;
+    gap: 10px;
+  }
+  .page-header h1 {
+    font-size: 21px;
+  }
+  .grid-split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 760px) {
+  .timeline {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .fac__top {
+    padding: 10px 16px;
+  }
+  .fac__tabs {
+    padding: 0 8px;
+    overflow-x: auto;
+  }
+  .opmodel__controls {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .grid-4 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

@@ -1,0 +1,333 @@
+# Data room inventory — Content Pack v0.1 section 6. Simulated, fictional data.
+payer_id: horizon
+artifacts:
+- id: H-01
+  title: Stars scorecard, last 3 cycles
+  format: dashboard
+  domain: stars_quality
+  file: h01-stars-scorecard.md
+  summary: Overall 2.5 → 3.0 → 3.0; BP control and complaints flat at 2 Stars; breast screening slipped
+  supports: neutral
+  release: company
+  tags:
+  - dashboard
+  - stars
+- id: H-02
+  title: Measure performance by county cohort
+  format: table
+  domain: stars_quality
+  file: h02-measure-performance-by-county-cohort.csv
+  summary: Legacy counties average 3.6; counties entered in last 18 months average 2.4
+  supports: H-RC1
+  release: diagnose
+  tags:
+  - stars
+  - table
+- id: H-03
+  title: Quality team initiative log 2024 to 2026
+  format: log
+  domain: stars_quality
+  file: h03-quality-initiative-log.md
+  summary: Nine initiatives, six abandoned mid-year; no owner named on four
+  supports: neutral
+  release: diagnose
+  tags:
+  - log
+  - stars
+- id: H-04
+  title: Provider gap-alert portal statistics
+  format: dashboard
+  domain: stars_quality
+  file: h04-provider-gap-alert-portal.md
+  summary: Alerts sent 38,000; opened 9%; acted on 3%; legacy-county risk groups open 61%
+  supports: H-RC3
+  release: diagnose
+  tags:
+  - dashboard
+  - stars
+- id: H-05
+  title: Membership growth and tenure distribution
+  format: table
+  domain: members
+  file: h05-membership-growth-tenure.csv
+  summary: 40% of members have under 12 months tenure; 22% under 6 months
+  supports: H-RC1
+  release: diagnose
+  tags:
+  - members
+  - table
+- id: H-06
+  title: Segmentation model output
+  format: table
+  domain: members
+  file: h06-segmentation-model-output.csv
+  summary: Four segments; 'digitally engaged' segment is 71% legacy-county members under 72
+  supports: H-RC2
+  release: diagnose
+  tags:
+  - members
+  - table
+- id: H-07
+  title: Member demographics by county
+  format: table
+  domain: members
+  file: h07-member-demographics-by-county.csv
+  summary: 'New-county members: median age 76, 31% rural, 24% dual'
+  supports: H-RC2
+  release: diagnose
+  tags:
+  - members
+  - table
+- id: H-08
+  title: D-SNP launch readiness memo
+  format: memo
+  domain: members
+  file: h08-dsnp-launch-readiness-memo.md
+  summary: 3,100 D-SNP members enrolled in 4 months; care model staffing 'to follow'
+  supports: neutral
+  release: diagnose
+  tags:
+  - members
+  - memo
+- id: H-09
+  title: Adherence PDC distribution by tenure
+  format: table
+  domain: pharmacy
+  file: h09-adherence-pdc-by-tenure.csv
+  summary: 'Members with 12+ months history: PDC 88%; under 12 months: 79% or excluded'
+  supports: H-RC1
+  release: diagnose
+  tags:
+  - pharmacy
+  - table
+- id: H-10
+  title: Pharmacy outreach results, Q1 to Q2
+  format: table
+  domain: pharmacy
+  file: h10-pharmacy-outreach-results.csv
+  summary: 1,900 calls, 62% to legacy-county members already above 80% PDC
+  supports: H-RC1
+  release: diagnose
+  tags:
+  - pharmacy
+  - table
+- id: H-11
+  title: PBM refill reminder program summary
+  format: memo
+  domain: pharmacy
+  file: h11-pbm-refill-reminder-summary.md
+  summary: 'SMS reminders: 48% delivered, 9% opened; mail: 91% delivered'
+  supports: H-RC2
+  release: diagnose
+  tags:
+  - memo
+  - pharmacy
+- id: H-12
+  title: Contact-center vendor scorecard
+  format: dashboard
+  domain: experience
+  file: h12-contact-center-vendor-scorecard.md
+  summary: Calls per member low; abandonment 11%; IVR disconnects after 4 minutes (footnote)
+  supports: H-MS2
+  release: diagnose
+  tags:
+  - dashboard
+  - service
+- id: H-13
+  title: CAHPS results and verbatims
+  format: survey
+  domain: experience
+  file: h13-cahps-results-verbatims.md
+  summary: Appointments 80 (good), customer service 88; verbatims mention 'could not get through'
+  supports: H-MS2
+  release: diagnose
+  tags:
+  - service
+  - survey
+- id: H-14
+  title: Complaint log with root-cause coding
+  format: log
+  domain: experience
+  file: h14-complaint-log-root-cause.md
+  summary: Complaints per 1,000 at 0.55; 34% coded 'outreach received in error' or 'wrong household'
+  supports: H-RC2
+  release: diagnose
+  tags:
+  - log
+  - service
+- id: H-15
+  title: App engagement dashboard
+  format: dashboard
+  domain: experience
+  file: h15-app-engagement-dashboard.md
+  summary: 44% monthly active; 86% of actives are in legacy counties
+  supports: H-MS1
+  release: diagnose
+  tags:
+  - dashboard
+  - service
+- id: H-16
+  title: Provider contract inventory by county
+  format: table
+  domain: providers
+  file: h16-provider-contract-inventory.csv
+  summary: 'New-county contracts: 100% fee-for-service, no quality terms; legacy: 2 risk groups'
+  supports: H-RC3
+  release: diagnose
+  tags:
+  - providers
+  - table
+- id: H-17
+  title: Blood pressure reading capture analysis
+  format: table
+  domain: providers
+  file: h17-bp-reading-capture-analysis.csv
+  summary: Only 54% of hypertensive members have a BP reading in plan data; chart review suggests 71% controlled
+  supports: H-RC3
+  release: diagnose
+  tags:
+  - providers
+  - table
+- id: H-18
+  title: Provider relations call notes, new counties
+  format: log
+  domain: providers
+  file: h18-provider-relations-call-notes.md
+  summary: '''We don''t know who you are''; ''portal login never worked'''
+  supports: H-RC3
+  release: diagnose
+  tags:
+  - log
+  - providers
+- id: H-19
+  title: Attribution confidence report
+  format: table
+  domain: providers
+  file: h19-attribution-confidence-report.csv
+  summary: Attribution confidence 68% in new counties, 91% legacy
+  supports: H-RC1
+  release: diagnose
+  tags:
+  - providers
+  - table
+- id: H-20
+  title: Application and data inventory
+  format: table
+  domain: technology
+  file: h20-application-data-inventory.csv
+  summary: 4 source systems, one cloud platform, one CRM; integration backlog 3 weeks
+  supports: neutral
+  release: company
+  tags:
+  - data
+  - table
+- id: H-21
+  title: Identity match rate report
+  format: table
+  domain: technology
+  file: h21-identity-match-rate-report.csv
+  summary: Match rate 93% overall; 84% in new counties; 2,400 households share a phone number
+  supports: H-RC2
+  release: diagnose
+  tags:
+  - data
+  - table
+- id: H-22
+  title: Prior-plan history ingestion proposal
+  format: memo
+  domain: technology
+  file: h22-prior-plan-history-proposal.md
+  summary: Vendor offers claims history for 70% of switchers; not funded
+  supports: H-RC1
+  release: diagnose
+  tags:
+  - data
+  - memo
+- id: H-23
+  title: Data quality exception report
+  format: log
+  domain: technology
+  file: h23-data-quality-exception-report.md
+  summary: Address churn 18% per year; 3,100 members with undeliverable mail
+  supports: H-RC2
+  release: diagnose
+  tags:
+  - data
+  - log
+- id: H-24
+  title: Transformation budget and board expectations
+  format: memo
+  domain: finance
+  file: h24-transformation-budget-board-expectations.md
+  summary: $18M Round 1; board wants a visible Stars signal in 12 months
+  supports: neutral
+  release: company
+  tags:
+  - finance
+  - memo
+- id: H-25
+  title: 'Staffing plan: quality and care management'
+  format: table
+  domain: finance
+  file: h25-staffing-plan-quality-care-management.csv
+  summary: 6 quality staff, 22 care managers, 4 pharmacists; 11 open requisitions
+  supports: neutral
+  release: company
+  tags:
+  - finance
+  - table
+- id: H-26
+  title: 4-Star bonus value estimate
+  format: memo
+  domain: finance
+  file: h26-four-star-bonus-value-estimate.md
+  summary: Crossing 4.0 Stars worth $31M per year (illustrative $600 PMPY)
+  supports: neutral
+  release: company
+  tags:
+  - finance
+  - memo
+- id: H-27
+  title: Vendor commitments
+  format: table
+  domain: finance
+  file: h27-vendor-commitments.csv
+  summary: Engagement platform 3-year contract; contact-center vendors annual
+  supports: neutral
+  release: diagnose
+  tags:
+  - finance
+  - table
+- id: H-28
+  title: AI inventory and model cards
+  format: model_card
+  domain: risk
+  file: h28-ai-inventory-model-cards.md
+  summary: Two models in production, no validation, no owner; segmentation model trained on legacy counties
+  supports: H-RC2
+  release: diagnose
+  tags:
+  - governance
+  - model-card
+- id: H-29
+  title: Privacy incident log
+  format: log
+  domain: risk
+  file: h29-privacy-incident-log.md
+  summary: 'Two near-misses: outreach to wrong household; no formal process'
+  supports: H-RC2
+  release: diagnose
+  tags:
+  - governance
+  - log
+- id: H-30
+  title: Compliance audit observations
+  format: audit
+  domain: risk
+  file: h30-compliance-audit-observations.md
+  summary: Consent capture for SMS outreach incomplete for 28% of members
+  supports: H-RC2
+  release: diagnose
+  tags:
+  - audit
+  - governance

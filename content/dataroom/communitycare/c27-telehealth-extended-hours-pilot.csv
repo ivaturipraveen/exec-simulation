@@ -1,0 +1,25 @@
+month,clinic,arm,phase,third_next_available_days,telehealth_share_of_visits_pct,extended_hour_sessions_per_week,np_visit_slots_per_week,analyst_note
+2025-07,Riverbend Primary Care,Pilot,Baseline,26,6,0,0,"Simulated, fictional data for executive education. Not real PHI. Pilot funded by a $410,000 Cascade Valley Health Foundation grant, Oct 2025 to Mar 2026: evening and Saturday sessions, telehealth follow-ups, nurse practitioner (NP) visit slots. TNA = third-next-available, days."
+2025-07,Lakeside Internal Medicine,Comparison,Baseline,27,5,0,0,
+2025-08,Riverbend Primary Care,Pilot,Baseline,27,6,0,0,
+2025-08,Lakeside Internal Medicine,Comparison,Baseline,26,6,0,0,
+2025-09,Riverbend Primary Care,Pilot,Baseline,26,7,0,0,
+2025-09,Lakeside Internal Medicine,Comparison,Baseline,27,6,0,0,
+2025-10,Riverbend Primary Care,Pilot,Pilot live,21,14,6,24,
+2025-10,Lakeside Internal Medicine,Comparison,Pilot live,27,6,0,0,
+2025-11,Riverbend Primary Care,Pilot,Pilot live,15,19,8,36,
+2025-11,Lakeside Internal Medicine,Comparison,Pilot live,28,7,0,0,
+2025-12,Riverbend Primary Care,Pilot,Pilot live,12,22,8,36,
+2025-12,Lakeside Internal Medicine,Comparison,Pilot live,27,6,0,0,
+2026-01,Riverbend Primary Care,Pilot,Pilot live,10,23,8,36,
+2026-01,Lakeside Internal Medicine,Comparison,Pilot live,26,6,0,0,
+2026-02,Riverbend Primary Care,Pilot,Pilot live,9,24,8,36,
+2026-02,Lakeside Internal Medicine,Comparison,Pilot live,27,7,0,0,
+2026-03,Riverbend Primary Care,Pilot,Pilot live,9,24,8,36,TNA reached 9 days in Feb and Mar 2026.
+2026-03,Lakeside Internal Medicine,Comparison,Pilot live,28,6,0,0,
+2026-04,Riverbend Primary Care,Pilot,Post-pilot,13,15,0,12,"Grant ended 31 Mar 2026; scale-up proposal ($2.4M, 6 clinics) not placed on system capital agenda. Pilot member CAHPS-style pulse: 'got appointment when needed' 81% vs 66% at baseline."
+2026-04,Lakeside Internal Medicine,Comparison,Post-pilot,27,7,0,0,
+2026-05,Riverbend Primary Care,Pilot,Post-pilot,17,9,0,0,
+2026-05,Lakeside Internal Medicine,Comparison,Post-pilot,27,6,0,0,
+2026-06,Riverbend Primary Care,Pilot,Post-pilot,20,7,0,0,
+2026-06,Lakeside Internal Medicine,Comparison,Post-pilot,27,7,0,0,

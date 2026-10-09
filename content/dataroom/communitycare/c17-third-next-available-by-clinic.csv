@@ -1,0 +1,28 @@
+site,service,county,zone_type,employed_pcps,attributed_ma_members,third_next_available_days,panel_status,analyst_note
+Granite Falls Family Medicine,Primary care,Granite,Rural edge,6,2710,41,Closed,"Simulated, fictional data for executive education. Not real PHI. Third-next-available (TNA) appointment in days for a 20-minute established-patient visit, measured weekly from the shared EHR scheduler; values are the Jun to Aug 2026 average. Recruiting 2 PCPs since Feb 2025."
+Orchard Hills Clinic,Primary care,Orchard,Rural edge,5,2270,38,Closed,
+Bellmont Ridge Health Center,Primary care,Bellmont,Rural edge,4,1640,36,Closed,One PCP on leave Jun to Sep 2026.
+Cascade Northgate Primary Care,Primary care,Cascade,Metro,14,5160,33,Closed,
+Bellmont Central Clinic,Primary care,Bellmont,Suburban,15,5456,31,Closed,
+Orchard Valley Primary Care,Primary care,Orchard,Suburban,12,4280,29,Closed,
+Cascade Southside Clinic,Primary care,Cascade,Metro,13,4760,28,Closed,
+Lakeside Internal Medicine,Primary care,Cascade,Metro,11,3960,27,Closed,Comparison clinic for 2025-26 extended-hours pilot.
+Cascade Midtown Primary Care,Primary care,Cascade,Metro,13,4570,26,Closed,
+Bellmont East Clinic,Primary care,Bellmont,Suburban,8,2650,25,Closed,
+Pioneer Square Family Medicine,Primary care,Cascade,Metro,12,4190,24,Closed,
+Cascade University Clinic,Primary care,Cascade,Metro,11,3840,24,Closed,
+Willow Park Primary Care,Primary care,Cascade,Metro,11,3830,24,Closed,
+Cedar Hollow Clinic,Primary care,Bellmont,Suburban,9,3450,23,Closed,
+Harbor View Internal Medicine,Primary care,Cascade,Metro,10,3770,23,Closed,
+Mill Creek Family Medicine,Primary care,Cascade,Metro,9,3410,22,Closed,
+Orchard Downtown Clinic,Primary care,Orchard,Suburban,8,2990,21,Closed,
+Riverbend Primary Care,Primary care,Cascade,Metro,9,3470,20,Closed,Extended-hours pilot site Oct 2025 to Mar 2026 (reached 9 days); pilot ended 31 Mar 2026.
+Summit Heights Clinic,Primary care,Cascade,Metro,9,3360,19,Open (limited),
+Granite Junction Clinic,Primary care,Granite,Rural edge,5,1780,17,Open (limited),Staffed by 3 physicians and 2 nurse practitioners (NPs).
+Westgate Geriatrics,Primary care,Cascade,Metro,8,3120,15,Open (limited),Geriatrics practice; longer visit slots.
+Cascade Senior Care Center,Primary care,Cascade,Metro,8,3070,12,Open,Medicare-focused practice opened Jan 2026.
+All 22 system primary care clinics,Primary care,All,,210,77736,24,,Median third-next-available 24 days; 3 clinics over 35 days. Employed-PCP members only; independent PCP offices do not report to the system scheduling feed.
+Cascade Breast Imaging Center,Screening mammography,Cascade,,,,44,,Screening mammography; 2 tomosynthesis units; Saturday sessions suspended Jan 2026.
+Bellmont Imaging,Screening mammography,Bellmont,,,,41,,
+Orchard Regional Imaging,Screening mammography,Orchard,,,,40,,Serves Granite County; mobile unit visits Granite Falls 2 days per month.
+All screening mammography sites,Screening mammography,All,,,,42,,Next available screening mammogram about 6 weeks (42 days).

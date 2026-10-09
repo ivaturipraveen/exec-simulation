@@ -1,0 +1,14 @@
+source_system,target_system,cohort,records_compared,exact_key_match_pct,probabilistic_match_pct,unmatched_pct,unmatched_count,last_reconciliation,analyst_note
+Apex Core Admin,Relay CRM,Legacy,32500,97.1,1.4,1.5,488,2026-08,"Simulated, fictional data for executive education. Not real PHI. Match rate = exact + probabilistic. Report run 28 August 2026 by Data Engineering."
+Apex Core Admin,Relay CRM,New,19900,76.2,7.8,16.0,3184,2026-08,New-county match rate 84.0%; most failures are phone or address mismatches after enrollment via brokers
+Apex Core Admin,Relay CRM,All,52400,89.2,3.8,7.0,3672,2026-08,Overall match rate 93.0%
+Apex Core Admin,Pulsewise Engage,Legacy,32500,96.8,1.5,1.7,553,2026-08,Pulsewise matches on phone number plus date of birth
+Apex Core Admin,Pulsewise Engage,New,19900,74.9,8.4,16.7,3323,2026-08,
+ClearRx PBM feed,Apex Core Admin,Legacy,32500,99.2,0.5,0.3,98,2026-08,
+ClearRx PBM feed,Apex Core Admin,New,19900,95.6,2.1,2.3,458,2026-08,Medicare Beneficiary Identifier present on PBM records
+LabBridge results feed,Apex Core Admin,All,30400,88.9,6.3,4.8,1459,2026-07,Lab results arrive with name and date of birth only for about 9% of records
+Supplemental data intake,Apex Core Admin,Legacy,4190,98.6,0.9,0.5,21,2026-08,Risk-group BP files
+CONTACT DATA QUALITY,Relay CRM,All,52400,n/a,n/a,n/a,n/a,2026-08,"2,400 households share a phone number with at least one other unrelated member household (1,610 in new counties)"
+CONTACT DATA QUALITY,Relay CRM,All,5300,n/a,n/a,n/a,n/a,2026-08,Members whose phone number of record is shared with an unrelated household
+CONTACT DATA QUALITY,Relay CRM,New,19900,n/a,n/a,n/a,n/a,2026-08,22% of new-county members had their phone number changed by an agent or broker in the last 12 months; changes are not written back to Apex
+CONTACT DATA QUALITY,Relay CRM,All,52400,n/a,n/a,n/a,n/a,2026-08,"1,140 member records are linked to 2 or more CRM contact profiles (possible duplicates)"

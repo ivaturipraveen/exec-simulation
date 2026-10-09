@@ -1,0 +1,15 @@
+health_system,state,adt_feed_status,book,discharges_q2_2026,first_notification_source,avg_notification_latency_days,followup_48h_pct,analyst_note
+Ashgrove Health System,OH,Live (HL7 ADT since 2019),Heritage core,5400,ADT,0.4,52.8,"Simulated, fictional data for executive education. Not real PHI. Index discharges Q2 2026 (Apr-Jun). Latency = days from discharge to first notification in CareFlow. Follow-up = care manager contact within 48 hours of discharge."
+Tamarack Regional Health,PA,Live (HL7 ADT since 2022),Heritage core,3600,ADT,0.7,50.6,
+Tamarack Regional Health,PA,Live (HL7 ADT since 2022),Pinecrest,840,ADT,0.7,49.5,
+Brightwater Health Partners,MI,Not live; data-sharing agreement pending,Lakeshore,2900,Claims,8.9,3.6,Brightwater is the largest system in the Lakeshore service area
+Brightwater Health Partners,MI,Not live; data-sharing agreement pending,Heritage core,1280,Claims,8.8,4.1,
+Cobalt Bay Health,WI,Not live; data-sharing agreement pending,Lakeshore,2700,Claims,9.1,3.2,
+Sablewood Medical System,NY,Not live; data-sharing agreement pending,Pinecrest,2460,Claims,8.7,4.4,
+Other in-network hospitals (58 facilities),6 states,Claims only; 9 send fax notices,Heritage core,2520,Claims,8.5,5.2,Fax notices keyed manually; median 3 days
+Other in-network hospitals (58 facilities),6 states,Claims only; 9 send fax notices,Lakeshore,860,Claims,9.0,3.5,
+Other in-network hospitals (58 facilities),6 states,Claims only; 9 send fax notices,Pinecrest,800,Claims,8.9,3.8,
+Out-of-network / out-of-area,various,Claims only,Heritage core,700,Claims,10.6,2.1,
+Out-of-network / out-of-area,various,Claims only,Lakeshore,300,Claims,11.2,1.7,
+Out-of-network / out-of-area,various,Claims only,Pinecrest,240,Claims,10.9,2.5,
+"Total, 5 major systems + other",,2 of 5 major systems live,All books,24600,mixed,5.6,23.0,40% of discharges via ADT; 60% known only via claims (mean 9.0 days)

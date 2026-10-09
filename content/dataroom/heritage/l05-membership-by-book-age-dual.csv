@@ -1,0 +1,23 @@
+book,states,age_band,members,pct_of_book,dual_eligible_members,dual_pct,note
+Heritage core,"OH, IN, PA",Under 65 (disability),16080,6.0,10341,64.3,"Simulated, fictional data for executive education. Not real PHI. Enrollment snapshot 2026-08-01. Dual = full or partial Medicaid dual eligible."
+Heritage core,"OH, IN, PA",65-69,56280,21.0,9924,17.6,
+Heritage core,"OH, IN, PA",70-74,72360,27.0,12010,16.6,
+Heritage core,"OH, IN, PA",75-79,58960,22.0,11008,18.7,
+Heritage core,"OH, IN, PA",80-84,37520,14.0,8172,21.8,
+Heritage core,"OH, IN, PA",85+,26800,10.0,7505,28.0,
+Heritage core,"OH, IN, PA",All ages (book total),268000,100.0,58960,22.0,median age 74; avg 74.2; LIS 31%; HMO 58% / PPO 35% / D-SNP 7%; 82 counties
+Lakeshore,"MI, WI",Under 65 (disability),7760,8.0,5957,76.8,
+Lakeshore,"MI, WI",65-69,12610,13.0,4468,35.4,
+Lakeshore,"MI, WI",70-74,19400,20.0,6492,33.5,
+Lakeshore,"MI, WI",75-79,24250,25.0,8830,36.4,
+Lakeshore,"MI, WI",80-84,18430,19.0,7436,40.3,
+Lakeshore,"MI, WI",85+,14550,15.0,6587,45.3,
+Lakeshore,"MI, WI",All ages (book total),97000,100.0,39770,41.0,median age 77; avg 76.4; LIS 52%; HMO 60% / PPO 18% / D-SNP 22%; acquired 2021; 34 counties
+Pinecrest,"NY, PA",Under 65 (disability),5280,8.0,3913,74.1,
+Pinecrest,"NY, PA",65-69,11220,17.0,3933,35.1,
+Pinecrest,"NY, PA",70-74,15840,24.0,5235,33.0,
+Pinecrest,"NY, PA",75-79,15180,23.0,5626,37.1,
+Pinecrest,"NY, PA",80-84,10560,16.0,4124,39.1,
+Pinecrest,"NY, PA",85+,7920,12.0,3569,45.1,
+Pinecrest,"NY, PA",All ages (book total),66000,100.0,26400,40.0,median age 75; avg 75.0; LIS 46%; HMO 75% / PPO 8% / D-SNP 17%; acquired 2021; 24 counties
+All books,6 states,All ages (enterprise total),431000,100.0,125130,29.0,avg age 74.8; LIS 38%; HMO 61% / PPO 27% / D-SNP 12%; 140 counties

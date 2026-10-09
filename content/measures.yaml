@@ -1,0 +1,186 @@
+# Measure model — Content Pack v0.1 section 3. Ten measures (OD-04).
+# Thresholds are GAME CONSTRUCTS (A-13), not CMS cut points. Weights per A-14 (verify).
+# cut_points = thresholds for 2, 3, 4, 5 Stars. The 2-Star threshold (below which a measure
+# is 1 Star) is not in the pack; we set it so the pack's "complaints fall to 1 Star" can occur.
+
+- id: m1
+  code: M1
+  name: Medication Adherence for Diabetes Medications
+  part: D
+  domain: Pharmacy adherence
+  weight: 3
+  unit: "% of members with PDC 80% or higher"
+  unit_kind: percent
+  cut_points: [78.0, 82.0, 86.0, 90.0]
+  thresholds_text: "2 Stars under 82.0 · 3 Stars 82.0 to 85.9 · 4 Stars 86.0 to 89.9 · 5 Stars 90.0 and above"
+  data_period: Calendar year; measure year = Year 1 of play, reported in the following rating year
+  lag_share: 0.5
+  lag_text: Leading KPIs move within 1 quarter of go-live; measure moves in the next rating year at 50% of full effect, full effect the year after
+  leading_indicators: ["At-risk members contacted per quarter (%)", "90-day fill rate (%)", "Average refill gap days"]
+  leading_kpis: [at_risk_contacted, fill_90day]
+  causal_pathway: Risk identification → outreach capacity → refill behavior → PDC → measure → Part D summary rating
+  simplification: PDC logic abstracted to a single plan-level rate.
+
+- id: m2
+  code: M2
+  name: Medication Adherence for Hypertension (RAS antagonists)
+  part: D
+  domain: Pharmacy adherence
+  weight: 3
+  unit: "% of members with PDC 80% or higher"
+  unit_kind: percent
+  cut_points: [80.0, 84.0, 88.0, 91.0]
+  thresholds_text: "2 Stars under 84.0 · 3 Stars 84.0 to 87.9 · 4 Stars 88.0 to 90.9 · 5 Stars 91.0 and above"
+  data_period: Calendar year
+  lag_share: 0.5
+  lag_text: Same as M1
+  leading_indicators: ["At-risk members contacted per quarter (%)", "90-day fill rate (%)", "Mail-order conversion (%)"]
+  leading_kpis: [at_risk_contacted, fill_90day]
+  causal_pathway: Same as M1; dual-eligible members respond less to digital reminders and more to pharmacist calls
+  simplification: As for M1.
+
+- id: m3
+  code: M3
+  name: Controlling Blood Pressure
+  part: C
+  domain: Clinical outcome
+  weight: 3
+  unit: "% of members with hypertension whose most recent BP is under 140/90"
+  unit_kind: percent
+  cut_points: [52.0, 62.0, 71.0, 79.0]
+  thresholds_text: "2 Stars under 62.0 · 3 Stars 62.0 to 70.9 · 4 Stars 71.0 to 78.9 · 5 Stars 79.0 and above"
+  data_period: Calendar year; hybrid (chart) data allowed
+  lag_share: 0.6
+  lag_text: Leading KPIs move within 1 to 2 quarters; measure moves next rating year at 60% of full effect
+  leading_indicators: ["% hypertensive members with a BP reading on file in last 6 months", "Provider alert action rate (%)", "Supplemental data submissions per month"]
+  leading_kpis: [bp_capture, provider_action_rate]
+  causal_pathway: Reading capture (data) → provider action on uncontrolled members → control rate → measure
+  simplification: Single reading logic; exclusions not modelled.
+
+- id: m4
+  code: M4
+  name: Glycemic Status Assessment for Patients with Diabetes
+  part: C
+  domain: Clinical outcome
+  weight: 3
+  unit: "% of diabetic members with most recent HbA1c (or GMI) under 8.0"
+  unit_kind: percent
+  cut_points: [60.0, 68.0, 76.0, 83.0]
+  thresholds_text: "2 Stars under 68.0 · 3 Stars 68.0 to 75.9 · 4 Stars 76.0 to 82.9 · 5 Stars 83.0 and above"
+  data_period: Calendar year
+  lag_share: 0.6
+  lag_text: Same as M3
+  leading_indicators: ["HbA1c test completion rate (%)", "Lab feed coverage (% of members with lab data in the warehouse)", "Diabetic members in care management (%)"]
+  leading_kpis: [lab_feed_coverage, provider_action_rate]
+  causal_pathway: Lab data availability → test completion → clinical management → control → measure
+  simplification: Lab capture and hybrid review folded into effects.
+
+- id: m5
+  code: M5
+  name: Breast Cancer Screening
+  part: C
+  domain: Clinical process
+  weight: 1
+  unit: "% of eligible women 50 to 74 with a mammogram in the measurement window"
+  unit_kind: percent
+  cut_points: [55.0, 64.0, 72.0, 79.0]
+  thresholds_text: "2 Stars under 64.0 · 3 Stars 64.0 to 71.9 · 4 Stars 72.0 to 78.9 · 5 Stars 79.0 and above"
+  data_period: 27-month lookback
+  lag_share: 0.7
+  lag_text: Leading KPIs move within 1 quarter; measure moves next rating year at 70% of full effect
+  leading_indicators: ["Outreach response rate (%)", "Mammogram scheduling rate among outreached (%)", "Imaging slot availability (days to next available)"]
+  leading_kpis: [outreach_response, third_next_available]
+  causal_pathway: Outreach reach → response → appointment availability → completion → measure
+  simplification: Single annual rate; exclusions not modelled.
+
+- id: m7
+  code: M7
+  name: Plan All-Cause Readmissions
+  part: C
+  domain: Outcome
+  weight: 3
+  unit: "Readmissions per 100 index stays within 30 days (game construct)"
+  unit_kind: rate
+  higher_is_better: false
+  cut_points: [13.5, 11.5, 9.5, 7.5]
+  thresholds_text: "5 Stars under 7.5 · 4 Stars 7.5 to 9.4 · 3 Stars 9.5 to 11.4 · 2 Stars 11.5 and above"
+  data_period: Calendar year
+  lag_share: 0.5
+  lag_text: Leading KPIs move within 1 quarter of ADT feed go-live; measure moves next rating year at 50% of full effect
+  leading_indicators: ["% discharges with a care manager contact within 48 hours", "ADT notification latency (days)", "% discharges with medication reconciliation within 7 days"]
+  leading_kpis: [followup_48h, adt_latency_days]
+  causal_pathway: Discharge notification latency → timely follow-up → medication reconciliation → readmission → measure
+  simplification: CMS uses a risk-adjusted observed-to-expected ratio; direction and lag are faithful.
+
+- id: m9
+  code: M9
+  name: Getting Appointments and Care Quickly (CAHPS)
+  part: C
+  domain: Member experience
+  weight: 2
+  unit: CAHPS composite score, 0 to 100
+  unit_kind: score
+  cut_points: [70.0, 74.0, 79.0, 83.0]
+  thresholds_text: "2 Stars under 74.0 · 3 Stars 74.0 to 78.9 · 4 Stars 79.0 to 82.9 · 5 Stars 83.0 and above"
+  data_period: Survey fielded in spring of the following year about the prior 6 months
+  lag_share: 0.5
+  lag_text: Leading KPIs move within 1 to 2 quarters; measure moves next rating year at 50% of full effect. AI moves this measure least.
+  leading_indicators: ["Third-next-available appointment (days)", "Telehealth share of primary care visits (%)", "Member-reported wait complaints per 1,000"]
+  leading_kpis: [third_next_available]
+  causal_pathway: Capacity and scheduling → wait time → member perception → survey → measure
+  simplification: Case-mix adjustment and sampling not modelled.
+
+- id: m10
+  code: M10
+  name: Customer Service (CAHPS)
+  part: C and D
+  domain: Member experience
+  weight: 2
+  unit: CAHPS composite score, 0 to 100
+  unit_kind: score
+  cut_points: [82.0, 86.0, 90.0, 93.0]
+  thresholds_text: "2 Stars under 86.0 · 3 Stars 86.0 to 89.9 · 4 Stars 90.0 to 92.9 · 5 Stars 93.0 and above"
+  data_period: Survey, spring of following year
+  lag_share: 0.6
+  lag_text: Leading KPIs move within 1 quarter; measure moves next rating year at 60% of full effect
+  leading_indicators: ["First-contact resolution (%)", "Call abandonment (%)", "Average handle time (minutes)"]
+  leading_kpis: [fcr, abandonment]
+  causal_pathway: Knowledge and routing → resolution and wait → member perception → survey → measure
+  simplification: As for M9.
+
+- id: m11
+  code: M11
+  name: Complaints about the Health Plan
+  part: C and D
+  domain: Complaints and access
+  weight: 2
+  unit: CTM complaints per 1,000 members (single rate)
+  unit_kind: rate
+  higher_is_better: false
+  cut_points: [0.80, 0.50, 0.25, 0.10]
+  thresholds_text: "5 Stars under 0.10 · 4 Stars 0.10 to 0.24 · 3 Stars 0.25 to 0.49 · 2 Stars 0.50 and above"
+  data_period: Calendar year, reported with a 1-year lag
+  lag_share: 0.9
+  lag_text: Moves within 1 to 2 quarters of a cause; this is the measure that worsens fastest from a crisis
+  leading_indicators: ["Complaints per 1,000 (monthly)", "Complaint root-cause mix (enrollment, access, outreach, billing)", "Contact-center abandonment (%)"]
+  leading_kpis: [abandonment]
+  causal_pathway: Service failures and inappropriate outreach → complaints → CTM → measure. Crisis events land here first.
+  simplification: CTM categories and case timeliness not modelled.
+
+- id: m12
+  code: M12
+  name: Reviewing Appeals Decisions
+  part: C
+  domain: Operations
+  weight: 2
+  unit: "% of plan appeal decisions upheld by the Independent Review Entity"
+  unit_kind: percent
+  cut_points: [78.0, 85.0, 90.0, 95.0]
+  thresholds_text: "2 Stars under 85.0 · 3 Stars 85.0 to 89.9 · 4 Stars 90.0 to 94.9 · 5 Stars 95.0 and above"
+  data_period: Calendar year
+  lag_share: 0.7
+  lag_text: Leading KPIs move within 1 quarter; measure moves next rating year at 70% of full effect
+  leading_indicators: ["Appeals cycle time (days)", "Pre-IRE quality review coverage (%)", "Overturn rate on internal audit (%)"]
+  leading_kpis: [appeals_cycle_days]
+  causal_pathway: Document intake and summarization → reviewer accuracy and consistency → upheld rate → measure
+  simplification: Single upheld rate.

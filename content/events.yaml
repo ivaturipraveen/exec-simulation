@@ -1,0 +1,225 @@
+# Crisis and curveball events — Content Pack v0.1 section 7.
+# After Round 2 the engine evaluates each event's severity rules against the team's state (first
+# matching rule wins) and recommends one event and a severity; the facilitator confirms or
+# overrides with an audit note. I10 halves probability and lowers severity one level unless the
+# event's own rules already account for I10 (governance_adjusts: false).
+# Effects land on the final scorecard (the crisis happens after Year 2).
+
+- id: e1
+  code: E1
+  title: Eligibility assumption drives inappropriate outreach to 11,400 members
+  payer_ids: [horizon]
+  trigger_text: Fires at high severity if I7 or I8 is live and neither I1 nor I10 is funded. Medium severity if one of I1 or I10 is funded. Low severity (facilitator optional) otherwise.
+  severity_rules:
+    - {severity: high, when: {any_live: [i7, i8], none_funded: [i1, i10]}}
+    - {severity: medium, when: {any_live: [i7, i8]}}
+    - {severity: low, when: {}}
+  governance_adjusts: false
+  minutes: 15
+  severities:
+    high:
+      description: 11,400 members contacted, 420 complaints in 3 weeks, local news story, state regulator inquiry.
+      measures: {m11: 0.30, m10: -2.0}
+      kpis: {outreach_response: -3}
+    medium:
+      description: 3,200 members, 90 complaints, no press.
+      measures: {m11: 0.10, m10: -0.8}
+      kpis: {outreach_response: -1}
+    low:
+      description: 600 members, internal catch.
+      measures: {m11: 0.02}
+  packet: >-
+    Monday 8:10 am. The engagement platform sent a 'your diabetes medication refill is overdue'
+    message to 11,400 members over the weekend. Early analysis: a segmentation rule used a
+    prior-plan eligibility flag that was never validated for new-county members. At least 2,900
+    recipients have no diabetes diagnosis. The contact center has 1,100 calls in queue. A member's
+    daughter posted the message on social media; a local TV station has called. Nobody is sure
+    whether the platform is still sending. You have 15 minutes.
+  leadership_test: Speed versus containment; member communication; validation; kill switch; accountability.
+  effect_text: M11 +0.20 to +0.35 within the quarter at high severity; M10 -2 pts; engagement response rates fall 30% for two quarters.
+  best_practice:
+    - Stop the platform sending now (kill switch) and confirm it has stopped; scope other campaigns built on the same rule.
+    - Name one accountable executive and an incident lead with authority to act.
+    - Call or write to affected members with a correction first; brief the regulator and board before the press does.
+    - Validate eligibility rules before restart; add human review for sensitive-condition messages and monitor complaints.
+
+- id: e2
+  code: E2
+  title: Acquired-plan member data cannot be reconciled; flagship initiative slips six months
+  payer_ids: [heritage]
+  trigger_text: Fires at high severity if I3, I5 or I8 is funded before or without I1. Medium severity if I1 is funded at partial scope. Low severity if I1 is funded at full scope in Round 1.
+  severity_rules:
+    - {severity: high, when: {any_funded: [i3, i5, i8], not_live_by_year1: [i1]}}
+    - {severity: medium, when: {any_funded: [i3, i5, i8], funded_partial_scope: [i1]}}
+    - {severity: low, when: {any_funded: [i3, i5, i8]}}
+  minutes: 15
+  severities:
+    high:
+      description: Flagship initiative 6 months late, $2.1M written off, Lakeshore outreach suspended for a quarter, board disclosure required.
+      measures: {m1: -0.5, m2: -0.4}
+      capacity_points: -3
+      write_off_musd: 2.1
+    medium:
+      description: 3 months late, no write-off.
+      measures: {m1: -0.2, m2: -0.2}
+      capacity_points: -1.5
+    low:
+      description: Internal rescope.
+  packet: >-
+    Quarterly review prep, two days out. The data team reports that the Lakeshore identity
+    crosswalk fails validation: 19% of matches are wrong, including 1,400 members matched to
+    deceased records. The predictive adherence model has been scoring the wrong people for two
+    months. Outreach lists for Q3 are frozen. The CIO proposes a six-month identity remediation;
+    the CFO wants to know what the board hears on Thursday. The Lakeshore contract loses a quarter
+    of adherence outreach. You have 15 minutes.
+  leadership_test: Scope, sequencing, data ownership, salvage path, board disclosure.
+  effect_text: Lakeshore M1 and M2 leading KPIs flat for 2 quarters; capacity -3 points for 2 quarters; financial dimension -$2.1M at high severity.
+  best_practice:
+    - Freeze model-driven outreach for affected members; keep core-book programs running.
+    - Name a single executive data owner for Lakeshore with authority over match rules.
+    - Disclose the slip to the board on Thursday with a re-baselined, scoped plan.
+    - Re-sequence identity remediation for Lakeshore first; add match validation before re-scoring.
+
+- id: e3
+  code: E3
+  title: Clinically sound recommendations are ignored by providers
+  payer_ids: [communitycare]
+  trigger_text: Fires at high severity if I5 or I6 is live and neither I11 nor I15 is funded. Medium if one is funded. Low if both are funded.
+  severity_rules:
+    - {severity: high, when: {any_live: [i5, i6], none_funded: [i11, i15]}}
+    - {severity: low, when: {any_live: [i5, i6], all_funded: [i11, i15]}}
+    - {severity: medium, when: {any_live: [i5, i6]}}
+  minutes: 15
+  severities:
+    high:
+      description: Adoption 7% after two quarters, clinicians request the tool be switched off, system CMIO escalates to the system board.
+      measures: {m3: -1.0, m4: -0.5}
+      dimensions: {maturity: -10}
+      adoption_override: 0.07
+    medium:
+      description: Adoption 25%, friction.
+      measures: {m3: -0.4}
+      dimensions: {maturity: -5}
+      adoption_override: 0.25
+    low:
+      description: Adoption 55%, tuning needed.
+  packet: >-
+    The system CMIO has asked for a meeting. The provider copilot has generated 41,000
+    recommendations in two quarters; clinicians have acted on 2,900. A clinic director survey calls
+    it 'another plan portal'. Three clinics have disabled alerts. The system board meets in two
+    weeks and the plan's future is on the agenda. Your own data shows the recommendations are
+    accurate: members flagged for uncontrolled blood pressure were right 83% of the time. You have
+    15 minutes.
+  leadership_test: Workflow redesign, incentives, capacity, shared ownership, adoption measurement.
+  effect_text: M3 and M4 leading KPIs flat; AI Transformation Maturity -10 at high severity; relationship penalty on all provider-facing investments for one quarter.
+  best_practice:
+    - Pause alert volume rather than the tool; agree with the CMIO which recommendations reach the inbox.
+    - Co-own the workflow with clinic directors; name a joint plan-system owner with decision rights.
+    - Tie a share of clinician compensation or incentive pool to acting on recommendations.
+    - Measure adoption and action rates weekly and report them to both boards.
+
+- id: e4
+  code: E4
+  title: Model underperforms for a subgroup
+  payer_ids: []
+  trigger_text: Available to any team with I3 or I6 live and no I12. Facilitator picks one team per session at most.
+  severity_rules:
+    - {severity: medium, when: {any_live: [i3, i6], none_live: [i12]}}
+  governance_adjusts: false
+  one_team_per_session: true
+  probability_halved_by: [i12]   # "I12 … halves probability of the subgroup-bias crisis"
+  minutes: 12
+  severities:
+    medium:
+      description: The adherence model's precision for dual-eligible members is 0.41 versus 0.74 overall; outreach has been going disproportionately to non-dual members for two quarters.
+      measures: {m1: -0.3, m2: -0.3}
+      equity_modifier: -1
+  packet: >-
+    A quality analyst notices that dual-eligible members are 29% of the at-risk list but 9% of
+    completed outreach. The model was trained on core-book data. The compliance officer asks
+    whether this is a Health Equity Index exposure. You have 12 minutes.
+  leadership_test: Bias detection, subgroup reporting, validation independence, equity reward exposure.
+  effect_text: Equity modifier -1 on scorecard; dual-eligible adherence lift halved for the year.
+  best_practice:
+    - Re-weight or route dual-eligible members to pharmacist outreach while the model is fixed.
+    - Commission independent validation with subgroup reporting before re-deployment.
+    - Report the gap to compliance and the board with a remediation timeline.
+
+- id: e5
+  code: E5
+  title: Sensitive data sent to the wrong system
+  payer_ids: []
+  trigger_text: Available to any team with I2 live and no I10.
+  severity_rules:
+    - {severity: medium, when: {any_live: [i2], none_funded: [i10]}}
+  governance_adjusts: false
+  privacy_event: true
+  minutes: 12
+  severities:
+    medium:
+      description: A nightly job replicated 60,000 member records including diagnoses to a vendor sandbox that was not covered by the data-sharing agreement.
+      dimensions: {risk: -8}
+      capacity_points: -1
+  packet: >-
+    The security team found the replication during a routine review. The vendor says the sandbox
+    is isolated. Legal wants to know whether notification is required. The data engineering lead
+    says the job 'has always done this'. You have 12 minutes.
+  leadership_test: Privacy, verification, escalation, communications, recovery.
+  effect_text: Risk and Governance dimension -8; one capacity point for a quarter on remediation.
+  best_practice:
+    - Stop the job and obtain written confirmation of deletion from the vendor.
+    - Engage privacy and legal on the notification assessment immediately.
+    - Inventory all replication jobs; add data-sharing checks to change control.
+
+- id: e6
+  code: E6
+  title: Hallucinated financial assumption reaches the board pack
+  payer_ids: []
+  trigger_text: Facilitator may apply to a team whose board pitch cited a figure not present in the data room.
+  severity_rules:
+    - {severity: medium, when: {pitch_unsupported_figure: true}}
+  governance_adjusts: false
+  facilitator_only: true
+  minutes: 10
+  severities:
+    medium:
+      description: The board pack states a $14M benefit that the AI assistant generated; no data-room source supports it.
+      pitch_points: -3
+      dimensions: {risk: -4}
+    low:
+      description: An unsupported figure was caught before the board pack was finalized.
+      pitch_points: -1
+      dimensions: {risk: -2}
+  packet: >-
+    The CFO's office traces the $14M line in your board pitch to a chat transcript. The assistant
+    produced it when asked for 'a reasonable estimate'. The board chair has asked who checked it.
+    You have 10 minutes.
+  leadership_test: Evidence discipline, AI-use controls, accountability.
+  effect_text: Board pitch score -3 retroactively; Risk and Governance -4.
+  best_practice:
+    - Correct the board pack and tell the chair exactly what happened.
+    - Require a cited source for every figure in board materials; review AI-generated content.
+
+- id: e7
+  code: E7
+  title: Automated member message creates a reputational issue
+  payer_ids: []
+  trigger_text: Available to any team with I7 live and no human review step in the operating model exercise.
+  severity_rules:
+    - {severity: medium, when: {any_live: [i7], opmodel_missing_human_review: true}}
+  governance_adjusts: false
+  minutes: 10
+  severities:
+    medium:
+      description: A generated message to members with a recent cancer diagnosis used a cheerful tone and an incorrect benefit reference.
+      measures: {m11: 0.08, m10: -1.0}
+      kpis: {outreach_response: -1}
+  packet: >-
+    Two members' families have written to the CEO. The message was generated from a template and
+    approved by nobody. The engagement vendor says tone controls were 'available but not
+    configured'. You have 10 minutes.
+  leadership_test: Human review design, consequence-based controls, communications.
+  effect_text: M11 +0.08; M10 -1 pt; engagement response -15% for a quarter.
+  best_practice:
+    - Pause generated messages for sensitive conditions; apologize personally to the families.
+    - Require human review of new templates and sensitive-condition messages; configure tone controls.

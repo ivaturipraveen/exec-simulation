@@ -1,0 +1,21 @@
+segment,county_cohort,age_band,members,default_outreach_channel,pct_of_segment,pct_of_plan,app_ever_opened_pct,outreach_response_rate_90d_pct,note
+Digitally engaged,All,All,22800,App + SMS,100.0%,43.5%,88,30.7,"Simulated, fictional data for executive education. Not real PHI. Model: Engagement Segmentation v2 (see H-28), scored July 2026. Legacy under 72 = 71% of segment; legacy any age = 88%"
+Digital-ready,All,All,14600,App + SMS,100.0%,27.9%,47,8.8,Legacy under 72 = 21% of segment; legacy any age = 45%
+Assisted,All,All,9800,Phone,100.0%,18.7%,20,16.2,Legacy under 72 = 12% of segment; legacy any age = 42%
+High-need,All,All,5200,Care manager,100.0%,9.9%,13,31.6,Legacy under 72 = 12% of segment; legacy any age = 34%
+Digitally engaged,Legacy,Under 72,16190,App + SMS,71.0%,30.9%,94,34,
+Digitally engaged,Legacy,72 and older,3950,App + SMS,17.3%,7.5%,81,27,
+Digitally engaged,New,Under 72,1640,App + SMS,7.2%,3.1%,72,19,
+Digitally engaged,New,72 and older,1020,App + SMS,4.5%,1.9%,49,11,
+Digital-ready,Legacy,Under 72,3100,App + SMS,21.2%,5.9%,71,16,
+Digital-ready,Legacy,72 and older,3400,App + SMS,23.3%,6.5%,52,11,
+Digital-ready,New,Under 72,3200,App + SMS,21.9%,6.1%,44,7,
+Digital-ready,New,72 and older,4900,App + SMS,33.6%,9.4%,31,4,
+Assisted,Legacy,Under 72,1200,Phone,12.2%,2.3%,38,22,
+Assisted,Legacy,72 and older,2900,Phone,29.6%,5.5%,24,19,
+Assisted,New,Under 72,1400,Phone,14.3%,2.7%,21,15,
+Assisted,New,72 and older,4300,Phone,43.9%,8.2%,12,13,
+High-need,Legacy,Under 72,600,Care manager,11.5%,1.1%,29,41,
+High-need,Legacy,72 and older,1160,Care manager,22.3%,2.2%,17,38,
+High-need,New,Under 72,640,Care manager,12.3%,1.2%,14,31,
+High-need,New,72 and older,2800,Care manager,53.8%,5.3%,8,27,

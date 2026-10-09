@@ -1,0 +1,14 @@
+measure_id,measure_name,weight,direction,plan_value,legacy_counties_value,legacy_stars,new_counties_value,new_stars,legacy_denominator,new_denominator,analyst_note
+M1,Medication Adherence for Diabetes Medications,3,higher,84.0,86.7,4,80.0,2,4310,2640,"Simulated, fictional data for executive education. Not real PHI. Legacy = 8 counties entered before 2025 (32,500 members); new = 9 counties entered in last 18 months (19,900 members). Stars use game thresholds."
+M2,Medication Adherence for Hypertension (RAS antagonists),3,higher,86.5,88.0,4,84.2,3,6020,3690,
+M3,Controlling Blood Pressure,3,higher,59.0,64.7,3,50.0,2,12170,7680,Hybrid sample of 412 allocated proportionally across cohorts (252 legacy and 160 new)
+M4,Glycemic Status Assessment for Patients with Diabetes,3,higher,70.0,71.0,3,68.5,3,5480,3360,
+M5,Breast Cancer Screening,1,higher,62.0,66.0,3,56.0,2,5210,3480,27-month lookback; many new-county members have under 27 months on our book
+M7,Plan All-Cause Readmissions,3,lower,9.0,8.6,4,9.6,3,2140,1310,Per 100 index stays (game construct)
+M9,Getting Appointments and Care Quickly (CAHPS),2,higher,80.0,81.2,4,78.2,3,512,301,CAHPS completes; new-county sample small
+M10,Customer Service (CAHPS),2,higher,88.0,90.3,4,84.6,2,488,286,
+M11,Complaints about the Health Plan,2,lower,0.55,0.36,3,0.84,2,32500,19900,CTM complaints per 1000 members per month; denominators are members
+M12,Reviewing Appeals Decisions,2,higher,87.0,90.0,4,82.5,2,118,72,Small n; IRE decisions Jan 2025 to Jun 2026
+SUMMARY,Average Star level across 10 measures (unweighted),n/a,n/a,3.0 overall,3.6,n/a,2.4,n/a,32500,19900,Cohort averages are internal diagnostics; CMS rates the contract not the county
+SUMMARY,Share of members with under 12 months tenure,n/a,n/a,40%,22.9%,n/a,68.0%,n/a,32500,19900,
+SUMMARY,Share of members dual-eligible,n/a,n/a,14%,7.9%,n/a,24.0%,n/a,32500,19900,

@@ -1,0 +1,17 @@
+period,channel,reminders_sent,members_reached,reach_pct,refilled_within_7_days,conversion_pct,top_free_text_theme,top_theme_share_of_free_text_pct,analyst_note
+2025-09,IVR + SMS + mail,3920,3434,87.6,426,12.4,Already have refills at home,18,"Simulated, fictional data for executive education. Not real PHI. Reached = message delivered and not bounced. Converted = refill claim within 7 days of reach. Run by the plan's 5 pharmacists' team via ClearPath PBM refill-gap file (weekly)."
+2025-10,IVR + SMS + mail,4110,3621,88.1,431,11.9,Can't get a refill appointment,22,
+2025-11,IVR + SMS + mail,4060,3589,88.4,438,12.2,Can't get a refill appointment,24,
+2025-12,IVR + SMS + mail,4380,3806,86.9,411,10.8,Pharmacy too far / no ride,19,
+2026-01,IVR + SMS + mail,4720,4116,87.2,477,11.6,Can't get a refill appointment,27,
+2026-02,IVR + SMS + mail,4290,3788,88.3,466,12.3,Prior authorization needed,21,
+2026-03,IVR + SMS + mail,4450,3943,88.6,497,12.6,Can't get a refill appointment,26,
+2026-04,IVR + SMS + mail,4310,3793,88.0,459,12.1,Can't get a refill appointment,25,
+2026-05,IVR + SMS + mail,4180,3716,88.9,461,12.4,Pharmacy too far / no ride,23,
+2026-06,IVR + SMS + mail,4240,3740,88.2,441,11.8,Can't get a refill appointment,28,
+2026-07,IVR + SMS + mail,4390,3854,87.8,462,12.0,Can't get a refill appointment,29,
+2026-08,IVR + SMS + mail,4410,3903,88.5,480,12.3,Can't get a refill appointment,27,
+12-month total,IVR + SMS + mail,51460,45303,88.0,5449,12.0,Can't get a refill appointment,24,"Free-text replies (n=2,318): 'can't get a refill appointment' is the most frequent theme in 8 of 12 months; prescriptions requiring a visit before renewal."
+12-month by channel,IVR only,21950,18899,86.1,2060,10.9,Can't get a refill appointment,23,
+12-month by channel,SMS only,19840,18094,91.2,2425,13.4,Can't get a refill appointment,26,
+12-month by channel,Mail only,9640,8281,85.9,927,11.2,Pharmacy too far / no ride,19,

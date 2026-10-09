@@ -1,0 +1,16 @@
+book,drug_class,avg_refill_gap_days,ninety_day_fill_share_pct,pct_fills_more_than_7_days_late,mail_order_share_pct,analyst_note
+Heritage core,Diabetes (non-insulin),6.3,58.9,9.4,,"Simulated, fictional data for executive education. Not real PHI. PBM prescription drug event data, Jan-Jun 2026. Gap = avg days between expected and actual refill among members with a late refill."
+Heritage core,RAS antagonists,5.8,58.4,8.7,,
+Heritage core,Statins,6.2,56.7,10.2,,
+Heritage core,All three classes,6.1,58,9.4,21.4,
+Lakeshore,Diabetes (non-insulin),14.6,30.6,21.8,,
+Lakeshore,RAS antagonists,13.2,31.9,19.9,,
+Lakeshore,Statins,14.1,30.5,22.6,,
+Lakeshore,All three classes,14.0,31,21.4,8.3,Refill gap 2.3x core
+Pinecrest,Diabetes (non-insulin),9.1,46.2,13.8,,
+Pinecrest,RAS antagonists,8.6,47.0,12.9,,
+Pinecrest,Statins,9.0,44.8,14.4,,
+Pinecrest,All three classes,8.9,46,13.7,14.9,Refill gap 1.5x core
+Enterprise (blended),All three classes,8.4,50,13.3,17.6,Enterprise view used in monthly pharmacy committee pack
+Lakeshore,Dual eligible members only,16.9,26.0,25.1,5.2,Pharmacy committee pack does not split by book or dual status
+Lakeshore,Non-dual members,12.8,34.1,20.0,10.4,

@@ -1,0 +1,13 @@
+data_domain,owner_heritage_core,owner_pinecrest,owner_lakeshore,note
+Member enrollment and eligibility,"K. Osei, Dir. Enrollment Operations",K. Osei,None assigned,"Simulated, fictional data for executive education. Not real PHI. Data governance council roster, 2026-06. Nine named data owners across domains."
+Medical claims,"R. Patel, VP Claims",R. Patel,None assigned (TPA-managed),
+Pharmacy claims and PDE,"Dr. H. Cho, VP Pharmacy",Dr. H. Cho,None assigned,
+"Member contact data (address, phone)","L. Ortega, VP Member Services","D. Fairchild, Pinecrest Ops Lead",None assigned,Pinecrest contact data owned locally since 2021
+Provider data and attribution,"M. Hale, VP Network",M. Hale,None assigned,
+"Clinical data (labs, ADT)","Dr. A. Whitfield, CMO",Dr. A. Whitfield,None assigned,
+Care management records,"G. Mbeki, VP Care Management",G. Mbeki,G. Mbeki (operational only),"Covers workflow, not source data quality"
+Appeals and grievances,"J. Kowalski, Dir. Appeals",J. Kowalski,None assigned,
+Quality and HEDIS data,"Dr. R. Okafor, Chief Quality Officer",Dr. R. Okafor,None assigned,
+Member master identity (cross-book),None assigned,None assigned,None assigned,Proposed under OneView; charter lapsed with program cancellation
+Count of named owners,8 in core column,7 in Pinecrest column (1 local),0 accountable data owners,Nine distinct owners in total
+Escalation path for Lakeshore data issues,,,Ticket to IT service desk; routed to TPA,Former Lakeshore data steward role eliminated 2024-03

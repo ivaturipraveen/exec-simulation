@@ -1,0 +1,21 @@
+county,state,cohort,members,attribution_confidence,basis_visit_claim_or_encounter,basis_member_pcp_selection_only,no_pcp_attributed,members_under_12m_tenure,note
+Saguaro County,AZ,Legacy,7400,95%,91%,6%,3%,18%,"Simulated, fictional data for executive education. Not real PHI. Attribution confidence = share of attributed members whose assigned primary care provider is confirmed by a qualifying visit claim or encounter in the last 12 months, or by a two-source match."
+Copper Ridge County,AZ,Legacy,4900,94%,90%,7%,3%,19%,
+Desert Bloom County,AZ,Legacy,3600,88%,84%,13%,3%,26%,
+Live Oak Bend County,TX,Legacy,5800,93%,89%,8%,3%,20%,
+Brazos Hollow County,TX,Legacy,3900,90%,86%,11%,3%,25%,
+Palmetto Shores County,FL,Legacy,3300,89%,85%,12%,3%,27%,
+Gulfview County,FL,Legacy,2100,86%,82%,15%,3%,30%,
+Cypress Key County,FL,Legacy,1500,85%,81%,16%,3%,31%,
+Yavapine County,AZ,New,1900,72%,63%,23%,14%,55%,
+Cochise Wells County,AZ,New,1400,63%,54%,32%,14%,58%,
+Pecos Ridge County,TX,New,2600,66%,57%,29%,14%,60%,
+Caddo Prairie County,TX,New,2200,64%,55%,31%,14%,64%,
+Llano Vista County,TX,New,1700,65%,56%,30%,14%,70%,
+Sabine Crossing County,TX,New,2900,70%,61%,25%,14%,82%,
+Suwannee Bend County,FL,New,2400,71%,62%,24%,14%,58%,
+Okeechee Lake County,FL,New,2300,69%,60%,26%,14%,80%,
+Hernando Pines County,FL,New,2500,70%,61%,25%,14%,82%,
+LEGACY TOTAL,AZ/TX/FL,Legacy,32500,91%,87%,10%,3%,23%,
+NEW-COUNTY TOTAL,AZ/TX/FL,New,19900,68%,59%,27%,14%,68%,Members with under 12 months of Horizon claims have no visit history to confirm attribution unless prior-plan claims are loaded
+PLAN TOTAL,AZ/TX/FL,All,52400,82%,76%,16%,8%,40%,Gap alerts and provider scorecards route to the attributed primary care provider

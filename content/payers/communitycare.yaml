@@ -1,0 +1,159 @@
+# Payer bible — Content Pack v0.1 section 2.3. Simulated, fictional organization.
+id: communitycare
+name: CommunityCare Alliance
+archetype: Provider-sponsored plan
+tagline: Rich clinical data, aligned on paper, not in the clinic.
+members: 94800
+starting_stars: 3.5
+starting_stars_text: 3.5 Stars (simulated)
+rating_adjustment: 0.0
+capital_round1_musd: 12.0
+capacity_per_quarter: 6
+data_readiness: 3
+dual_share: 0.18
+flags: [shared_ehr]
+profile:
+  - {label: Members, value: "94,800"}
+  - {label: Geography, value: "One metropolitan region (Cascade Valley, 4 counties); 82% of members attributed to the sponsoring health system"}
+  - {label: Product mix, value: "74% HMO, 18% PPO, 8% D-SNP"}
+  - {label: Dual-eligible / LIS share, value: "18% dual, 26% LIS"}
+  - {label: Average member age, value: "73.9"}
+  - {label: Starting overall rating, value: "3.5 Stars (simulated)"}
+  - {label: Revenue, value: "$1.3B illustrative"}
+  - {label: Round 1 capital, value: "$12.0M"}
+  - {label: Round 2 capital, value: "$8.0M base plus up to $4.0M earned at the board pitch"}
+  - {label: Implementation capacity, value: "6 capacity points per quarter (plan IT is small; system IT has its own priorities)"}
+  - {label: Data readiness score, value: "3 of 5 (excellent clinical data from the system EHR, weak payer-side operations data)"}
+  - {label: Care management staff, value: "48 care managers (28 employed by the health system), 5 pharmacists"}
+  - {label: Contact center, value: "95 agents, abandonment 6%"}
+  - {label: Technology, value: "Shared EHR with the sponsoring system; plan runs a separate core admin and a small warehouse; 6 source systems"}
+  - {label: Provider network, value: "Sponsoring system employs 70% of attributed PCPs (salaried, no Stars-linked compensation); 30% independent"}
+population: >-
+  Geographically concentrated, well attributed, with rich clinical context from the shared EHR.
+  Access is the binding constraint: primary care panels are full and third-next-available
+  appointment is 24 days. Rural edges of the region have transport barriers.
+board_mandate: >-
+  Reach 4.0 Stars and prove the plan-provider model to the system board, which is weighing whether
+  to keep the plan. Capital is modest and every dollar is compared against clinical investments the
+  system could make instead.
+briefing: >-
+  CommunityCare Alliance is the 94,800-member Medicare Advantage plan of a health system in the
+  four-county Cascade Valley region. Of its members, 82% are attributed to the sponsoring system,
+  which shares its EHR with the plan, so lab, vitals and encounter data are current and complete.
+  Blood pressure and glycemic control are already at 4 Stars and complaints are low. The plan sits
+  at 3.5 Stars, with Getting Appointments at 2 Stars. You have $12.0M of Round 1 capital and only
+  6 capacity points a quarter, because plan IT is small and system IT has its own queue. The system
+  board is weighing whether to keep the plan at all.
+advantages:
+  - "Shared EHR: lab, vitals and encounter data are current and complete for 82% of members"
+  - Trusted clinical relationships; care managers sit inside clinics
+  - Low complaint rate and strong customer service scores
+  - Blood pressure and glycemic control already at 4 Stars
+constraints:
+  - PCP panels are full; outreach generates demand the clinics cannot absorb
+  - Employed clinicians are salaried with no quality compensation; plan quality is not on their scorecard
+  - Clinical recommendations go to a plan portal; clinicians work in the EHR inbox
+  - Plan IT depends on system IT for any EHR-facing change; queue is 2 quarters
+hidden_root_causes:
+  - id: C-RC1
+    title: Recommendations land where nobody works
+    description: >-
+      The plan's gap and risk recommendations are delivered to a plan portal with a 6% clinician
+      open rate. The sponsoring system's clinicians live in the EHR inbox. Until recommendations
+      are delivered inside the EHR workflow with an agreed owner, insight quality is irrelevant.
+    affected_measures: [m3, m4]
+    clue: >-
+      Recommendations are accurate, but almost none are opened; clinicians act quickly on what
+      reaches their EHR inbox, and plan recommendations never get there.
+    addressed_by: [i6, i11]
+  - id: C-RC2
+    title: Access, not awareness, caps screening and appointments
+    description: >-
+      Breast screening outreach already reaches 78% of eligible members. Third-next-available
+      appointment is 24 days and imaging slots are booked 6 weeks out. Getting Appointments and
+      Care Quickly sits at 2 Stars for the same reason. More outreach raises complaints, not
+      screening.
+    affected_measures: [m5, m9, m1, m2]
+    clue: >-
+      Outreach reaches most eligible members, but only about one in five gets scheduled;
+      members wait more than three weeks for appointments and six weeks for imaging.
+    addressed_by: [i16]
+  - id: C-RC3
+    title: Affiliation is assumed to mean alignment
+    description: >-
+      Plan and system leadership believe the shared ownership guarantees adoption. Clinicians
+      receive no Stars-linked compensation and see plan requests as administrative burden. Care
+      managers employed by the system report to clinic directors, not the plan.
+    affected_measures: [m3, m4, m7]
+    clue: >-
+      Employed clinicians perform no better than independents on plan priorities, and most care
+      managers report to clinic directors rather than the plan.
+    addressed_by: [i15, i11]
+misleading_signals:
+  - id: C-MS1
+    title: Clinical data completeness is best-in-class
+    why_misleading: >-
+      Predictive models validate beautifully on this data. Teams conclude that insight is the gap.
+      It is not; action is.
+  - id: C-MS2
+    title: Customer Service CAHPS at 4 Stars
+    why_misleading: >-
+      Members like the people they reach. The problem is the appointment they cannot get, which
+      shows up in a different CAHPS measure and in disenrollment.
+trap_title: Assume affiliation guarantees adoption
+trap_description: >-
+  Value comes from coordinated action (workflow placement, incentives, capacity), not from data
+  possession. The signature failure is a provider copilot that produces excellent recommendations
+  which clinicians ignore.
+measures:
+  m1: {value: 85.0, headroom: 4.0, headroom_text: "+4.0 pts", root_cause_link: "C-RC2 (transport to pharmacy)"}
+  m2: {value: 87.0, headroom: 3.5, headroom_text: "+3.5 pts", root_cause_link: C-RC2}
+  m3: {value: 73.0, headroom: 4.0, headroom_text: "+4 pts", root_cause_link: C-RC1}
+  m4: {value: 78.0, headroom: 3.0, headroom_text: "+3 pts", root_cause_link: C-RC1}
+  m5: {value: 75.0, headroom: 5.0, headroom_text: "+5 pts (only if imaging capacity is added)", root_cause_link: C-RC2}
+  m7: {value: 10.5, headroom: 1.5, headroom_text: "-1.5", root_cause_link: "C-RC3 (care managers report to clinics)"}
+  m9: {value: 72.0, headroom: 6.0, headroom_text: "+6 pts (only with access expansion)", root_cause_link: C-RC2}
+  m10: {value: 91.0, headroom: 1.5, headroom_text: "+1.5 pts", root_cause_link: none}
+  m11: {value: 0.20, headroom: 0.05, headroom_text: "-0.05", root_cause_link: "C-RC2 (if outreach outpaces access)"}
+  m12: {value: 88.0, headroom: 4.0, headroom_text: "+4 pts", root_cause_link: none}
+kpis:
+  identity_match: 98
+  at_risk_contacted: 40
+  fill_90day: 44
+  bp_capture: 94
+  provider_action_rate: 2
+  lab_feed_coverage: 96
+  outreach_response: 22
+  adt_latency_days: 1.5
+  followup_48h: 52
+  third_next_available: 24
+  abandonment: 6
+  fcr: 78
+  appeals_cycle_days: 27
+  copilot_adoption: 0
+viable_strategies:
+  - title: Adoption-first
+    description: >-
+      Provider incentives (I15), workflow redesign (I11), provider copilot embedded in the EHR (I6)
+      and access expansion (I16). Slower to show in leading KPIs, large Year 2 effect on access and
+      screening.
+    round1: [i15, i11, i6, i16]
+    round2: [i10]
+  - title: Capacity-first
+    description: >-
+      Access expansion (I16), pharmacy capacity (I14), personalized engagement tuned to transport
+      barriers (I7), governance (I10). Lifts appointments and adherence without depending on
+      system IT.
+    round1: [i16, i14, i7, i10, i18, i12]
+failure_modes:
+  - title: Insight-heavy
+    description: "Insight-heavy portfolio (I5, I6, I3) without I11 or I15: the ignored-recommendations crisis fires, adoption stays under 10%, measures flat."
+  - title: Outreach-heavy
+    description: "Outreach-heavy portfolio (I7, I8) without I16: appointment demand rises, access measure falls a star, complaints rise."
+conflict_hooks:
+  - roles: [Plan CEO, System CMIO]
+    tension: Put plan recommendations in the EHR inbox vs. protect clinicians from more alerts.
+  - roles: [CFO, Chief Medical Officer]
+    tension: Spend on incentives and access vs. on analytics the system can showcase.
+  - roles: [Chief Quality Officer, Clinic Operations Director]
+    tension: More outreach for screening vs. clinics that cannot absorb the demand.

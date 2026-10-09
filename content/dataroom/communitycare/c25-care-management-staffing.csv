@@ -1,0 +1,11 @@
+team,employer,headcount,reports_to,primary_work_queue,caseload_per_fte,discharge_contact_48h_pct,notes,analyst_note
+Transitions of care team,CommunityCare Alliance (plan),8,"Rachel Nguyen, RN, Director of Care Management (plan)",CareTrack,62,78,Plan sets priorities.,"Simulated, fictional data for executive education. Not real PHI. Headcount as of 1 Aug 2026 from plan HR and CVH HR. Caseload = active plan members per FTE. 48-hour contact = % of plan-member hospital discharges with care manager contact within 48 hours, H1 2026, by team that owns the discharge."
+Complex case management,CommunityCare Alliance (plan),7,"Rachel Nguyen, RN, Director of Care Management (plan)",CareTrack,48,,,
+D-SNP care coordination,CommunityCare Alliance (plan),3,"Rachel Nguyen, RN, Director of Care Management (plan)",CareTrack,110,,"Model of care requirements for 7,584 D-SNP members.",
+Behavioral health care management,CommunityCare Alliance (plan),2,"Rachel Nguyen, RN, Director of Care Management (plan)",CareTrack,55,,,
+Clinic-embedded care managers: Cascade metro clinics,Cascade Valley Health (system),14,Clinic directors (12 clinics),Meridian EHR clinic worklists,140,41,Time study: 46% of time on plan-member work; balance on clinic panel management and all-payer patients.,
+Clinic-embedded care managers: Bellmont clinics,Cascade Valley Health (system),6,Clinic directors (4 clinics),Meridian EHR clinic worklists,150,44,,
+Clinic-embedded care managers: Orchard clinics,Cascade Valley Health (system),4,Clinic directors (3 clinics),Meridian EHR clinic worklists,145,39,,
+Clinic-embedded care managers: Granite clinics,Cascade Valley Health (system),4,Clinic directors (3 clinics),Meridian EHR clinic worklists,130,36,One position vacant 5 months; filled Aug 2026.,
+Clinical pharmacists (adherence),CommunityCare Alliance (plan),5,"Dr. Samuel Okafor, PharmD, Director of Pharmacy (plan)",ClearPath refill-gap file and CareTrack,1380,,Pharmacists are not counted in the 48 care managers.,
+All care managers,"Plan 20, system 28",48,20 report to the plan; 28 report to clinic directors,,95,58,Plan-wide share of discharges with a care manager contact within 48 hours: 58% (2025: 61%).,
