@@ -251,12 +251,12 @@ Not a prompt-engineering or coding class, a vendor demo, an exact CMS formula, a
 - **Edition:** assumptions log with sign-off status, §12 review checklist status, simplification register, content warnings, crisis triggers, contingency cuts, workflow facilitator notes.
 - **Session settings:** this session's configuration snapshot. Changes need an audit note; model and scorecard parameters lock after Year 1.
 
-**Settings (`/settings`, admin password from `.env`)**
+**Settings (`/settings`, admin password from `backend/.env`)**
 - About 70 settings in six groups: Session defaults, Facilitation, AI analyst, Model parameters (§5), Scorecard (§10.1 weights), Pilot targets.
-- Each setting shows its source (content file, `.env`, or saved in the UI), its env var name, and whether it applies live or to new sessions. Reset returns it to the `.env`/content value.
+- Each setting shows its source (content file, `backend/.env`, or saved in the UI), its env var name, and whether it applies live or to new sessions. Reset returns it to the `backend/.env`/content value.
 - Content review: confirm or change each §12 checklist item and each assumption row, with a note.
 - Sessions: every session with an "Open console" link. System: version, database (masked), AI model, whether a key is set (never the key).
-- Precedence: `content/game.yaml` → `.env` → saved in Settings. Secrets (`ANTHROPIC_API_KEY`, `SECRET_KEY`, `ADMIN_PASSWORD`) are `.env`-only.
+- Precedence: `content/game.yaml` → `backend/.env` → saved in Settings. Secrets (`ANTHROPIC_API_KEY`, `SECRET_KEY`, `ADMIN_PASSWORD`) are `backend/.env`-only.
 
 **Start page:** agenda built from the run-of-show; create a session with the payers to include and team names, and defaults taken from Settings.
 
@@ -288,9 +288,9 @@ Not a prompt-engineering or coding class, a vendor demo, an exact CMS formula, a
 - Signed, scoped tokens; never in URLs or logs. WebSocket authenticates in-band.
 - Teams never receive root causes, rules or triggers.
 - Every override needs an audit note.
-- Secrets live only in `.env`.
+- Secrets live only in `backend/.env`.
 
-**Configuration (`.env`):**
+**Configuration (`backend/.env`):**
 - Ports and storage.
 - Secret and AI key, model, effort and limits.
 - Game rules: `SIM_MODE`, `ROUND2_MECHANIC`, `ROUND2_BASE_MUSD`, `CONFIDENCE_BAND`, `SIM_DEFAULT_SEED`, `INCLUDE_TRANSLATION`, `PITCH_AI_SUGGEST`, `OPPORTUNITY_RETENTION_DAYS`.
@@ -569,8 +569,9 @@ Legend: `[x]` done · `[~]` draft · `[ ]` to do · `(C)` content or expert task
 
 ```
 Exec Simulation/
-├── README.md · Makefile · .env.example · .editorconfig
-├── .env                         ← all configuration (incl. game rules, ADMIN_PASSWORD); never committed
+├── README.md · Makefile · .editorconfig
+├── backend/.env                 ← API configuration (game rules, AI, ADMIN_PASSWORD); never committed
+├── frontend/.env                ← dev port, API proxy target, VITE_API_URL; never committed
 ├── content/                     ← game.yaml · measures · kpis · investments · events · stages · workflow ·
 │                                  rubrics · reference · payers/ · dataroom/ (90 artifacts)
 ├── backend/app/                 ← game server (FastAPI)

@@ -1,5 +1,5 @@
-"""Settings (admin). Everything configurable in .env and content/game.yaml can be overridden
-here; secrets stay in .env. Access requires ADMIN_PASSWORD from .env."""
+"""Settings (admin). Everything configurable in backend/.env and content/game.yaml can be overridden
+here; secrets stay in backend/.env. Access requires ADMIN_PASSWORD from backend/.env."""
 
 from __future__ import annotations
 
@@ -44,7 +44,7 @@ class AdminStatus(BaseModel):
 
 @router.get("/status")
 def status(request: Request) -> AdminStatus:
-    """Whether Settings are enabled (ADMIN_PASSWORD set in .env)."""
+    """Whether Settings are enabled (ADMIN_PASSWORD set in backend/.env)."""
     return AdminStatus(enabled=request.app.state.settings.admin_password is not None)
 
 
@@ -52,7 +52,7 @@ def status(request: Request) -> AdminStatus:
 def login(body: LoginBody, request: Request) -> LoginOut:
     settings = request.app.state.settings
     if settings.admin_password is None:
-        raise Forbidden("Settings are disabled: set ADMIN_PASSWORD in .env and restart")
+        raise Forbidden("Settings are disabled: set ADMIN_PASSWORD in backend/.env and restart")
     client = request.client.host if request.client else "local"
     now = time.monotonic()
     attempts = _FAILURES[client]

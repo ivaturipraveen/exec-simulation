@@ -92,7 +92,7 @@ This product teaches that by letting leaders make the decisions and feel the con
 | **Co-facilitator** *(optional)* | Tests the room and tech | Helps teams with the app; logs observations | Writes up observations |
 | **Stars SME** | Reviews measures and the simplifications | Q&A | Technical follow-ups |
 | **Product owner** | Owns content and decisions (Edition tab) | — | Turns playtest feedback into content edits |
-| **Tech admin** | `make start`, checks the AI key and `.env` | Keeps the app running | Exports and archives |
+| **Tech admin** | `make start`, checks the AI key and `backend/.env` | Keeps the app running | Exports and archives |
 
 ## 4. The engagement lifecycle (step by step)
 
@@ -270,7 +270,7 @@ It prints the **facilitator link** (it contains a secret token, so don't paste i
 - [ ] **AI analyst** shows "Claude connected".
 - [ ] The facilitator **Run** tab shows the timeline and three team cards.
 - [ ] You know the **Answer key** tab and won't project it.
-- [ ] *(Optional)* **Settings** (top right of the start page; password = `ADMIN_PASSWORD` in `.env`) opens. Don't project the System card.
+- [ ] *(Optional)* **Settings** (top right of the start page; password = `ADMIN_PASSWORD` in `backend/.env`) opens. Don't project the System card.
 
 ## 9. Format A — Guided tour of a finished session (15 minutes)
 
@@ -396,7 +396,7 @@ It prints the **facilitator link** (it contains a secret token, so don't paste i
 | A team has no crisis | A clean portfolio may trigger none; apply a curveball from the Teams tab |
 | Started a stage by mistake | **Back**, or click the stage in the timeline |
 | Team says "Results are being reviewed" | Release the year from the **Run** tab (Stage actions) |
-| Settings says it is disabled | Set `ADMIN_PASSWORD` in `.env` and restart `make dev` |
+| Settings says it is disabled | Set `ADMIN_PASSWORD` in `backend/.env` and restart `make dev` |
 | A setting change didn't affect a running session | Expected: sessions keep a snapshot. Change it in that session's **Session settings** tab |
 
 ## 15. After the demo

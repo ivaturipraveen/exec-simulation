@@ -42,7 +42,7 @@ type Section = string
 
 const SOURCE_LABEL: Record<string, string> = {
   content: 'content/game.yaml',
-  env: '.env',
+  env: 'backend/.env',
   ui: 'Saved here',
 }
 
@@ -92,9 +92,9 @@ export function SettingsPage() {
         <div className="settings__gate">
           <Card title="Settings are disabled">
             <p className="secondary">
-              Set <code>ADMIN_PASSWORD</code> in <code>.env</code> and restart the app to manage
-              settings here. Every setting can also be configured in <code>.env</code> and{' '}
-              <code>content/game.yaml</code>.
+              Set <code>ADMIN_PASSWORD</code> in <code>backend/.env</code> and restart the app to
+              manage settings here. Every setting can also be configured in{' '}
+              <code>backend/.env</code> and <code>content/game.yaml</code>.
             </p>
           </Card>
         </div>
@@ -143,7 +143,7 @@ function Login({ onToken }: { onToken: (t: string) => void }) {
             <KeyRound size={16} aria-hidden /> Settings
           </span>
         }
-        subtitle="Enter the ADMIN_PASSWORD from .env"
+        subtitle="Enter the ADMIN_PASSWORD from backend/.env"
       >
         <form className="stack" onSubmit={submit}>
           {error && <Callout tone="critical">{error}</Callout>}
@@ -224,7 +224,7 @@ function SettingsWorkspace({ token, onExpired }: { token: string; onExpired: () 
         delete next[key]
         return next
       })
-      toast('Reset to the .env / content value')
+      toast('Reset to the backend/.env / content value')
     } catch (e) {
       toast(errorMessage(e), 'error')
     }
@@ -313,7 +313,7 @@ const GROUP_INTRO: Record<string, string> = {
   'Session defaults':
     'Defaults for new sessions. Each session keeps a snapshot, so changes never shift a workshop already under way. Facilitators can adjust a session from its console (Session tab).',
   Facilitation: 'Console behaviour and the board pitch.',
-  'AI analyst': 'Applies immediately. The API key stays in .env (never stored here).',
+  'AI analyst': 'Applies immediately. The API key stays in backend/.env (never stored here).',
   'Model parameters':
     'Content Pack §5. Changes apply to new sessions; use `make calibrate` to see their effect on the reference portfolios.',
   Scorecard: 'Content Pack §10.1. The five dimension weights must sum to 100%.',
@@ -608,18 +608,20 @@ function SystemCard({ view }: { view: SettingsView }) {
     ['Allowed origins', s.cors_origins.join(', ')],
     [
       'Claude API key',
-      s.ai_configured ? 'Configured in .env' : 'Not set — the analyst runs in retrieval-only mode',
+      s.ai_configured
+        ? 'Configured in backend/.env'
+        : 'Not set — the analyst runs in retrieval-only mode',
     ],
     ['Token signing key', s.signing_key],
-    ['Admin password', s.admin_password_set ? 'Set in .env' : 'Not set'],
+    ['Admin password', s.admin_password_set ? 'Set in backend/.env' : 'Not set'],
   ]
   return (
     <div className="stack" style={{ '--gap': '16px' } as React.CSSProperties}>
       <div>
         <h1>System</h1>
         <p className="secondary">
-          Read-only. Infrastructure and secrets are configured in <code>.env</code> and need a
-          restart.
+          Read-only. Infrastructure and secrets are configured in <code>backend/.env</code> and need
+          a restart.
         </p>
       </div>
       <Card flush>

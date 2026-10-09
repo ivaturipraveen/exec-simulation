@@ -1,7 +1,8 @@
 # Local developer entry points. Run `make help` for a list.
 SHELL := /bin/bash
-# Ports and other settings come from .env when present (see .env.example).
--include .env
+# Ports come from backend/.env and frontend/.env when present (see each .env.example).
+-include backend/.env
+-include frontend/.env
 API_PORT ?= 8800
 WEB_PORT ?= 5180
 export WEB_PORT
@@ -21,7 +22,8 @@ help: ## Show available targets
 	@grep -E '^[a-zA-Z0-9_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2}'
 
 setup: setup-backend setup-frontend ## Install all dependencies
-	@test -f .env || cp .env.example .env
+	@test -f backend/.env || cp backend/.env.example backend/.env
+	@test -f frontend/.env || cp frontend/.env.example frontend/.env
 	@mkdir -p data
 
 setup-backend: ## Create Python venv and install backend deps
@@ -55,7 +57,7 @@ demo: ## Create a fully played demo session (app must be running) and print link
 demo-fresh: ## Create a clean, started session for a live walkthrough
 	cd backend && .venv/bin/python scripts/demo_session.py --fresh
 
-test-live: ## Live Claude analyst checks (uses API credits; needs ANTHROPIC_API_KEY in .env)
+test-live: ## Live Claude analyst checks (uses API credits; needs ANTHROPIC_API_KEY in backend/.env)
 	cd backend && RUN_LIVE_AI=1 .venv/bin/pytest tests/test_live_analyst.py -v
 
 test-frontend:

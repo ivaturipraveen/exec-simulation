@@ -15,7 +15,7 @@ A facilitated, decision-driven executive workshop built from the **Requirements 
 Requires Python ≥ 3.12, Node ≥ 20 and make.
 
 ```bash
-make setup      # venv + npm ci + .env
+make setup      # venv + npm ci + backend/.env and frontend/.env
 make dev        # API :8800 (docs at /docs) + web http://localhost:5180
 # or
 make start      # production-style: built UI + API on http://127.0.0.1:8800
@@ -25,12 +25,12 @@ make start      # production-style: built UI + API on http://127.0.0.1:8800
 2. Each team opens the start page → **Join your team** → enter its code.
 3. Run the session from the facilitator console. See the facilitator guide.
 
-All configuration lives in `.env` (template: `.env.example`):
+Each service has its own configuration file (templates: `backend/.env.example`, `frontend/.env.example`). The frontend file holds only the dev port, the proxy target and `VITE_API_URL`. Everything below lives in `backend/.env`:
 - **Infrastructure:** ports, local SQLite path, token-signing secret.
 - **AI:** key, model, effort, limits.
 - **Game rules:** `SIM_MODE`, `ROUND2_MECHANIC`, `ROUND2_BASE_MUSD`, `CONFIDENCE_BAND`, `SIM_DEFAULT_SEED`, `INCLUDE_TRANSLATION`, `PITCH_AI_SUGGEST`, `OPPORTUNITY_RETENTION_DAYS`.
 
-Blank game values fall back to `content/game.yaml`. Set `ADMIN_PASSWORD` to enable the **Settings** screen (`/settings`, linked from the start page). There you can change about 70 settings without editing files: session defaults, facilitation, the AI analyst, model parameters (§5), scorecard weights and pilot targets. Each one shows its source and env var. Precedence is `content/game.yaml` → `.env` → saved in Settings. Runtime settings apply immediately; game settings apply to new sessions, because each session keeps a snapshot (adjust one session from its console's **Session settings** tab, with an audit note). Secrets stay in `.env` only. The same screen holds the Content Pack §12 review sign-off and a list of sessions.
+Blank game values fall back to `content/game.yaml`. Set `ADMIN_PASSWORD` to enable the **Settings** screen (`/settings`, linked from the start page). There you can change about 70 settings without editing files: session defaults, facilitation, the AI analyst, model parameters (§5), scorecard weights and pilot targets. Each one shows its source and env var. Precedence is `content/game.yaml` → `backend/.env` → saved in Settings. Runtime settings apply immediately; game settings apply to new sessions, because each session keeps a snapshot (adjust one session from its console's **Session settings** tab, with an audit note). Secrets stay in `backend/.env` only. The same screen holds the Content Pack §12 review sign-off and a list of sessions.
 
 The AI analyst uses Claude when `ANTHROPIC_API_KEY` is set; otherwise it runs in retrieval-only mode.
 
@@ -48,6 +48,8 @@ The API and the UI can run as two services. Set `VITE_API_URL` on the UI build s
 | Extra | A persistent disk at `/var/data` with `DATA_DIR=/var/data` and `DATABASE_URL=sqlite:////var/data/exec_sim.db`; without it, sessions are lost on every deploy or restart | Rewrite rule `/*` → `/index.html` so deep links work |
 
 Use one API worker: live updates (WebSocket) and the session lock are in-process.
+
+The API's production values are kept in `backend/.env.production` (git-ignored). Paste them into Render under **Environment → Add from .env**. The UI needs only `VITE_API_URL` and `NODE_VERSION`.
 
 ## Commands
 

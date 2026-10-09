@@ -859,7 +859,7 @@ class SettingsStore:
             log_level=s.log_level,
             cors_origins=s.cors_origins,
             ai_configured=s.ai_configured,
-            signing_key="set in .env" if s.secret_key else "generated locally (data/.secret)",
+            signing_key="set in backend/.env" if s.secret_key else "generated locally (data/.secret)",
             admin_password_set=s.admin_password is not None,
         )
         return SettingsView(fields=fields, system=system, review=self.review_entries())

@@ -21,7 +21,7 @@ Your job:
 ## Before the session
 
 1. Run `make setup` once. Then `make start` serves everything on `http://<host>:8800` (or `make dev` for development).
-2. Check `.env`:
+2. Check `backend/.env`:
    - `ANTHROPIC_API_KEY` enables the Claude analyst and AI-suggested pitch scores. Without it, the analyst returns cited passages and the engine suggests scores.
    - Game rules: `ROUND2_MECHANIC=hybrid`, `ROUND2_BASE_MUSD=8.0`, `SIM_MODE=deterministic`, `INCLUDE_TRANSLATION=true`, `CONFIDENCE_BAND=0.20`.
 3. Start page → **Facilitate** → create a session. Choose the Round-2 mechanic (hybrid is the pack default), the mode and a seed.
@@ -81,7 +81,7 @@ Every action below needs an audit note and is logged.
 After each simulation, results stay hidden from teams ("Results are being reviewed") until you release them from the Run tab. Use the gap to check every team on the Results tab. Final scorecards have their own release at Final results.
 
 ## Settings
-`/settings` (link on the start page; password is `ADMIN_PASSWORD` in `.env`) holds the defaults for new sessions: timings, the AI analyst, model parameters, scorecard weights and pilot targets. Each setting shows where its value comes from (content, `.env` or saved here) and its env var. A running session never changes when a default changes. Settings → **Content review** is where the content owner signs off the §12 checklist and the assumption rows, and the Edition tab shows that status.
+`/settings` (link on the start page; password is `ADMIN_PASSWORD` in `backend/.env`) holds the defaults for new sessions: timings, the AI analyst, model parameters, scorecard weights and pilot targets. Each setting shows where its value comes from (content, `backend/.env` or saved here) and its env var. A running session never changes when a default changes. Settings → **Content review** is where the content owner signs off the §12 checklist and the assumption rows, and the Edition tab shows that status.
 
 ## Projector view
 Click **Projector** in the console header. It opens a read-only room view in a new window (drag it to the projector, then use the full-screen button in the bottom corner). It shows the stage, the executive question, the clock, the next stage, join codes at setup, each team's progress, and the scoreboard once you release scorecards. It never shows the answer key, scores in progress or overtime: the clock holds at 0:00.

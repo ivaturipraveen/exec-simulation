@@ -1,7 +1,8 @@
-"""Application settings, loaded from environment variables and the repo-level .env file.
+"""Application settings, loaded from environment variables and `backend/.env`.
 
-All configuration lives in `.env` (see `.env.example`). Relative paths resolve from the
-project root so the server behaves the same whichever directory it is started from.
+Backend configuration lives in `backend/.env` (see `backend/.env.example`); the frontend has its
+own `frontend/.env`. Relative paths resolve from the project root so the server behaves the same
+whichever directory it is started from. Real environment variables (e.g. on Render) win over the file.
 """
 
 from functools import lru_cache
@@ -12,6 +13,7 @@ from pydantic import Field, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
+BACKEND_DIR = REPO_ROOT / "backend"
 _SQLITE_PREFIX = "sqlite:///"
 
 
@@ -21,7 +23,7 @@ def _from_root(path: Path) -> Path:
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=REPO_ROOT / ".env",
+        env_file=BACKEND_DIR / ".env",
         env_file_encoding="utf-8",
         extra="ignore",
     )
