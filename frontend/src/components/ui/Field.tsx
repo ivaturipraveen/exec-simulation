@@ -1,9 +1,9 @@
 import {
+  type ComponentProps,
   useId,
   type InputHTMLAttributes,
   type ReactNode,
   type SelectHTMLAttributes,
-  type TextareaHTMLAttributes,
 } from 'react'
 
 interface FieldProps {
@@ -30,7 +30,7 @@ export function Field({ label, hint, error, children }: FieldProps) {
 export const Input = (p: InputHTMLAttributes<HTMLInputElement>) => (
   <input {...p} className={`input ${p.className ?? ''}`} />
 )
-export const Textarea = (p: TextareaHTMLAttributes<HTMLTextAreaElement>) => (
+export const Textarea = (p: ComponentProps<'textarea'>) => (
   <textarea {...p} className={`textarea ${p.className ?? ''}`} />
 )
 export const Select = (p: SelectHTMLAttributes<HTMLSelectElement>) => (

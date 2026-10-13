@@ -1055,7 +1055,7 @@
 }
 .projector__code {
   margin-top: 6px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-variant-numeric: tabular-nums;
   font-size: clamp(28px, 3.4vw, 56px);
   font-weight: 700;
   letter-spacing: 0.12em;

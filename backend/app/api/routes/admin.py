@@ -127,6 +127,12 @@ def sessions(_: Admin, request: Request) -> list[SessionRow]:
         ]
 
 
+@router.delete("/sessions/{session_id}", status_code=204)
+def delete_session(session_id: str, _: Admin, request: Request) -> None:
+    """Delete a session, its teams and its activity log (admins only; cannot be undone)."""
+    request.app.state.game.delete_session(session_id)
+
+
 @router.post("/sessions/{session_id}/token")
 def facilitator_token(session_id: str, _: Admin, request: Request) -> LoginOut:
     """Open any session's facilitator console (admins only)."""

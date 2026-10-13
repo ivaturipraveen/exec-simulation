@@ -5,7 +5,7 @@ from fastapi.testclient import TestClient
 
 from app.core.config import Settings
 from app.main import create_app
-from tests.api.helpers import auth, create_session
+from tests.api.helpers import auth, create_session, join_all
 
 
 @pytest.fixture
@@ -101,3 +101,21 @@ def test_admin_can_open_any_session(admin_client: TestClient) -> None:
     assert rows[0]["id"] == s["id"]
     tok = c.post(f"/api/admin/sessions/{s['id']}/token", headers=h).json()["token"]
     assert c.get(f"/api/sessions/{s['id']}", headers=auth(tok)).status_code == 200
+
+
+def test_admin_can_delete_a_session(admin_client: TestClient) -> None:
+    c = admin_client
+    session, ftok = create_session(c)
+    sid = session["id"]
+    join_all(c, session)
+    codes = [t["join_code"] for t in session["teams"]]
+    admin = _login(c)
+    # Only admins may delete; facilitators and unknown ids are refused.
+    assert c.delete(f"/api/admin/sessions/{sid}", headers=auth(ftok)).status_code == 403
+    assert c.delete("/api/admin/sessions/nope", headers=admin).status_code == 404
+    assert c.delete(f"/api/admin/sessions/{sid}", headers=admin).status_code == 204
+    # The session, its teams (join codes) and its listing are gone.
+    assert sid not in {s["id"] for s in c.get("/api/admin/sessions", headers=admin).json()}
+    assert c.get(f"/api/sessions/{sid}", headers=auth(ftok)).status_code == 404
+    for code in codes:
+        assert c.post("/api/join", json={"code": code}).status_code == 404

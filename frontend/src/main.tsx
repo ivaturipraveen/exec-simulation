@@ -13,6 +13,8 @@ import './styles/components.css'
 import './styles/pages.css'
 import './styles/theme.css'
 import './styles/responsive.css'
+import './styles/brand.css'
+import './styles/game.css'
 
 initTheme()
 

@@ -1,31 +1,42 @@
-/* Design tokens. Chart roles follow the validated reference palette (dataviz skill). */
+/* Design tokens — Brightcone.ai palette (navy · blue · cyan · mint) in a light and a dark theme.
+   Chart roles follow the validated reference palette (dataviz skill), with series-1 on the brand blue. */
 :root {
   color-scheme: light;
-  --font-sans: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
-  --page: #f4f6f9;
+  /* brand constants (same in both themes) */
+  --bc-navy: #0b2545;
+  --bc-navy-deep: #061426;
+  --bc-blue: #0a6ed1;
+  --bc-blue-bright: #1e8fff;
+  --bc-cyan: #13b4c8;
+  --bc-mint: #14c79f;
+  --bc-gradient: linear-gradient(120deg, #0d3a6e 0%, #1e8fff 55%, #13b4c8 100%);
+
+  --page: #f4f7fb;
   --surface: #ffffff;
-  --surface-2: #f8f9fb;
-  --surface-sunken: #eef1f5;
-  --border: rgba(15, 23, 42, 0.08);
-  --border-strong: rgba(15, 23, 42, 0.15);
+  --surface-2: #f7f9fc;
+  --surface-sunken: #ecf1f7;
+  --border: rgba(11, 37, 69, 0.09);
+  --border-strong: rgba(11, 37, 69, 0.17);
 
-  --text: #0f172a;
-  --text-2: #475467;
-  --text-muted: #6b7486;
+  --text: #0b1a2e;
+  --text-2: #43536a;
+  --text-muted: #66768c;
   --text-inverse: #ffffff;
 
-  --accent: #2457c5;
-  --accent-hover: #1e48a6;
-  --accent-soft: #e9effc;
-  --accent-ink: #1b3f8c;
-  --focus: #2a78d6;
+  --accent: #0a6ed1;
+  --accent-hover: #085cb0;
+  --accent-soft: #e6f1fc;
+  --accent-ink: #0a4f99;
+  --accent-2: #0f9fb2;
+  --focus: #1e8fff;
 
-  --brand: #0d1b2f;
-  --brand-2: #142742;
+  --brand: #061426;
+  --brand-2: #0b2545;
   --brand-line: rgba(255, 255, 255, 0.08);
-  --brand-text: #d3dbe8;
-  --brand-muted: #8a9ab3;
+  --brand-text: #cfdbeb;
+  --brand-muted: #8399b6;
 
   --good: #0ca30c;
   --good-ink: #046c2a;
@@ -39,21 +50,21 @@
   --critical-soft: #fcecec;
 
   /* charts */
-  --chart-surface: #fcfcfb;
-  --grid: #e1e0d9;
-  --axis: #c3c2b7;
-  --series-1: #2a78d6;
+  --chart-surface: #fbfcfe;
+  --grid: #e1e6ee;
+  --axis: #c2cbd8;
+  --series-1: #0a6ed1;
   --series-2: #eb6834;
   --series-3: #1baf7a;
   --series-4: #eda100;
   --series-5: #e87ba4;
 
-  --radius-sm: 7px;
+  --radius-sm: 8px;
   --radius: 12px;
   --radius-lg: 16px;
-  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
-  --shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 6px 18px rgba(15, 23, 42, 0.06);
-  --shadow-lg: 0 18px 40px rgba(15, 23, 42, 0.16);
+  --shadow-sm: 0 1px 2px rgba(11, 37, 69, 0.06);
+  --shadow: 0 1px 2px rgba(11, 37, 69, 0.04), 0 6px 18px rgba(11, 37, 69, 0.07);
+  --shadow-lg: 0 18px 40px rgba(11, 37, 69, 0.16);
 
   --sidebar-w: 248px;
   --topbar-h: 60px;
@@ -62,74 +73,76 @@
 @media (prefers-color-scheme: dark) {
   :root:where(:not([data-theme='light'])) {
     color-scheme: dark;
-    --page: #0b0e13;
-    --surface: #12161d;
-    --surface-2: #171c24;
-    --surface-sunken: #0e1218;
-    --border: rgba(255, 255, 255, 0.08);
-    --border-strong: rgba(255, 255, 255, 0.15);
-    --text: #eef2f7;
-    --text-2: #b7c1d0;
-    --text-muted: #8691a3;
-    --brand: #080f1a;
-    --brand-2: #0f1a2b;
-    --accent: #3987e5;
-    --accent-hover: #5598e7;
-    --accent-soft: rgba(57, 135, 229, 0.14);
-    --accent-ink: #86b6ef;
-    --focus: #5598e7;
-    --good-ink: #0ca30c;
-    --good-soft: rgba(12, 163, 12, 0.12);
+    --page: #04070c;
+    --surface: #0b111a;
+    --surface-2: #101822;
+    --surface-sunken: #070c13;
+    --border: rgba(160, 196, 240, 0.1);
+    --border-strong: rgba(160, 196, 240, 0.19);
+    --text: #eaf1f9;
+    --text-2: #b3c1d3;
+    --text-muted: #8090a6;
+    --brand: #02050a;
+    --brand-2: #071426;
+    --accent: #1e8fff;
+    --accent-hover: #4aa5ff;
+    --accent-soft: rgba(30, 143, 255, 0.14);
+    --accent-ink: #7fbfff;
+    --accent-2: #13b4c8;
+    --focus: #4aa5ff;
+    --good-ink: #2fc35a;
+    --good-soft: rgba(12, 163, 12, 0.13);
     --warning-ink: #fab219;
     --warning-soft: rgba(250, 178, 25, 0.12);
-    --critical-ink: #e66767;
-    --critical-soft: rgba(208, 59, 59, 0.14);
-    --chart-surface: #151a22;
-    --grid: #2c2c2a;
-    --axis: #383835;
-    --series-1: #3987e5;
+    --critical-ink: #ee6f6f;
+    --critical-soft: rgba(208, 59, 59, 0.15);
+    --chart-surface: #0d141e;
+    --grid: #1b2533;
+    --axis: #2b3748;
+    --series-1: #1e8fff;
     --series-2: #d95926;
     --series-3: #199e70;
     --series-4: #c98500;
     --series-5: #d55181;
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
-    --shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.6);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
+    --shadow-lg: 0 14px 36px rgba(0, 0, 0, 0.65);
   }
 }
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --page: #0b0e13;
-  --surface: #12161d;
-  --surface-2: #171c24;
-  --surface-sunken: #0e1218;
-  --border: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(255, 255, 255, 0.15);
-  --text: #eef2f7;
-  --text-2: #b7c1d0;
-  --text-muted: #8691a3;
-  --brand: #080f1a;
-  --brand-2: #0f1a2b;
-  --accent: #3987e5;
-  --accent-hover: #5598e7;
-  --accent-soft: rgba(57, 135, 229, 0.14);
-  --accent-ink: #86b6ef;
-  --focus: #5598e7;
-  --good-ink: #0ca30c;
-  --good-soft: rgba(12, 163, 12, 0.12);
+  --page: #04070c;
+  --surface: #0b111a;
+  --surface-2: #101822;
+  --surface-sunken: #070c13;
+  --border: rgba(160, 196, 240, 0.1);
+  --border-strong: rgba(160, 196, 240, 0.19);
+  --text: #eaf1f9;
+  --text-2: #b3c1d3;
+  --text-muted: #8090a6;
+  --brand: #02050a;
+  --brand-2: #071426;
+  --accent: #1e8fff;
+  --accent-hover: #4aa5ff;
+  --accent-soft: rgba(30, 143, 255, 0.14);
+  --accent-ink: #7fbfff;
+  --accent-2: #13b4c8;
+  --focus: #4aa5ff;
+  --good-ink: #2fc35a;
+  --good-soft: rgba(12, 163, 12, 0.13);
   --warning-ink: #fab219;
   --warning-soft: rgba(250, 178, 25, 0.12);
-  --critical-ink: #e66767;
-  --critical-soft: rgba(208, 59, 59, 0.14);
-  --chart-surface: #151a22;
-  --grid: #2c2c2a;
-  --axis: #383835;
-  --series-1: #3987e5;
+  --critical-ink: #ee6f6f;
+  --critical-soft: rgba(208, 59, 59, 0.15);
+  --chart-surface: #0d141e;
+  --grid: #1b2533;
+  --axis: #2b3748;
+  --series-1: #1e8fff;
   --series-2: #d95926;
   --series-3: #199e70;
   --series-4: #c98500;
   --series-5: #d55181;
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.6);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
+  --shadow-lg: 0 14px 36px rgba(0, 0, 0, 0.65);
 }

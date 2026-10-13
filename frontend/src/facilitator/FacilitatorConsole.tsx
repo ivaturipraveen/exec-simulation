@@ -6,6 +6,7 @@ import {
   Settings,
   KeyRound,
   Lightbulb,
+  LogOut,
   MonitorPlay,
   PlayCircle,
   Users,
@@ -13,7 +14,7 @@ import {
   WifiOff,
 } from 'lucide-react'
 import { useEffect, useState, type FormEvent } from 'react'
-import { Link, useParams, useSearchParams } from 'react-router-dom'
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { ApiError } from '../api/client'
 import { useSession } from '../api/hooks'
 import { useRealtime } from '../api/realtime'
@@ -31,6 +32,7 @@ import { EditionPanel } from './EditionPanel'
 import { SessionSettingsPanel } from './SessionSettingsPanel'
 import { OpportunityPanel } from './OpportunityPanel'
 import { ResultsPanel } from './ResultsPanel'
+import { BrandMark } from '../components/BrandMark'
 import { RunPanel } from './RunPanel'
 import { TeamsPanel } from './TeamsPanel'
 
@@ -39,6 +41,7 @@ type Tab = 'run' | 'teams' | 'key' | 'results' | 'map' | 'activity' | 'edition' 
 export function FacilitatorConsole() {
   const { sessionId = '' } = useParams()
   const [params, setParams] = useSearchParams()
+  const navigate = useNavigate()
   const [token, setToken] = useState(() => {
     const fromLink = params.get('token')
     if (fromLink) auth.setFacilitator(sessionId, fromLink)
@@ -69,17 +72,13 @@ export function FacilitatorConsole() {
     <div className="fac">
       <header className="fac__top">
         <Link to="/" className="row" style={{ color: 'inherit', textDecoration: 'none' }}>
-          <div className="brand-mark">MA</div>
+          <BrandMark />
         </Link>
         <div className="grow">
           <div className="xs muted upper">Facilitator console</div>
           <div className="strong">{session.name}</div>
         </div>
         <div className="row">
-          <span className="xs muted">
-            {session.stages[session.clock.stage_index]?.start} · Stage{' '}
-            {session.clock.stage_index + 1}/{session.stages.length} · {session.clock.stage_title}
-          </span>
           <Countdown clock={session.clock} />
           <Button
             size="sm"
@@ -97,6 +96,24 @@ export function FacilitatorConsole() {
             {connected ? 'Live' : 'Offline'}
           </Badge>
           <ThemeToggle />
+          <Button
+            size="sm"
+            variant="ghost"
+            icon={<LogOut />}
+            aria-label="Log out"
+            title="Log out of this console on this device"
+            iconOnly
+            onClick={() => {
+              if (
+                window.confirm(
+                  'Log out of this facilitator console? You will need the facilitator link or token to come back.',
+                )
+              ) {
+                auth.clearFacilitator(session.id)
+                navigate('/')
+              }
+            }}
+          />
         </div>
       </header>
       <div className="fac__tabs">

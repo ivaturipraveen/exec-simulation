@@ -1,6 +1,5 @@
 import { Bot, FileText, Lock, Mic, Plus, Send, Timer } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { errorMessage } from '../api/client'
 import { useCatalog, useDataRoom, useSavePitch } from '../api/hooks'
 import type { PitchSubmission, TeamView } from '../api/types'
@@ -11,6 +10,7 @@ import { Card } from '../components/ui/Card'
 import { Dialog } from '../components/ui/Dialog'
 import { Field, Textarea } from '../components/ui/Field'
 import { Badge, Callout, Empty, Loading, PageHeader } from '../components/ui/primitives'
+import { useAnalyst } from './analystContext'
 import { useToast } from '../components/ui/toastContext'
 import { money } from '../lib/format'
 import { useDebouncedEffect } from '../lib/useDebouncedEffect'
@@ -60,7 +60,7 @@ export function PitchPage({ team }: { team: TeamView }) {
   const [picking, setPicking] = useState(false)
   const save = useSavePitch()
   const toast = useToast()
-  const navigate = useNavigate()
+  const { openAnalyst } = useAnalyst()
   const titles = useMemo(() => new Map((room ?? []).map((a) => [a.id, a.title])), [room])
 
   const total = FIELDS.reduce((n, f) => n + words(pitch[f.key] ?? ''), 0)
@@ -94,13 +94,11 @@ export function PitchPage({ team }: { team: TeamView }) {
             variant="secondary"
             icon={<Bot />}
             onClick={() =>
-              navigate('/team/analyst', {
-                state: {
-                  mode: 'pitch',
-                  context:
-                    FIELDS.map((f) => `${f.label}: ${pitch[f.key]}`).join('\n') +
-                    `\nEvidence: ${pitch.evidence.join(', ')}`,
-                },
+              openAnalyst({
+                mode: 'pitch',
+                context:
+                  FIELDS.map((f) => `${f.label}: ${pitch[f.key]}`).join('\n') +
+                  `\nEvidence: ${pitch.evidence.join(', ')}`,
               })
             }
           >
@@ -205,6 +203,12 @@ export function PitchPage({ team }: { team: TeamView }) {
             subtitle={`Added to the ${money(team.rules.round2_base_musd)} base`}
           >
             <table className="table table--compact">
+              <thead>
+                <tr>
+                  <th>Pitch score</th>
+                  <th>Earned capital</th>
+                </tr>
+              </thead>
               <tbody>
                 {tiers.map((t, i) => (
                   <tr

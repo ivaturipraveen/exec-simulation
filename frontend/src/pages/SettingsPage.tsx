@@ -14,11 +14,13 @@ import {
   Target,
   Timer,
   Trophy,
+  Trash2,
 } from 'lucide-react'
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ApiError, errorMessage, request } from '../api/client'
 import type { ReviewEntry, SessionRow, SettingView, SettingsView } from '../api/types'
+import { BrandMark } from '../components/BrandMark'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { SettingControl } from '../components/SettingControl'
 import { formatSetting } from '../lib/settings'
@@ -67,7 +69,7 @@ export function SettingsPage() {
     <div className="settings">
       <header className="settings__top">
         <Link to="/" className="row" style={{ color: 'inherit', textDecoration: 'none' }}>
-          <div className="brand-mark">MA</div>
+          <BrandMark />
           <span className="strong">Executive AI Simulation</span>
         </Link>
         <span className="grow" />
@@ -81,9 +83,10 @@ export function SettingsPage() {
               adminAuth.clear()
               setToken(null)
             }}
-          >
-            Sign out
-          </Button>
+            aria-label="Log out"
+            title="Log out of Settings"
+            iconOnly
+          />
         )}
       </header>
       {enabled === null ? (
@@ -240,7 +243,10 @@ function SettingsWorkspace({ token, onExpired }: { token: string; onExpired: () 
             key={g}
             type="button"
             className={`settings__nav-item ${section === g ? 'is-active' : ''}`}
-            onClick={() => setSection(g)}
+            onClick={() => {
+              setSection(g)
+              window.scrollTo(0, 0)
+            }}
           >
             {(() => {
               const Icon = GROUP_ICON[g] ?? SlidersHorizontal
@@ -262,7 +268,10 @@ function SettingsWorkspace({ token, onExpired }: { token: string; onExpired: () 
             key={g}
             type="button"
             className={`settings__nav-item ${section === g ? 'is-active' : ''}`}
-            onClick={() => setSection(g)}
+            onClick={() => {
+              setSection(g)
+              window.scrollTo(0, 0)
+            }}
           >
             {g === 'Content review' ? (
               <ClipboardCheck aria-hidden />
@@ -338,69 +347,76 @@ function GroupEditor({
     (n, f) => n + Number(f.key in draft ? draft[f.key] : f.value),
     0,
   )
+  const weightsOk = Math.abs(weightSum - 1) < 0.001
+  const edited = fields.filter((f) => f.key in draft).length
   return (
-    <div className="stack" style={{ '--gap': '16px' } as React.CSSProperties}>
-      <div>
-        <h1>{title}</h1>
-        <p className="secondary">{GROUP_INTRO[title]}</p>
-      </div>
+    <section className="card ss-panel" aria-label={title}>
+      <header className="ss-panel__head">
+        <div>
+          <h1 className="ss-panel__title">{title}</h1>
+          {GROUP_INTRO[title] && <p className="ss-panel__intro">{GROUP_INTRO[title]}</p>}
+        </div>
+        <span className="ss-panel__count">
+          {edited > 0
+            ? `${edited} edited`
+            : `${fields.length} setting${fields.length === 1 ? '' : 's'}`}
+        </span>
+      </header>
       {weightKeys.length > 0 && (
-        <Callout
-          tone={Math.abs(weightSum - 1) < 0.001 ? 'good' : 'critical'}
-          title={`Dimension weights total ${Math.round(weightSum * 1000) / 10}%`}
-        >
-          {Math.abs(weightSum - 1) < 0.001
-            ? 'Balanced.'
-            : 'Adjust so the five weights total 100% before saving.'}
-        </Callout>
+        <div className={`ss-panel__check ${weightsOk ? 'is-ok' : 'is-bad'}`}>
+          Dimension weights total {Math.round(weightSum * 1000) / 10}%
+          {weightsOk ? ' · balanced' : ' · adjust to 100% before saving'}
+        </div>
       )}
-      <Card flush>
-        <ul className="list-reset setting-list">
-          {fields.map((f) => {
-            const changed = f.key in draft
-            const value = changed ? draft[f.key] : f.value
-            return (
-              <li key={f.key} className={`setting-row ${changed ? 'is-changed' : ''}`}>
-                <div className="setting-row__text">
-                  <label className="strong small" htmlFor={`setting-${f.key}`}>
-                    {f.label}
-                  </label>
-                  {f.help && <div className="xs secondary">{f.help}</div>}
-                  <div
-                    className="row wrap xs muted"
-                    style={{ '--gap': '8px', marginTop: 4 } as React.CSSProperties}
-                  >
-                    <Badge tone={f.source === 'ui' ? 'accent' : 'neutral'} outline>
-                      {SOURCE_LABEL[f.source]}
-                    </Badge>
-                    {f.env && <code>{f.env}</code>}
-                    <span>{f.scope}</span>
-                    {f.source === 'ui' && <span>Default {formatSetting(f, f.default)}</span>}
-                  </div>
-                </div>
-                <div className="setting-row__control">
-                  <SettingControl
-                    spec={f}
-                    value={value}
-                    onChange={(v) => setDraft((d) => ({ ...d, [f.key]: v }))}
+      <ul className="list-reset ss-grid">
+        {fields.map((f) => {
+          const changed = f.key in draft
+          const value = changed ? draft[f.key] : f.value
+          const wide = f.kind === 'text' || f.kind === 'enum'
+          return (
+            <li
+              key={f.key}
+              className={`ss-field ${changed ? 'is-changed' : ''} ${f.kind === 'bool' ? 'is-bool' : ''} ${wide ? 'is-wide' : ''}`}
+            >
+              <div className="ss-field__text">
+                <label className="ss-field__label" htmlFor={`setting-${f.key}`}>
+                  {f.label}
+                </label>
+                {f.help && <p className="ss-field__help">{f.help}</p>}
+              </div>
+              <div className="ss-field__control">
+                <SettingControl
+                  spec={f}
+                  value={value}
+                  onChange={(v) => setDraft((d) => ({ ...d, [f.key]: v }))}
+                />
+                {f.kind === 'bool' && (
+                  <span className="setting-tile__state">{value ? 'On' : 'Off'}</span>
+                )}
+                {f.source === 'ui' && !changed && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    icon={<RotateCcw />}
+                    onClick={() => onReset(f.key)}
+                    aria-label={`Reset ${f.label} to its default`}
+                    title={`Reset to default (${formatSetting(f, f.default)})`}
+                    iconOnly
                   />
-                  {f.source === 'ui' && !changed && (
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      icon={<RotateCcw />}
-                      onClick={() => onReset(f.key)}
-                      aria-label={`Reset ${f.label}`}
-                      iconOnly
-                    />
-                  )}
-                </div>
-              </li>
-            )
-          })}
-        </ul>
-      </Card>
-    </div>
+                )}
+              </div>
+              <div className="ss-field__meta">
+                {changed && <Badge tone="accent">Edited</Badge>}
+                <span className={`ss-source ss-source--${f.source}`}>{SOURCE_LABEL[f.source]}</span>
+                {f.env && <code>{f.env}</code>}
+                <span>{f.scope}</span>
+                {f.source === 'ui' && <span>Default {formatSetting(f, f.default)}</span>}
+              </div>
+            </li>
+          )
+        })}
+      </ul>
+    </section>
   )
 }
 
@@ -537,14 +553,55 @@ function SessionsList({ token }: { token: string }) {
       toast(errorMessage(e), 'error')
     }
   }
+  const [deleting, setDeleting] = useState<string | null>(null)
+  const remove = async (ids: string[]) => {
+    const label =
+      ids.length === 1
+        ? `"${rows?.find((r) => r.id === ids[0])?.name ?? ids[0]}"`
+        : `all ${ids.length} sessions`
+    if (
+      !window.confirm(
+        `Delete ${label}? Teams, decisions and the activity log are removed permanently. This cannot be undone.`,
+      )
+    )
+      return
+    setDeleting(ids.length === 1 ? ids[0] : 'all')
+    const gone: string[] = []
+    try {
+      for (const id of ids) {
+        await request('DELETE', `/admin/sessions/${id}`, { token })
+        auth.clearFacilitator(id)
+        gone.push(id)
+      }
+      toast(ids.length === 1 ? 'Session deleted' : `${gone.length} sessions deleted`)
+    } catch (e) {
+      toast(errorMessage(e), 'error')
+    } finally {
+      setRows((prev) => (prev ? prev.filter((r) => !gone.includes(r.id)) : prev))
+      setDeleting(null)
+    }
+  }
   return (
     <div className="stack" style={{ '--gap': '16px' } as React.CSSProperties}>
-      <div>
-        <h1>Sessions</h1>
-        <p className="secondary">
-          Open any session's facilitator console. Sessions from an older content version cannot be
-          resumed.
-        </p>
+      <div className="row spread wrap" style={{ alignItems: 'flex-end' }}>
+        <div className="grow">
+          <h1>Sessions</h1>
+          <p className="secondary">
+            Open any session's facilitator console, or delete sessions you no longer need. Sessions
+            from an older content version cannot be resumed.
+          </p>
+        </div>
+        {rows && rows.length > 1 && (
+          <Button
+            variant="danger"
+            icon={<Trash2 />}
+            loading={deleting === 'all'}
+            disabled={deleting !== null}
+            onClick={() => remove(rows.map((r) => r.id))}
+          >
+            Delete all
+          </Button>
+        )}
       </div>
       {!rows ? (
         <Loading />
@@ -559,7 +616,7 @@ function SessionsList({ token }: { token: string }) {
                 <th>Created</th>
                 <th>Progress</th>
                 <th>Teams</th>
-                <th />
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -580,9 +637,23 @@ function SessionsList({ token }: { token: string }) {
                   </td>
                   <td className="small">{r.teams.join(', ')}</td>
                   <td>
-                    <Button size="sm" icon={<ExternalLink />} onClick={() => open(r.id)}>
-                      Open console
-                    </Button>
+                    <div className="row" style={{ '--gap': '6px' } as React.CSSProperties}>
+                      <Button size="sm" icon={<ExternalLink />} onClick={() => open(r.id)}>
+                        Open console
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        icon={<Trash2 />}
+                        loading={deleting === r.id}
+                        disabled={deleting !== null}
+                        onClick={() => remove([r.id])}
+                        aria-label={`Delete session ${r.name}`}
+                        title="Delete this session"
+                        className="btn--delete"
+                        iconOnly
+                      />
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -626,6 +697,12 @@ function SystemCard({ view }: { view: SettingsView }) {
       </div>
       <Card flush>
         <table className="table table--compact">
+          <thead>
+            <tr>
+              <th>Setting</th>
+              <th>Value</th>
+            </tr>
+          </thead>
           <tbody>
             {rows.map(([k, v]) => (
               <tr key={k}>

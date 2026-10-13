@@ -5,6 +5,7 @@ import { useScoreboard, useSession } from '../api/hooks'
 import { useRealtime } from '../api/realtime'
 import type { SessionView } from '../api/types'
 import { Countdown } from '../components/Countdown'
+import { BrandMark } from '../components/BrandMark'
 import { Loading } from '../components/ui/primitives'
 import { auth } from '../lib/storage'
 
@@ -108,7 +109,7 @@ export function ProjectorView() {
 
       <header className="projector__top">
         <div className="row">
-          <div className="brand-mark">MA</div>
+          <BrandMark />
           <span className="projector__session">{session.name}</span>
         </div>
         <span className="projector__step">

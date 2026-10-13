@@ -1,6 +1,5 @@
 import { ArrowDownRight, ArrowRight, ArrowUpRight, Bot, Minus } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useResults } from '../api/hooks'
 import type { KpiSeries, MeasureResult, TeamView, YearReport } from '../api/types'
 import { CapacityPlan } from '../components/CapacityPlan'
@@ -19,6 +18,7 @@ import {
   Stat,
 } from '../components/ui/primitives'
 import { Tabs } from '../components/ui/Tabs'
+import { useAnalyst } from './analystContext'
 import { kpiValue, measureDelta, measureValue, money, pct } from '../lib/format'
 
 const SERIES_COLORS = ['var(--series-1)', 'var(--series-2)', 'var(--series-3)', 'var(--series-4)']
@@ -65,7 +65,9 @@ export function ResultsPage({ team }: { team: TeamView }) {
       <StageBanner team={team} compact />
       <StarsTiles report={report} />
       {(report.clues.length > 0 || report.unintended.length > 0) && (
-        <div className="grid grid-2">
+        <div
+          className={`grid ${report.clues.length > 0 && report.unintended.length > 0 ? 'grid-2' : ''}`}
+        >
           {report.clues.length > 0 && (
             <Callout tone="accent" title="What the evidence is telling you">
               <ul className="bullets">
@@ -249,6 +251,14 @@ function KpiSection({ report }: { report: YearReport }) {
       </Card>
       <Card title="All leading KPIs" subtitle="Start → now" flush>
         <table className="table table--compact">
+          <thead>
+            <tr>
+              <th>KPI</th>
+              <th>Start</th>
+              <th>Now</th>
+              <th>Change</th>
+            </tr>
+          </thead>
           <tbody>
             {report.kpis.map((k) => (
               <KpiRow key={k.id} k={k} />
@@ -276,7 +286,7 @@ function KpiRow({ k }: { k: KpiSeries }) {
 }
 
 function InitiativesCard({ report }: { report: YearReport }) {
-  const navigate = useNavigate()
+  const { openAnalyst } = useAnalyst()
   const context = report.initiatives
     .map(
       (i) =>
@@ -289,11 +299,7 @@ function InitiativesCard({ report }: { report: YearReport }) {
       title="Result drivers by card"
       subtitle="Which cards moved which KPIs and measures, and which multipliers applied"
       actions={
-        <Button
-          size="sm"
-          icon={<Bot />}
-          onClick={() => navigate('/team/analyst', { state: { mode: 'explain', context } })}
-        >
+        <Button size="sm" icon={<Bot />} onClick={() => openAnalyst({ mode: 'explain', context })}>
           Ask the explainer
         </Button>
       }

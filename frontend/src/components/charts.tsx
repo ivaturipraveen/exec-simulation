@@ -11,6 +11,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import { useEffect, useState } from 'react'
 
 export interface Series {
   key: string
@@ -19,6 +20,18 @@ export interface Series {
 }
 
 const axisTick = { fill: 'var(--text-muted)', fontSize: 11.5 }
+
+/** Category-label column width: narrower on phones so the bars keep most of the width. */
+function useLabelWidth(wide: number) {
+  const narrow = () => typeof window !== 'undefined' && window.innerWidth < 640
+  const [isNarrow, setIsNarrow] = useState(narrow)
+  useEffect(() => {
+    const onResize = () => setIsNarrow(narrow())
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+  return isNarrow ? 120 : wide
+}
 
 function TooltipBox({
   active,
@@ -142,13 +155,14 @@ export function BarList({
   reference?: { value: number; label: string }
   height?: number
 }) {
+  const labelWidth = useLabelWidth(200)
   return (
-    <ResponsiveContainer width="100%" height={height ?? data.length * 40 + 24}>
+    <ResponsiveContainer width="100%" height={height ?? data.length * 50 + 30}>
       <BarChart
         data={data}
         layout="vertical"
         margin={{ top: 4, right: 48, bottom: 4, left: 0 }}
-        barCategoryGap={10}
+        barCategoryGap={14}
       >
         <CartesianGrid horizontal={false} stroke="var(--grid)" />
         <XAxis
@@ -165,7 +179,7 @@ export function BarList({
           tick={{ ...axisTick, fill: 'var(--text-2)' }}
           tickLine={false}
           axisLine={{ stroke: 'var(--axis)' }}
-          width={180}
+          width={labelWidth}
         />
         <Tooltip
           content={<TooltipBox format={format} />}
@@ -215,6 +229,7 @@ export function GroupedBars({
   format: (v: number) => string
   domain?: [number, number]
 }) {
+  const labelWidth = useLabelWidth(200)
   return (
     <figure className="chart" style={{ margin: 0 }}>
       <Legend series={series} />
@@ -241,7 +256,7 @@ export function GroupedBars({
             tick={{ ...axisTick, fill: 'var(--text-2)' }}
             tickLine={false}
             axisLine={{ stroke: 'var(--axis)' }}
-            width={190}
+            width={labelWidth}
           />
           <Tooltip
             content={<TooltipBox format={format} series={series} />}

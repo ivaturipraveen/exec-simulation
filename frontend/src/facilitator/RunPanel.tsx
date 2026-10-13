@@ -1,14 +1,11 @@
 import {
   AlarmClock,
-  BellRing,
-  CheckCircle2,
   Eye,
   Lock,
   Send,
   Trophy,
   ChevronLeft,
   ChevronRight,
-  Circle,
   Flag,
   Gavel,
   ListChecks,
@@ -18,8 +15,6 @@ import {
   Quote,
   Scissors,
   Siren,
-  Sparkles,
-  Wallet,
 } from 'lucide-react'
 import { useState } from 'react'
 import { errorMessage } from '../api/client'
@@ -39,6 +34,7 @@ import { Badge, Callout } from '../components/ui/primitives'
 import { useToast } from '../components/ui/toastContext'
 import { money } from '../lib/format'
 import { RubricDialog } from './RubricDialog'
+import { RunOfShow, TeamProgressCard } from './RunOverview'
 
 type Run = (
   path: string,
@@ -67,29 +63,7 @@ export function RunPanel({ session, token }: { session: SessionView; token: stri
 
   return (
     <div className="stack" style={{ '--gap': '20px' } as React.CSSProperties}>
-      <Card flush>
-        <div style={{ padding: 16 }}>
-          <div className="timeline" role="list" aria-label="Run of show">
-            {session.stages.map((s, i) => (
-              <button
-                key={s.id}
-                type="button"
-                role="listitem"
-                className={`timeline__step ${i === c.stage_index && c.status !== 'not_started' ? 'is-current' : ''} ${i < c.stage_index ? 'is-done' : ''} ${s.optional ? 'is-optional' : ''}`}
-                onClick={() =>
-                  c.status !== 'not_started' && run('/stage', { action: 'goto', index: i })
-                }
-                title={`${s.title} — ${s.executive_question}`}
-                aria-current={i === c.stage_index ? 'step' : undefined}
-              >
-                <span className="d">{s.start}</span>
-                <span className="t">{s.title}</span>
-                <span className="d">{s.duration_minutes} min</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      </Card>
+      <RunOfShow session={session} onGoto={(i) => run('/stage', { action: 'goto', index: i })} />
 
       {c.status !== 'not_started' && behind >= 2 && (
         <Callout
@@ -230,91 +204,11 @@ export function RunPanel({ session, token }: { session: SessionView; token: stri
 
       <div className="grid grid-3">
         {session.teams.map((t) => (
-          <TeamCard key={t.team_id} t={t} rules={session.rules} />
+          <TeamProgressCard key={t.team_id} t={t} session={session} />
         ))}
       </div>
       <Observations session={session} run={run} />
     </div>
-  )
-}
-
-function Check({ ok, children }: { ok: boolean; children: React.ReactNode }) {
-  return (
-    <span className={ok ? 'ok' : 'pending'}>
-      {ok ? <CheckCircle2 aria-label="done" /> : <Circle aria-label="pending" />}
-      {children}
-    </span>
-  )
-}
-
-function TeamCard({ t, rules }: { t: TeamProgress; rules: SessionView['rules'] }) {
-  return (
-    <Card
-      title={t.payer_name}
-      subtitle={
-        <span>
-          Join code <span className="team-card__code">{t.join_code}</span>
-        </span>
-      }
-      actions={
-        t.needs_nudge && (
-          <Badge tone="warning" icon={<BellRing aria-hidden />}>
-            Nudge: no evidence yet
-          </Badge>
-        )
-      }
-    >
-      <div className="stack" style={{ '--gap': '12px' } as React.CSSProperties}>
-        <div className="checklist">
-          <Check ok={t.priorities > 0}>
-            Priorities ({t.priorities}, {t.evidence_cited} cited)
-          </Check>
-          <Check ok={t.round1_submitted}>Round 1</Check>
-          <Check ok={t.pitch_submitted}>
-            Board pitch{t.pitch_total != null && ` · ${t.pitch_total}/15`}
-          </Check>
-          <Check ok={t.round2_submitted}>Round 2</Check>
-          <Check ok={t.opmodel_submitted}>
-            Operating model{t.opmodel_total != null && ` · ${t.opmodel_total}/12`}
-          </Check>
-          <Check ok={t.crisis_responded}>
-            Crisis{t.crisis_total != null && ` · ${t.crisis_total}/18`}
-          </Check>
-          <Check ok={t.opportunities > 0}>Opportunities ({t.opportunities})</Check>
-        </div>
-        <div className="row wrap">
-          <Badge icon={<Wallet aria-hidden />}>
-            {money(t.available_musd)} of {money(t.granted_musd)}
-          </Badge>
-          <Badge tone={t.root_causes_cited >= 2 ? 'good' : 'neutral'}>
-            Root causes evidenced {t.root_causes_cited}/{t.root_causes_total}
-          </Badge>
-          <Badge icon={<Sparkles aria-hidden />}>{t.ai_requests} AI queries</Badge>
-          {t.capacity_peak != null && t.capacity_peak > 1 && (
-            <Badge tone={t.capacity_peak > rules.capacity_overrun_cap ? 'critical' : 'warning'}>
-              Capacity peak {Math.round(t.capacity_peak * 100)}%
-            </Badge>
-          )}
-          {t.stars_projected != null && (
-            <Badge tone="accent">★ {t.stars_projected.toFixed(1)} projected</Badge>
-          )}
-          {t.score_total != null && <Badge tone="accent">Score {t.score_total.toFixed(0)}</Badge>}
-          {t.pitch_figures.length > 0 && (
-            <Badge tone="warning">Unsourced figure: {t.pitch_figures.join(', ')}</Badge>
-          )}
-          {t.crisis_event_id &&
-            (t.crisis_responded ? (
-              <Badge tone="good" icon={<Siren aria-hidden />}>
-                {t.crisis_event_id.toUpperCase()} handled
-              </Badge>
-            ) : (
-              <Badge tone="critical" icon={<Siren aria-hidden />}>
-                {t.crisis_event_id.toUpperCase()} live · {t.crisis_severity}
-              </Badge>
-            ))}
-        </div>
-      </div>
-    </Card>
   )
 }
 
@@ -338,7 +232,7 @@ function PitchScorer({
     <>
       <div className="row">
         <span className="grow small">
-          {team.payer_name}
+          {team.team_name}
           {!team.pitch_submitted && <span className="muted"> · not submitted</span>}
         </span>
         {team.pitch_total != null && <Badge tone="accent">{team.pitch_total}/15</Badge>}
@@ -355,7 +249,7 @@ function PitchScorer({
         <RubricDialog
           open={open}
           onClose={() => setOpen(false)}
-          title={`Board pitch — ${team.payer_name}`}
+          title={`Board pitch — ${team.team_name}`}
           rows={catalog.rubrics.pitch}
           score={review?.score}
           footerNote={(total) => (
@@ -435,7 +329,7 @@ function RubricOverride({
       <RubricDialog
         open={open}
         onClose={() => setOpen(false)}
-        title={`${kind === 'opmodel' ? 'Operating model' : 'Crisis response'} — ${team.payer_name}`}
+        title={`${kind === 'opmodel' ? 'Operating model' : 'Crisis response'} — ${team.team_name}`}
         rows={rubric}
         score={score}
         onSave={async (values, note) => {
@@ -583,7 +477,7 @@ function StageActions({
             ) : pending.length > 0 ? (
               <>
                 <span className="small secondary">
-                  Waiting on: {pending.map((t) => t.payer_name).join(', ')}
+                  Waiting on: {pending.map((t) => t.team_name).join(', ')}
                 </span>
                 <Button
                   loading={busy}
@@ -621,13 +515,33 @@ function StageActions({
               session.teams.map((t) => (
                 <PitchScorer key={t.team_id} session={session} token={token} team={t} run={run} />
               ))}
-            <Button
-              variant="primary"
-              loading={busy}
-              onClick={() => run('/round2/grant', undefined, 'POST', 'Round 2 capital granted')}
-            >
-              Grant Round 2 capital
-            </Button>
+            {(() => {
+              // Hybrid capital depends on every pitch score: the server refuses the grant until
+              // each team is scored, so say who is still waiting instead of failing on click.
+              const unscored =
+                session.round2_mechanic === 'hybrid'
+                  ? session.teams.filter((t) => t.pitch_total == null).map((t) => t.team_name)
+                  : []
+              return (
+                <>
+                  {unscored.length > 0 && (
+                    <span className="xs muted">
+                      Score every board pitch first · waiting on {unscored.join(', ')}
+                    </span>
+                  )}
+                  <Button
+                    variant="primary"
+                    loading={busy}
+                    disabled={unscored.length > 0}
+                    onClick={() =>
+                      run('/round2/grant', undefined, 'POST', 'Round 2 capital granted')
+                    }
+                  >
+                    Grant Round 2 capital
+                  </Button>
+                </>
+              )
+            })()}
           </div>
         )}
         {session.simulated_years >= 1 && (
@@ -656,7 +570,7 @@ function StageActions({
               .filter((t) => t.opmodel_total != null)
               .map((t) => (
                 <div key={t.team_id} className="row">
-                  <span className="grow small">{t.payer_name}</span>
+                  <span className="grow small">{t.team_name}</span>
                   <RubricOverride
                     session={session}
                     token={token}
@@ -682,7 +596,7 @@ function StageActions({
               return (
                 <div key={t.team_id} className="crisis-row">
                   <div className="row">
-                    <span className="grow small strong">{t.payer_name}</span>
+                    <span className="grow small strong">{t.team_name}</span>
                     {t.crisis_event_id && (
                       <Badge tone={t.crisis_responded ? 'good' : 'critical'}>
                         {t.crisis_event_id.toUpperCase()} {t.crisis_severity}
@@ -709,7 +623,7 @@ function StageActions({
                   ) : (
                     <div className="row wrap" style={{ '--gap': '6px' } as React.CSSProperties}>
                       <Select
-                        aria-label={`Crisis for ${t.payer_name}`}
+                        aria-label={`Crisis for ${t.team_name}`}
                         style={{ flex: '1 1 220px' }}
                         value={chosen}
                         onChange={(e) => setEventFor({ ...eventFor, [t.team_id]: e.target.value })}
@@ -722,7 +636,7 @@ function StageActions({
                         ))}
                       </Select>
                       <Select
-                        aria-label={`Severity for ${t.payer_name}`}
+                        aria-label={`Severity for ${t.team_name}`}
                         style={{ width: 110 }}
                         value={sev}
                         onChange={(e) => setSevFor({ ...sevFor, [t.team_id]: e.target.value })}
@@ -735,7 +649,7 @@ function StageActions({
                       </Select>
                       {(overriding || (rec && sev !== rec.severity)) && (
                         <Input
-                          aria-label={`Override note for ${t.payer_name}`}
+                          aria-label={`Override note for ${t.team_name}`}
                           placeholder="Audit note for the override"
                           style={{ flex: '1 1 200px' }}
                           value={notes[t.team_id] ?? ''}
@@ -832,7 +746,7 @@ function Observations({ session, run }: { session: SessionView; run: Run }) {
               <option value="">Whole room</option>
               {session.teams.map((t) => (
                 <option key={t.team_id} value={t.team_id}>
-                  {t.payer_name}
+                  {t.team_name}
                 </option>
               ))}
             </Select>

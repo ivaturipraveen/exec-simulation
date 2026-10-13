@@ -1,0 +1,1299 @@
+/* Game layer: the visual polish that makes the workshop feel like play.
+   Loaded last; changes look and motion only, never layout sizes or behaviour.
+   Every animation is switched off for people who ask their system for reduced motion. */
+
+:root {
+  --glow-blue: 0 0 0 4px color-mix(in srgb, var(--accent) 16%, transparent);
+  --glow-mint: 0 0 0 4px color-mix(in srgb, var(--mint) 20%, transparent);
+  --lift: 0 2px 4px rgba(11, 37, 69, 0.05), 0 14px 32px rgba(11, 37, 69, 0.1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+:root[data-theme='dark'] {
+  --lift: 0 2px 4px rgba(0, 0, 0, 0.5), 0 16px 36px rgba(0, 0, 0, 0.55);
+}
+
+/* ---------- 1. A living background ---------- */
+.main,
+.fac,
+.settings {
+  background:
+    radial-gradient(
+      900px 520px at 100% 0%,
+      color-mix(in srgb, var(--mint) 9%, transparent),
+      transparent 62%
+    ),
+    radial-gradient(
+      1000px 600px at 0% 100%,
+      color-mix(in srgb, var(--accent) 8%, transparent),
+      transparent 62%
+    ),
+    radial-gradient(
+        circle at 1px 1px,
+        color-mix(in srgb, var(--accent) 10%, transparent) 1px,
+        transparent 0
+      )
+      0 0 / 24px 24px,
+    var(--page);
+}
+
+/* ---------- 2. Cards: soft depth, lift on hover ---------- */
+.card {
+  border-radius: 16px;
+  transition:
+    box-shadow 220ms var(--ease-out),
+    transform 220ms var(--ease-out),
+    border-color 220ms var(--ease-out);
+}
+.card.inv:hover,
+.card.tp:hover,
+.card--interactive:hover,
+.stat:hover,
+.setting-tile:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--lift);
+}
+.card__title,
+.tp__name,
+.ss-panel__title {
+  letter-spacing: -0.015em;
+}
+
+/* Small inner boxes react too, so the whole page feels touchable. */
+.tp__stats > div,
+.kpi,
+.key-card,
+.ss-field,
+.dim-list > li,
+.row-list > li {
+  transition:
+    transform 180ms var(--ease-out),
+    box-shadow 180ms var(--ease-out),
+    border-color 180ms var(--ease-out),
+    background 180ms var(--ease-out);
+}
+.tp__stats > div:hover,
+.kpi:hover,
+.key-card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+  box-shadow: 0 8px 18px rgba(11, 37, 69, 0.08);
+}
+.dim-list > li:hover,
+.row-list > li:hover {
+  background: color-mix(in srgb, var(--accent-soft) 60%, var(--surface));
+}
+
+/* ---------- 3. Numbers that pop ---------- */
+.tp__stat-value,
+.stat__value,
+.kpi__value,
+.score-hero__value,
+.rubric__score {
+  background: linear-gradient(120deg, var(--text) 30%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.tp__stat-value,
+.stat__value {
+  font-weight: 750;
+}
+
+/* ---------- 4. Game-menu tabs: pills on a track ---------- */
+.section-tabs > .tabs,
+.stack > .tabs,
+.card .tabs {
+  display: inline-flex;
+  align-self: flex-start;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--surface-sunken) 80%, transparent);
+  max-width: 100%;
+}
+.section-tabs > .tabs button,
+.stack > .tabs button,
+.card .tabs button {
+  margin: 0;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 10px;
+  color: var(--text-2);
+  transition:
+    background 200ms var(--ease-out),
+    color 200ms var(--ease-out),
+    box-shadow 200ms var(--ease-out);
+}
+.section-tabs > .tabs button:hover,
+.stack > .tabs button:hover,
+.card .tabs button:hover {
+  color: var(--text);
+  background: color-mix(in srgb, var(--surface) 60%, transparent);
+}
+.section-tabs > .tabs button[aria-selected='true'],
+.stack > .tabs button[aria-selected='true'],
+.card .tabs button[aria-selected='true'] {
+  background: var(--surface);
+  color: var(--accent-ink);
+  box-shadow:
+    0 1px 2px rgba(11, 37, 69, 0.08),
+    0 4px 12px rgba(10, 110, 209, 0.12);
+}
+:root[data-theme='dark'] .section-tabs > .tabs button[aria-selected='true'],
+:root[data-theme='dark'] .stack > .tabs button[aria-selected='true'],
+:root[data-theme='dark'] .card .tabs button[aria-selected='true'] {
+  background: color-mix(in srgb, var(--accent) 22%, var(--surface-2));
+  color: #fff;
+}
+/* Top navigation tabs keep their underline but it slides in. */
+.fac__tabs .tabs button[aria-selected='true'] {
+  animation: tab-in 260ms var(--ease-out);
+}
+@keyframes tab-in {
+  from {
+    background-size: 0% 2px;
+  }
+  to {
+    background-size: 100% 2px;
+  }
+}
+
+/* ---------- 5. Buttons that feel like game controls ---------- */
+.btn {
+  position: relative;
+  overflow: hidden;
+}
+.btn:active:not(:disabled) {
+  transform: translateY(1px) scale(0.98);
+}
+.btn--primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 70%
+  );
+  transform: translateX(-120%);
+  transition: transform 600ms var(--ease-out);
+  pointer-events: none;
+}
+.btn--primary:hover:not(:disabled)::after {
+  transform: translateX(120%);
+}
+.analyst-fab {
+  /* A soft glow pulse: draws the eye but the button never moves, so it is easy to hit. */
+  animation: fab-glow 3.2s ease-in-out infinite;
+}
+.analyst-fab:hover {
+  animation-play-state: paused;
+}
+@keyframes fab-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 10px 28px rgba(10, 110, 209, 0.38),
+      0 0 0 4px color-mix(in srgb, var(--mint) 14%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 10px 28px rgba(10, 110, 209, 0.38),
+      0 0 0 9px color-mix(in srgb, var(--mint) 22%, transparent);
+  }
+}
+
+/* ---------- 6. Progress: the current step pulses, done steps glow ---------- */
+.tp__dot.is-now {
+  animation: pulse-blue 2s ease-out infinite;
+}
+.tp__dot.is-done {
+  box-shadow: var(--glow-mint);
+}
+.tp__dots::before {
+  background: linear-gradient(90deg, var(--mint), var(--accent) 60%, var(--surface-sunken));
+  opacity: 0.35;
+}
+@keyframes pulse-blue {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+  70% {
+    box-shadow: 0 0 0 10px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+.nav-item .badge--accent,
+.ros__tag,
+.team-tab .badge {
+  animation: now-glow 2.4s ease-in-out infinite;
+}
+@keyframes now-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+  50% {
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--mint) 30%, transparent);
+  }
+}
+.progress__bar,
+.ledger__fill,
+.dim-list__bar span,
+.ros-dots__bar span,
+.tp__progress-bar span {
+  background-size: 200% 100%;
+  animation: bar-flow 3s linear infinite;
+  background-image: linear-gradient(90deg, #1e8fff, #13b4c8, #14c79f, #13b4c8, #1e8fff);
+}
+@keyframes bar-flow {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* ---------- 7. Hero and stage banner: a slow light sweep ---------- */
+.hero,
+.stage-banner {
+  isolation: isolate;
+}
+.hero::after,
+.stage-banner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.07) 50%,
+    transparent 65%
+  );
+  background-size: 250% 100%;
+  animation: sweep 7s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes sweep {
+  0% {
+    background-position: 130% 0;
+  }
+  60%,
+  100% {
+    background-position: -130% 0;
+  }
+}
+
+/* ---------- 8. Sidebar: the active item glows ---------- */
+.nav-item {
+  transition:
+    background 180ms var(--ease-out),
+    color 180ms var(--ease-out),
+    transform 180ms var(--ease-out);
+}
+.nav-item:hover:not(.active) {
+  transform: translateX(3px);
+}
+.nav-item.active {
+  box-shadow:
+    inset 0 0 0 1px rgba(111, 240, 204, 0.18),
+    0 6px 16px rgba(0, 0, 0, 0.18);
+}
+
+/* ---------- 9. Pages slide in ---------- */
+.content > *,
+.section-tabs__body > *,
+.settings__main > *,
+.fac > .content > * {
+  animation: rise-in 420ms var(--ease-out) both;
+}
+.content > *:nth-child(2),
+.section-tabs__body > *:nth-child(2) {
+  animation-delay: 50ms;
+}
+.content > *:nth-child(3),
+.section-tabs__body > *:nth-child(3) {
+  animation-delay: 100ms;
+}
+.content > *:nth-child(n + 4),
+.section-tabs__body > *:nth-child(n + 4) {
+  animation-delay: 150ms;
+}
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.dialog {
+  animation: pop-in 220ms var(--ease-out);
+}
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- 10. Celebrate success ---------- */
+.callout--good {
+  background:
+    radial-gradient(
+      400px 120px at 100% 0%,
+      color-mix(in srgb, var(--mint) 18%, transparent),
+      transparent 70%
+    ),
+    var(--good-soft);
+}
+.badge--good {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--mint) 35%, transparent);
+}
+
+/* ---------- 11. Inputs feel responsive ---------- */
+.input,
+.select,
+.textarea {
+  border-radius: 10px;
+}
+.input:hover:not(:disabled),
+.select:hover:not(:disabled),
+.textarea:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border-strong));
+}
+
+/* ---------- Respect "reduce motion" ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .card.inv:hover,
+  .card.tp:hover,
+  .card--interactive:hover,
+  .stat:hover,
+  .setting-tile:hover,
+  .tp__stats > div:hover,
+  .kpi:hover,
+  .key-card:hover,
+  .nav-item:hover:not(.active) {
+    transform: none;
+  }
+}
+
+/* ---------- Balanced layouts ----------
+   Boxes that sit side by side share one height, so a row never looks lopsided.
+   Cards stretch; their content stays at the top. */
+.grid > .card,
+.grid-split > .card,
+.grid > .stat,
+.grid > .key-card,
+.grid > .tp {
+  height: 100%;
+}
+/* Two-column page sections whose columns are stacks of cards: the last card in the
+   shorter column grows to meet the taller column. */
+.grid-split > .stack > .card:last-child,
+.grid-2 > .stack > .card:last-child {
+  flex: 1 1 auto;
+}
+
+/* Long action lists scroll inside their card instead of stretching the page. */
+.evidence-list {
+  display: flex;
+  flex-direction: column;
+  max-height: 420px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.evidence-list > li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px 8px 14px;
+}
+.evidence-list > li + li {
+  border-top: 1px solid var(--border);
+}
+.evidence-list > li:hover {
+  background: color-mix(in srgb, var(--accent-soft) 55%, var(--surface));
+}
+
+/* Opportunity map: compact quadrants that grow only with content, with an empty hint. */
+.opp-q {
+  min-height: 110px;
+  transition:
+    transform 180ms var(--ease-out),
+    box-shadow 180ms var(--ease-out);
+}
+.opp-q:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(11, 37, 69, 0.08);
+}
+.opp-q header .strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.opp-q__empty {
+  margin-top: auto;
+  padding: 10px 12px;
+  border: 1px dashed var(--border-strong);
+  border-radius: 10px;
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* KPI tile grids: tiles share a row height; a lone last tile spans the row so it never dangles. */
+.kpi-grid {
+  grid-auto-rows: 1fr;
+}
+.kpi-grid > .kpi:last-child:nth-child(3n + 1) {
+  grid-column: 1 / -1;
+}
+dl.grid > div:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
+/* Company profile: compact two-column tiles instead of a long table, so it sits level with the briefing. */
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 160px), 1fr));
+  gap: 8px;
+  margin: 0;
+}
+.profile-grid > div {
+  padding: 9px 11px;
+  border-radius: 10px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  min-width: 0;
+}
+.profile-grid dt {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+}
+.profile-grid dd {
+  margin: 3px 0 0;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+/* Lists of boxes inside a stretched card share its height evenly, so no blank band at the bottom. */
+.grid > .card {
+  display: flex;
+  flex-direction: column;
+}
+.grid > .card > .card__body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+.grid > .card > .card__body > .stack:has(> .tension) {
+  flex: 1 1 auto;
+}
+.stack:has(> .tension) > .tension {
+  flex: 1 1 auto;
+  justify-content: center;
+}
+
+/* ---------- Answer key: uniform cards ---------- */
+.ak-grid {
+  display: grid;
+  gap: var(--space-tile);
+  align-items: stretch;
+}
+.ak-grid--3 {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+}
+.ak-grid--2 {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+}
+.ak-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  padding: 16px 18px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  overflow-wrap: anywhere;
+  transition:
+    transform 180ms var(--ease-out),
+    box-shadow 180ms var(--ease-out),
+    border-color 180ms var(--ease-out);
+}
+.ak-card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+  box-shadow: 0 10px 22px rgba(11, 37, 69, 0.08);
+}
+.ak-card--root {
+  border-top: 3px solid var(--accent);
+}
+.ak-card--warn {
+  box-shadow: inset 3px 0 0 var(--warning);
+}
+.ak-card--good {
+  box-shadow: inset 3px 0 0 var(--mint);
+}
+.ak-card--bad {
+  box-shadow: inset 3px 0 0 var(--critical);
+}
+.sec > .ak-card + .ak-card {
+  margin-top: 0;
+}
+.ak-card__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.ak-card__head .code-chip {
+  flex: none;
+  margin-top: 2px;
+}
+.ak-card__title {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--text);
+}
+.ak-card__text {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+.ak-clue {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text);
+}
+.ak-clue__label,
+.ak-foot__label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+}
+.ak-foot__label {
+  color: var(--text-muted);
+}
+.ak-card__foot {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border-strong);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ak-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.ak-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  font-size: 11.5px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-2);
+  cursor: help;
+}
+.ak-chip svg {
+  width: 12px;
+  height: 12px;
+  color: var(--text-muted);
+}
+.ak-chip--card {
+  cursor: default;
+  border-color: transparent;
+  background: var(--mint-soft);
+  color: var(--mint-ink);
+}
+.ak-trap {
+  position: relative;
+  padding: 16px 20px 16px 22px;
+  border-radius: 12px;
+  background:
+    radial-gradient(500px 140px at 100% 0%, rgba(208, 59, 59, 0.12), transparent 70%),
+    var(--critical-soft);
+  border: 1px solid color-mix(in srgb, var(--critical) 25%, transparent);
+  box-shadow: inset 4px 0 0 var(--critical);
+}
+.ak-trap__label {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--critical-ink);
+}
+.ak-trap__title {
+  margin: 2px 0 6px;
+  font-size: 15.5px;
+  font-weight: 700;
+  color: var(--text);
+}
+.ak-trap p {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+
+/* ---------- Activity log: tight, readable columns ---------- */
+.activity-table th:nth-child(1),
+.activity-table td:nth-child(1) {
+  width: 120px;
+  text-align: left;
+}
+.activity-table th:nth-child(2),
+.activity-table td:nth-child(2) {
+  width: 170px;
+}
+.activity-table th:nth-child(3),
+.activity-table td:nth-child(3) {
+  width: 110px;
+}
+.activity-table th:nth-child(4),
+.activity-table td:nth-child(4) {
+  width: 200px;
+}
+.activity__time {
+  font-size: 12.5px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--text);
+}
+.activity__detail {
+  font-size: 12.5px;
+  color: var(--text-2);
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Answer key root causes: sections line up across the three cards ----------
+   Each card shares the row tracks of its neighbours (subgrid), so the description, review
+   clue and evidence block start at the same height in every card with even gaps. */
+@media (min-width: 900px) {
+  @supports (grid-template-rows: subgrid) {
+    .ak-grid--3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-rows: auto auto auto auto;
+      row-gap: 0;
+    }
+    .ak-grid--3 > .ak-card--root {
+      display: grid;
+      grid-template-rows: subgrid;
+      grid-row: span 4;
+      row-gap: 12px;
+      align-content: start;
+    }
+    .ak-grid--3 > .ak-card--root > .ak-card__foot {
+      margin-top: 0;
+      align-self: stretch;
+    }
+    .ak-grid--3 > .ak-card--root > .ak-clue {
+      align-self: start;
+    }
+  }
+}
+
+/* Strategies and failure modes: full-width rows sized to their content. */
+.ak-rows {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--surface-2);
+}
+.ak-rows > li {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px;
+  transition: background 160ms var(--ease-out);
+}
+.ak-rows > li + li {
+  border-top: 1px solid var(--border);
+}
+.ak-rows > li:hover {
+  background: color-mix(in srgb, var(--accent-soft) 55%, var(--surface));
+}
+.ak-rows--good > li {
+  box-shadow: inset 3px 0 0 var(--mint);
+}
+.ak-rows--bad > li {
+  box-shadow: inset 3px 0 0 var(--critical);
+  grid-template-columns: 200px minmax(0, 1fr);
+}
+.ak-rows__title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+}
+.ak-rows__text {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+.ak-rows__chips {
+  justify-content: flex-end;
+  max-width: 260px;
+}
+@media (max-width: 760px) {
+  .ak-rows > li,
+  .ak-rows--bad > li {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+  }
+  .ak-rows__chips {
+    justify-content: flex-start;
+    max-width: none;
+  }
+}
+
+/* ---------- No coloured side stripes anywhere ----------
+   Colour is carried by the box fill (and a matching thin border) instead of a left edge line. */
+.callout,
+.callout--accent,
+.callout--good,
+.callout--warning,
+.callout--critical,
+.packet,
+.workflow__step,
+.workflow__step--ai_assist,
+.workflow__step--agent_approval,
+.workflow__step--autonomous,
+.key-card,
+.key-card--good,
+.key-card--bad,
+.dataroom__item.is-active,
+.md blockquote {
+  border-left-width: 1px;
+}
+.callout--accent {
+  border-color: color-mix(in srgb, var(--accent) 22%, transparent);
+}
+.callout--good {
+  border-color: color-mix(in srgb, var(--good) 28%, transparent);
+}
+.callout--warning {
+  border-color: color-mix(in srgb, var(--warning) 35%, transparent);
+}
+.callout--critical {
+  border-color: color-mix(in srgb, var(--critical) 28%, transparent);
+}
+.packet {
+  border-color: rgba(238, 111, 111, 0.45);
+}
+.workflow__step,
+.dataroom__item.is-active {
+  border-left-color: var(--border);
+}
+.workflow__step--ai_assist {
+  background: color-mix(in srgb, var(--accent-soft) 45%, var(--surface));
+}
+.workflow__step--agent_approval {
+  background: color-mix(in srgb, var(--mint-soft) 55%, var(--surface));
+}
+.workflow__step--autonomous {
+  background: color-mix(in srgb, var(--bc-cyan) 8%, var(--surface));
+}
+.dataroom__item.is-active {
+  border-left-color: transparent;
+}
+.stage-banner::before,
+.nav-item.active::before {
+  display: none;
+}
+.stage-banner {
+  padding-left: 20px;
+}
+.settings__nav-item.is-active,
+.setting-row.is-changed,
+.setting-tile.is-changed,
+.ss-field.is-changed,
+.row-list--good > li,
+.row-list--bad > li,
+.key-card--good,
+.key-card--bad,
+dl.grid > div,
+.ak-card--warn,
+.ak-card--good,
+.ak-card--bad,
+.ak-rows--good > li,
+.ak-rows--bad > li,
+.ak-trap,
+.tp__step.is-now {
+  box-shadow: none;
+}
+.ak-card--root {
+  border-top-width: 1px;
+}
+/* Tinted fills replace the stripes. */
+.ak-card--warn {
+  background: color-mix(in srgb, var(--warning-soft) 70%, var(--surface));
+  border-color: color-mix(in srgb, var(--warning) 30%, transparent);
+}
+.ak-card--good,
+.ak-rows--good > li,
+.key-card--good,
+.row-list--good > li {
+  background: color-mix(in srgb, var(--mint-soft) 55%, var(--surface));
+}
+.ak-card--bad,
+.ak-rows--bad > li,
+.key-card--bad,
+.row-list--bad > li {
+  background: color-mix(in srgb, var(--critical-soft) 55%, var(--surface));
+}
+.ak-card--root {
+  background: color-mix(in srgb, var(--accent-soft) 35%, var(--surface-2));
+}
+.ak-rows--good,
+.ak-rows--bad {
+  background: transparent;
+}
+.ak-trap {
+  border-color: color-mix(in srgb, var(--critical) 28%, transparent);
+}
+
+/* ---------- Tables: every column lines up under its heading ----------
+   Headings and cells share one alignment (left) everywhere, numbers included; digits stay
+   fixed-width so values still line up with each other. */
+.table th,
+.table td,
+.table th.num,
+.table td.num,
+.md th,
+.md td {
+  text-align: left;
+}
+.table td.num,
+.table th.num {
+  font-variant-numeric: tabular-nums;
+}
+.table th:first-child {
+  white-space: nowrap;
+}
+/* Scoreboard: team names stay on one line; guardrail badges wrap in full. */
+.table td .chip-list .badge {
+  white-space: normal;
+  height: auto;
+  min-height: 22px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  line-height: 1.35;
+}
+/* Long names and text in any table cell wrap instead of widening the table. */
+.table td,
+.table td .strong {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.table td:first-child {
+  min-width: 140px;
+}
+.table td.num,
+.table td .badge {
+  white-space: nowrap;
+}
+
+/* ---------- One calm highlight colour: soft blue replaces amber everywhere ----------
+   "Warning" states (nudges, traps, capacity, missed steps, low timers) use the same soft blue
+   as the "Now" highlight. Star ratings keep their gold. */
+:root {
+  --warning: #1e8fff;
+  --warning-ink: #0a4f99;
+  --warning-soft: #e6f1fc;
+  --series-4: #13b4c8;
+  --star: #f5b301;
+}
+:root[data-theme='dark'] {
+  --warning: #4aa5ff;
+  --warning-ink: #9fd0ff;
+  --warning-soft: rgba(30, 143, 255, 0.16);
+  --series-4: #13b4c8;
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme='light'])) {
+    --warning: #4aa5ff;
+    --warning-ink: #9fd0ff;
+    --warning-soft: rgba(30, 143, 255, 0.16);
+    --series-4: #13b4c8;
+  }
+}
+.stars {
+  color: var(--star);
+}
+/* Soft-blue boxes get a matching thin blue border, like the "Now" strip. */
+.callout--warning,
+.tp__current.is-missed,
+.badge--warning,
+.input--attention,
+.ak-card--warn {
+  background: var(--warning-soft);
+  border-color: color-mix(in srgb, var(--warning) 32%, transparent);
+  color: var(--warning-ink);
+}
+.callout--warning {
+  color: var(--text);
+}
+.ak-card--warn .ak-card__text {
+  color: var(--text-2);
+}
+/* Navy header and hover-box variants (were hard-coded amber). */
+:is(.topbar, .fac__top) .clock--low,
+:is(.topbar, .fac__top) .badge--warning {
+  background: rgba(30, 143, 255, 0.2);
+  color: #9fd0ff;
+}
+.tp__tip-status.is-missed {
+  color: #9fd0ff;
+}
+
+/* Facilitator override rows: field + one action button of a single, uniform size. */
+.override-row {
+  align-items: flex-end;
+}
+.override-row > .btn {
+  flex: none;
+  width: 124px;
+  height: 36px;
+}
+.override-row .input,
+.override-row .select {
+  height: 36px;
+}
+@media (max-width: 560px) {
+  .override-row {
+    flex-wrap: wrap;
+  }
+  .override-row > .btn {
+    width: 100%;
+  }
+}
+
+/* ---------- Teams tab team switcher: brand blue-green for the selected team, white for the rest ---------- */
+.team-switch .btn--primary {
+  background: var(--grad-brand);
+  color: #fff;
+}
+.team-switch .btn--secondary {
+  background: var(--surface);
+  color: var(--accent-ink);
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border-strong));
+}
+
+/* ---------- Settings: full-height navy sidebar + full-width content ---------- */
+.settings__body {
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 0;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  min-height: calc(100vh - var(--topbar-h, 60px));
+}
+.settings__nav {
+  position: sticky;
+  top: var(--topbar-h, 60px);
+  align-self: start;
+  height: calc(100vh - var(--topbar-h, 60px));
+  overflow-y: auto;
+  padding: 20px 12px;
+  background: linear-gradient(180deg, #061426 0%, #0b2545 100%);
+  border-right: 1px solid var(--frame-line);
+}
+:root[data-theme='dark'] .settings__nav {
+  background: linear-gradient(180deg, #02060c 0%, #061426 100%);
+}
+.settings__nav-label {
+  color: var(--brand-muted) !important;
+}
+.settings__nav-item {
+  color: var(--brand-text);
+  font-size: 13.5px;
+  font-weight: 550;
+  border-radius: 10px;
+}
+.settings__nav-item:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: #fff;
+}
+.settings__nav-item.is-active {
+  background: linear-gradient(90deg, rgba(30, 143, 255, 0.26), rgba(20, 199, 159, 0.1));
+  color: #fff;
+  font-weight: 650;
+}
+.settings__nav-item.is-active > svg {
+  color: #6ff0cc;
+}
+.settings__nav-item .badge {
+  background: rgba(255, 255, 255, 0.1);
+  color: #d6e4f5;
+  border-color: rgba(255, 255, 255, 0.16);
+}
+.settings__main {
+  padding: 28px 32px 120px;
+  max-width: 1320px;
+  width: 100%;
+}
+@media (max-width: 860px) {
+  .settings__body {
+    grid-template-columns: 1fr;
+  }
+  .settings__nav {
+    position: static;
+    height: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 10px;
+  }
+  .settings__main {
+    padding: 16px 16px 120px;
+  }
+}
+
+@media (min-width: 861px) {
+  .settings__savebar:not(.settings__savebar--inline) {
+    left: calc(50% + 130px);
+  }
+}
+
+/* One balanced blue → green brand gradient, identical in light and dark themes
+   (both ends keep white text readable). */
+:root,
+:root[data-theme='dark'] {
+  --grad-brand: linear-gradient(120deg, #0b6fd1 0%, #0a7ab0 50%, #0b8270 100%);
+  --grad-brand-hover: linear-gradient(120deg, #0868c4 0%, #0a73a6 50%, #0a7a69 100%);
+}
+
+/* ---------- No coloured top lines either ---------- */
+.stat::before {
+  display: none;
+}
+.stat,
+.ak-card--root,
+.timeline__step {
+  border-top-width: 1px;
+}
+.stat {
+  border-top-color: var(--border);
+}
+.timeline__step.is-current {
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+.ak-card--root {
+  border-top-color: var(--border);
+}
+
+/* ---------- Playtest timing: full-width track per stage, fill = share of planned time used ---------- */
+.timing-track {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 160px;
+}
+.timing-track__bar {
+  flex: 1 1 auto;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.timing-track__fill {
+  display: block;
+  height: 100%;
+  width: var(--fill);
+  border-radius: 999px;
+  background: var(--grad-line);
+  animation: timing-fill var(--dur) var(--ease-out) both;
+}
+.timing-track__fill.is-over {
+  background: linear-gradient(90deg, var(--accent), var(--bc-blue-bright));
+}
+.timing-track__label {
+  flex: none;
+  min-width: 92px;
+  font-size: 11.5px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+.timing-track__fill.is-over + .timing-track__label,
+.timing-track:has(.is-over) .timing-track__label {
+  color: var(--warning-ink);
+}
+@keyframes timing-fill {
+  from {
+    width: 0;
+  }
+  to {
+    width: var(--fill);
+  }
+}
+
+/* Delete icon button: neutral until hovered, then a clear red warning. */
+.btn--delete {
+  color: var(--text-muted);
+}
+.btn--delete:hover:not(:disabled) {
+  background: var(--critical-soft);
+  color: var(--critical-ink);
+}
+
+/* ---------- Status strips: calm, tab-like (no solid green/red fills) ----------
+   Neutral track surface with a small coloured dot carries the status. */
+.ss-panel__check,
+.ss-panel__check.is-ok,
+.ss-panel__check.is-bad {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: color-mix(in srgb, var(--surface-sunken) 80%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text-2);
+  font-weight: 600;
+}
+.ss-panel__check::before {
+  content: '';
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--mint);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--mint) 22%, transparent);
+}
+.ss-panel__check.is-bad {
+  color: var(--critical-ink);
+}
+.ss-panel__check.is-bad::before {
+  background: var(--critical);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--critical) 20%, transparent);
+}
+/* Success notices: same calm surface, green only on the icon. */
+.callout--good {
+  background: color-mix(in srgb, var(--surface-sunken) 80%, transparent);
+  border-color: var(--border);
+  color: var(--text);
+}
+.callout--good svg {
+  color: var(--mint-ink);
+}
+
+/* Large green/red tints become the calm neutral surface; colour lives in labels, icons and dots. */
+.callout--critical,
+.ak-trap,
+.opp-q--act_now {
+  background: color-mix(in srgb, var(--surface-sunken) 80%, transparent);
+  border-color: var(--border);
+}
+.callout--critical {
+  color: var(--text);
+}
+.callout--critical svg {
+  color: var(--critical-ink);
+}
+.ak-trap {
+  background: var(--surface-2);
+}
+.ak-card--good,
+.ak-card--bad,
+.ak-rows--good > li,
+.ak-rows--bad > li,
+.key-card--good,
+.key-card--bad,
+.row-list--good > li,
+.row-list--bad > li {
+  background: var(--surface-2);
+}
+/* A small status dot in front of each strategy / failure name. */
+.ak-rows__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.ak-rows__title::before {
+  content: '';
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.ak-rows--good .ak-rows__title::before {
+  background: var(--mint);
+}
+.ak-rows--bad .ak-rows__title::before {
+  background: var(--critical);
+}
+.opp-q--act_now header .strong::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--mint);
+}
+
+/* Leadership tensions: boxes fit their text (no stretched empty space); the card keeps its height. */
+.stack:has(> .tension) > .tension {
+  flex: 0 0 auto;
+  justify-content: flex-start;
+}
+.grid > .card > .card__body > .stack:has(> .tension) {
+  flex: 0 0 auto;
+}
+
+/* No status dots: plain text on the calm surface, like the tabs. */
+.ss-panel__check::before,
+.ss-panel__check.is-bad::before,
+.ak-rows__title::before,
+.opp-q--act_now header .strong::before {
+  content: none;
+  display: none;
+}
+
+/* Start page on small phones: the single column shrinks to the screen instead of growing to its widest child. */
+@media (max-width: 900px) {
+  .landing__main {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .landing__panel,
+  .landing__hero {
+    min-width: 0;
+  }
+}

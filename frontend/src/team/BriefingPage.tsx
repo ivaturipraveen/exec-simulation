@@ -66,7 +66,7 @@ export function BriefingPage({ team }: { team: TeamView }) {
         />
       </div>
 
-      <div className="grid grid-split">
+      <div className="grid grid-2 briefing-row">
         <Card title="Briefing">
           <div className="stack" style={{ '--gap': '14px' } as React.CSSProperties}>
             <p className="prose">{p.briefing}</p>
@@ -76,19 +76,15 @@ export function BriefingPage({ team }: { team: TeamView }) {
             <p className="prose small">{p.population}</p>
           </div>
         </Card>
-        <Card title="Profile" flush>
-          <table className="table table--compact">
-            <tbody>
-              {p.profile.map((r) => (
-                <tr key={r.label}>
-                  <th scope="row" className="muted" style={{ width: '38%', fontWeight: 500 }}>
-                    {r.label}
-                  </th>
-                  <td>{r.value}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <Card title="Profile">
+          <dl className="profile-grid">
+            {p.profile.map((r) => (
+              <div key={r.label}>
+                <dt>{r.label}</dt>
+                <dd>{r.value}</dd>
+              </div>
+            ))}
+          </dl>
         </Card>
       </div>
 

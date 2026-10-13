@@ -21,14 +21,14 @@ export function TeamsPanel({ session, token }: { session: SessionView; token: st
   })
   return (
     <div className="stack" style={{ '--gap': '20px' } as React.CSSProperties}>
-      <div className="row wrap">
+      <div className="row wrap team-switch">
         {session.teams.map((t) => (
           <Button
             key={t.team_id}
             variant={t.team_id === teamId ? 'primary' : 'secondary'}
             onClick={() => setTeamId(t.team_id)}
           >
-            {t.payer_name}
+            {t.team_name}
           </Button>
         ))}
       </div>
@@ -210,7 +210,7 @@ function TeamDetail({
                 />
               )}
             </Field>
-            <div className="row" style={{ alignItems: 'flex-end' }}>
+            <div className="row override-row">
               <div className="grow">
                 <Field label="Adjust capital ($M, ±)">
                   {(id) => (
@@ -239,7 +239,7 @@ function TeamDetail({
                 Apply
               </Button>
             </div>
-            <div className="row" style={{ alignItems: 'flex-end' }}>
+            <div className="row override-row">
               <div className="grow">
                 <Field label="Team name">
                   {(id) => (
@@ -262,7 +262,7 @@ function TeamDetail({
                 Rename
               </Button>
             </div>
-            <div className="row" style={{ alignItems: 'flex-end' }}>
+            <div className="row override-row">
               <div className="grow">
                 <Field label="Re-open a submission">
                   {(id) => (
@@ -283,7 +283,7 @@ function TeamDetail({
                 Re-open
               </Button>
             </div>
-            <div className="row" style={{ alignItems: 'flex-end' }}>
+            <div className="row override-row">
               <div className="grow">
                 <Field
                   label={`Round 2 base for this team ($M, default ${money(session.teams.find((t) => t.team_id === team.team_id)?.round2_base_musd ?? 8)})`}
@@ -421,11 +421,14 @@ function EvidenceRelease({
   })
   const hidden = (data ?? []).filter((a) => !a.visible)
   return (
-    <Card title="Evidence release" subtitle="Release later-stage documents early, e.g. as a hint">
+    <Card
+      title="Evidence release"
+      subtitle={`Release later-stage documents early, e.g. as a hint${hidden.length ? ` · ${hidden.length} not yet open` : ''}`}
+    >
       {hidden.length === 0 ? (
         <span className="small muted">All documents are visible to this team.</span>
       ) : (
-        <ul className="list-reset stack" style={{ '--gap': '8px' } as React.CSSProperties}>
+        <ul className="list-reset evidence-list">
           {hidden.map((a) => (
             <li key={a.id} className="row">
               <span className="grow small">

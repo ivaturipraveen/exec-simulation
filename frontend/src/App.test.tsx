@@ -59,8 +59,11 @@ test('invalid join code shows the server error message', async () => {
 
 test('team route without a session redirects to the start page', async () => {
   renderAt('/team')
-  expect(await screen.findByRole('heading', { level: 1 })).toHaveTextContent(/AI transformation/)
-})
+  // /team loads the workspace bundle on demand before redirecting; allow for a slow first import.
+  expect(await screen.findByRole('heading', { level: 1 }, { timeout: 10_000 })).toHaveTextContent(
+    /AI transformation/,
+  )
+}, 20_000)
 
 test('unknown route shows not found', () => {
   renderAt('/nope')

@@ -72,9 +72,14 @@ export function OpportunityMatrix({
                 aria-label={`${q.title}: ${inQ.length}`}
               >
                 <header>
-                  <span className="strong small">{q.title}</span>
+                  <span className="strong small">
+                    {q.title} <span className="ss-tab__count">{inQ.length}</span>
+                  </span>
                   <span className="xs muted">{q.sub}</span>
                 </header>
+                {inQ.length === 0 && (
+                  <span className="opp-q__empty">No opportunities here yet</span>
+                )}
                 <ul className="list-reset stack" style={{ '--gap': '6px' } as React.CSSProperties}>
                   {inQ.map((i) => (
                     <li key={i.id} className="opp-chip">
