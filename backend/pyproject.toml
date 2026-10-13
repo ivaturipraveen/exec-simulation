@@ -12,6 +12,7 @@ dependencies = [
     "sqlmodel>=0.0.48",
     "alembic>=1.16",
     "anthropic>=1.12",
+    "psycopg[binary]>=3.2",  # PostgreSQL driver (production database)
 ]
 
 [project.optional-dependencies]

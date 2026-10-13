@@ -87,9 +87,21 @@ BACKEND_DIR = Path(__file__).resolve().parent.parent
 BASELINE_REVISION = "0001"
 
 
+def normalize_database_url(url: str) -> str:
+    """Use the psycopg 3 driver for PostgreSQL URLs as Render and most hosts hand them out."""
+    for prefix in ("postgres://", "postgresql://"):
+        if url.startswith(prefix):
+            return "postgresql+psycopg://" + url.removeprefix(prefix)
+    return url
+
+
 def make_engine(url: str, *, run_migrations: bool = True) -> Engine:
-    connect_args = {"check_same_thread": False} if url.startswith("sqlite") else {}
-    engine = create_engine(url, connect_args=connect_args)
+    url = normalize_database_url(url)
+    if url.startswith("sqlite"):
+        engine = create_engine(url, connect_args={"check_same_thread": False})
+    else:
+        # Hosted databases drop idle connections; check each one before use and recycle hourly.
+        engine = create_engine(url, pool_pre_ping=True, pool_recycle=3600, pool_size=5, max_overflow=10)
     if url.startswith("sqlite"):
 
         @event.listens_for(engine, "connect")
