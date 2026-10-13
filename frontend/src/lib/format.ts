@@ -62,3 +62,8 @@ export const LEVEL_TONE: Record<string, 'good' | 'warning' | 'neutral'> = {
   medium: 'neutral',
   low: 'warning',
 }
+
+/** The company a team plays, shown next to its name only when the facilitator gave it a custom name. */
+export function payerSuffix(teamName: string, payerName: string): string {
+  return teamName.trim() === payerName.trim() ? '' : payerName
+}

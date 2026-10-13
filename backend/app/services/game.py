@@ -1455,6 +1455,26 @@ class GameService:
         self._facilitator_team_edit(session_id, team_id, "team_renamed", note, edit, name=clean)
         return self.session_view(session_id)
 
+    def delete_session(self, session_id: str) -> None:
+        """Remove a session with its teams and activity log (admins only; cannot be undone)."""
+        with self._lock, self._db() as db:
+            gs = self._session(db, session_id)
+            team_ids = set()
+            for row in db.exec(select(EventLog).where(EventLog.session_id == gs.id)).all():
+                db.delete(row)
+            for row in self._teams(db, gs.id):
+                team_ids.add(row.id)
+                db.delete(row)
+            db.flush()
+            db.delete(gs)
+            db.commit()
+        # Drop in-memory caches for the deleted session (pitch reviews are keyed by team).
+        for key in [k for k in self._pitch_cache if k[0] in team_ids]:
+            self._pitch_cache.pop(key, None)
+        for key in [k for k in self._content_cache if k[0] == session_id]:
+            self._content_cache.pop(key, None)
+        self._publish(session_id, "session", "team:*")
+
     def purge_opportunities(self, session_id: str, note: str) -> v.SessionView:
         """OD-09: delete captured opportunities and consent when the organization asks."""
         if not note.strip():

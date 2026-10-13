@@ -58,6 +58,11 @@ export const auth = {
     const known = auth.knownSessions().filter((s) => s !== sessionId)
     storage.set('execsim.sessions', JSON.stringify([sessionId, ...known].slice(0, 10)))
   },
+  clearFacilitator(sessionId: string): void {
+    storage.remove(FAC_PREFIX + sessionId)
+    const known = auth.knownSessions().filter((s) => s !== sessionId)
+    storage.set('execsim.sessions', JSON.stringify(known))
+  },
   knownSessions(): string[] {
     try {
       return JSON.parse(storage.get('execsim.sessions') ?? '[]') as string[]

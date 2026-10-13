@@ -1,25 +1,23 @@
-import { Monitor, Moon, Sun } from 'lucide-react'
+import { Moon, Sun } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { storage } from '../lib/storage'
-import { applyTheme as apply, type Theme } from '../lib/theme'
+import { applyTheme as apply, currentTheme, type Theme } from '../lib/theme'
 
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>(
-    () => (storage.get('execsim.theme') as Theme) ?? 'system',
-  )
+  const [theme, setTheme] = useState<Theme>(currentTheme)
   useEffect(() => {
     apply(theme)
     storage.set('execsim.theme', theme)
   }, [theme])
-  const next: Record<Theme, Theme> = { system: 'light', light: 'dark', dark: 'system' }
-  const Icon = theme === 'light' ? Sun : theme === 'dark' ? Moon : Monitor
+  const next: Theme = theme === 'light' ? 'dark' : 'light'
+  const Icon = theme === 'light' ? Moon : Sun
   return (
     <button
-      className="btn btn--ghost btn--sm"
+      className="btn btn--ghost btn--sm btn--icon"
       type="button"
-      onClick={() => setTheme(next[theme])}
-      aria-label={`Theme: ${theme}. Switch theme`}
-      title={`Theme: ${theme}`}
+      onClick={() => setTheme(next)}
+      aria-label={`Switch to ${next} theme`}
+      title={`Switch to ${next} theme`}
     >
       <Icon aria-hidden />
     </button>

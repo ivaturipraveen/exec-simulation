@@ -79,3 +79,10 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* 13 stages (12 + optional translation) sit in two even rows on wide screens */
+@media (min-width: 1280px) {
+  .timeline {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+}

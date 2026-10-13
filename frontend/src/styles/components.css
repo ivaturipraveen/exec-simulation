@@ -711,7 +711,7 @@
   width: 28px;
   height: 28px;
   border-radius: 8px;
-  background: linear-gradient(135deg, var(--accent), #164a96);
+  background: linear-gradient(140deg, var(--bc-blue-bright), var(--bc-blue) 50%, var(--bc-navy));
   display: grid;
   place-items: center;
   color: #fff;

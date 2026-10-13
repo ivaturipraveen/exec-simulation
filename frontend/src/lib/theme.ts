@@ -1,12 +1,21 @@
 import { storage } from './storage'
 
-export type Theme = 'system' | 'light' | 'dark'
+export type Theme = 'light' | 'dark'
+
+/** Stored choice, or the OS preference on first visit (older 'system' values resolve the same way). */
+export function currentTheme(): Theme {
+  const saved = storage.get('execsim.theme')
+  if (saved === 'light' || saved === 'dark') return saved
+  return typeof window !== 'undefined' &&
+    window.matchMedia?.('(prefers-color-scheme: dark)').matches
+    ? 'dark'
+    : 'light'
+}
 
 export function applyTheme(theme: Theme) {
-  if (theme === 'system') document.documentElement.removeAttribute('data-theme')
-  else document.documentElement.setAttribute('data-theme', theme)
+  document.documentElement.setAttribute('data-theme', theme)
 }
 
 export function initTheme() {
-  applyTheme((storage.get('execsim.theme') as Theme) ?? 'system')
+  applyTheme(currentTheme())
 }

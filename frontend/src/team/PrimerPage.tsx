@@ -145,6 +145,12 @@ export function PrimerPage({ team }: { team: TeamView }) {
             your score.
           </p>
           <table className="table table--compact">
+            <thead>
+              <tr>
+                <th>Dimension</th>
+                <th>Weight</th>
+              </tr>
+            </thead>
             <tbody>
               {dimensions.map(([d, w, t]) => (
                 <tr key={d}>

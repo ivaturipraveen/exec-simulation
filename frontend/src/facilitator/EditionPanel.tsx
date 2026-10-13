@@ -2,6 +2,7 @@ import { AlertTriangle, BookOpen, ClipboardCheck, Scissors, Siren, Workflow } fr
 import { Link } from 'react-router-dom'
 import { useCatalog, useEdition } from '../api/hooks'
 import type { SessionView } from '../api/types'
+import { SectionTabs } from '../components/SectionTabs'
 import { Card } from '../components/ui/Card'
 import { Badge, Callout, Loading } from '../components/ui/primitives'
 
@@ -38,181 +39,259 @@ export function EditionPanel({ session, token }: { session: SessionView; token: 
           </ul>
         </Callout>
       )}
-      <Card
-        title={
-          <span className="row">
-            <Siren size={16} aria-hidden /> Crisis triggers
-          </span>
-        }
-        subtitle="The engine recommends; you confirm or override with a note"
-        flush
-      >
-        <table className="table">
-          <tbody>
-            {data.events.map((e) => (
-              <tr key={e.id}>
-                <td style={{ width: '32%' }}>
-                  <span className="code-chip code-chip--strong">{e.code}</span>{' '}
-                  <span className="strong">{e.title}</span>
-                  <div className="xs muted">
-                    {e.payer_ids.length ? e.payer_ids.join(', ') : 'Cross-cutting'} · {e.minutes}{' '}
-                    min · {e.severities.join(' / ')}
-                  </div>
-                </td>
-                <td className="small secondary">{e.trigger_text}</td>
-                <td className="small" style={{ width: '24%' }}>
-                  {e.leadership_test}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </Card>
-      <div className="grid grid-2">
-        <Card
-          title={
-            <span className="row">
-              <Scissors size={16} aria-hidden /> Contingency cuts
-            </span>
-          }
-          flush
-        >
-          <table className="table table--compact">
-            <tbody>
-              {data.contingency_cuts.map((c) => (
-                <tr key={String(c.id)}>
-                  <td className="small strong" style={{ width: '38%' }}>
-                    {String(c.condition)}
-                  </td>
-                  <td className="small secondary">{String(c.cut)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </Card>
-        <Card
-          title={
-            <span className="row">
-              <Workflow size={16} aria-hidden /> Operating model: facilitator notes
-            </span>
-          }
-          flush
-        >
-          <table className="table table--compact">
-            <tbody>
-              {catalog.workflow_steps.map((s) => (
-                <tr key={s.id}>
-                  <td className="small strong" style={{ width: '34%' }}>
-                    {s.number}. {s.name}
-                  </td>
-                  <td className="small secondary">{data.workflow_notes[s.id]}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </Card>
-      </div>
-      {review.length > 0 && (
-        <Card
-          title={
-            <span className="row">
-              <ClipboardCheck size={16} aria-hidden /> Content review sign-off (pack §12)
-            </span>
-          }
-          subtitle={`${review.length - open} of ${review.length} items confirmed or changed · edit in Settings → Content review`}
-          actions={
-            <Link to="/settings" className="btn btn--ghost btn--sm">
-              Open Settings
-            </Link>
-          }
-          flush
-        >
-          <table className="table table--compact">
-            <tbody>
-              {review
-                .filter((r) => r.kind === 'checklist')
-                .map((r) => (
-                  <tr key={r.id}>
-                    <td style={{ width: 70 }}>
-                      <Badge outline>{r.id}</Badge>
-                    </td>
-                    <td className="small secondary">
-                      <span className="strong">{r.section}</span> · {r.text}
-                      {r.note && <div className="xs muted">Note: {r.note}</div>}
-                    </td>
-                    <td style={{ width: 110 }}>
-                      <Badge tone={tone(r.status)}>{r.status}</Badge>
-                    </td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
-        </Card>
-      )}
-      <Card
-        title={
-          <span className="row">
-            <BookOpen size={16} aria-hidden /> Assumptions log
-          </span>
-        }
-        subtitle="Open decisions resolved for this edition; B-rows are build assumptions for review"
-        flush
-      >
-        <table className="table table--compact">
-          <tbody>
-            {data.assumptions.map((a) => (
-              <tr key={String(a.id)}>
-                <td style={{ width: 70 }}>
-                  <Badge tone={String(a.id).startsWith('B') ? 'warning' : 'neutral'}>
-                    {String(a.id)}
-                  </Badge>
-                </td>
-                <td className="small strong" style={{ width: '22%' }}>
-                  {String(a.decision)}
-                </td>
-                <td className="small secondary">{String(a.assumption)}</td>
-                <td style={{ width: 110 }}>
-                  {status.get(String(a.id)) && (
-                    <Badge tone={tone(status.get(String(a.id))?.status)}>
-                      {status.get(String(a.id))?.status}
-                    </Badge>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </Card>
-      <Card
-        title={
-          <span className="row">
-            <AlertTriangle size={16} aria-hidden /> Simplification register
-          </span>
-        }
-        subtitle="Say these lines in the debrief"
-        flush
-      >
-        <table className="table table--compact">
-          <thead>
-            <tr>
-              <th>Actual concept</th>
-              <th>V1 representation</th>
-              <th>Risk of misunderstanding</th>
-              <th>Facilitator disclosure</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.simplifications.map((s) => (
-              <tr key={s.actual}>
-                <td className="small">{s.actual}</td>
-                <td className="small secondary">{s.representation}</td>
-                <td className="small secondary">{s.risk}</td>
-                <td className="small">“{s.disclosure}”</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </Card>
+      <SectionTabs
+        label="Edition sections"
+        sections={[
+          {
+            id: 'crisis',
+            label: 'Crisis triggers',
+            count: data.events.length,
+            content: (
+              <Card
+                title={
+                  <span className="row">
+                    <Siren size={16} aria-hidden /> Crisis triggers
+                  </span>
+                }
+                subtitle="The engine recommends; you confirm or override with a note"
+                flush
+              >
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th>Event</th>
+                      <th>Trigger</th>
+                      <th>Leadership test</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.events.map((e) => (
+                      <tr key={e.id}>
+                        <td style={{ width: '32%' }}>
+                          <span className="code-chip code-chip--strong">{e.code}</span>{' '}
+                          <span className="strong">{e.title}</span>
+                          <div className="xs muted">
+                            {e.payer_ids.length ? e.payer_ids.join(', ') : 'Cross-cutting'} ·{' '}
+                            {e.minutes} min · {e.severities.join(' / ')}
+                          </div>
+                        </td>
+                        <td className="small secondary">{e.trigger_text}</td>
+                        <td className="small" style={{ width: '24%' }}>
+                          {e.leadership_test}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </Card>
+            ),
+          },
+          {
+            id: 'facilitation',
+            label: 'Contingency & facilitator notes',
+            count: data.contingency_cuts.length,
+            content: (
+              <div className="grid grid-2">
+                <Card
+                  title={
+                    <span className="row">
+                      <Scissors size={16} aria-hidden /> Contingency cuts
+                    </span>
+                  }
+                  flush
+                >
+                  <table className="table table--compact">
+                    <thead>
+                      <tr>
+                        <th>When</th>
+                        <th>Cut</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.contingency_cuts.map((c) => (
+                        <tr key={String(c.id)}>
+                          <td className="small strong" style={{ width: '38%' }}>
+                            {String(c.condition)}
+                          </td>
+                          <td className="small secondary">{String(c.cut)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </Card>
+                <Card
+                  title={
+                    <span className="row">
+                      <Workflow size={16} aria-hidden /> Operating model: facilitator notes
+                    </span>
+                  }
+                  flush
+                >
+                  <table className="table table--compact">
+                    <thead>
+                      <tr>
+                        <th>Workflow step</th>
+                        <th>Facilitator note</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {catalog.workflow_steps.map((s) => (
+                        <tr key={s.id}>
+                          <td className="small strong" style={{ width: '34%' }}>
+                            {s.number}. {s.name}
+                          </td>
+                          <td className="small secondary">{data.workflow_notes[s.id]}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </Card>
+              </div>
+            ),
+          },
+          ...(review.length > 0
+            ? [
+                {
+                  id: 'review',
+                  label: 'Content review',
+                  count: open > 0 ? undefined : review.length,
+                  marker: open > 0 ? <Badge tone="warning">{open} open</Badge> : undefined,
+                  content: (
+                    <Card
+                      title={
+                        <span className="row">
+                          <ClipboardCheck size={16} aria-hidden /> Content review sign-off (pack
+                          §12)
+                        </span>
+                      }
+                      subtitle={`${review.length - open} of ${review.length} items confirmed or changed · edit in Settings → Content review`}
+                      actions={
+                        <Link to="/settings" className="btn btn--ghost btn--sm">
+                          Open Settings
+                        </Link>
+                      }
+                      flush
+                    >
+                      <table className="table table--compact">
+                        <thead>
+                          <tr>
+                            <th>ID</th>
+                            <th>Item</th>
+                            <th>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {review
+                            .filter((r) => r.kind === 'checklist')
+                            .map((r) => (
+                              <tr key={r.id}>
+                                <td style={{ width: 70 }}>
+                                  <Badge outline>{r.id}</Badge>
+                                </td>
+                                <td className="small secondary">
+                                  <span className="strong">{r.section}</span> · {r.text}
+                                  {r.note && <div className="xs muted">Note: {r.note}</div>}
+                                </td>
+                                <td style={{ width: 110 }}>
+                                  <Badge tone={tone(r.status)}>{r.status}</Badge>
+                                </td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                    </Card>
+                  ),
+                },
+              ]
+            : []),
+          {
+            id: 'assumptions',
+            label: 'Assumptions',
+            count: data.assumptions.length,
+            content: (
+              <Card
+                title={
+                  <span className="row">
+                    <BookOpen size={16} aria-hidden /> Assumptions log
+                  </span>
+                }
+                subtitle="Open decisions resolved for this edition; B-rows are build assumptions for review"
+                flush
+              >
+                <table className="table table--compact">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Decision</th>
+                      <th>Assumption</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.assumptions.map((a) => (
+                      <tr key={String(a.id)}>
+                        <td style={{ width: 70 }}>
+                          <Badge tone={String(a.id).startsWith('B') ? 'warning' : 'neutral'}>
+                            {String(a.id)}
+                          </Badge>
+                        </td>
+                        <td className="small strong" style={{ width: '22%' }}>
+                          {String(a.decision)}
+                        </td>
+                        <td className="small secondary">{String(a.assumption)}</td>
+                        <td style={{ width: 110 }}>
+                          {status.get(String(a.id)) && (
+                            <Badge tone={tone(status.get(String(a.id))?.status)}>
+                              {status.get(String(a.id))?.status}
+                            </Badge>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </Card>
+            ),
+          },
+          {
+            id: 'simplifications',
+            label: 'Simplifications',
+            count: data.simplifications.length,
+            content: (
+              <Card
+                title={
+                  <span className="row">
+                    <AlertTriangle size={16} aria-hidden /> Simplification register
+                  </span>
+                }
+                subtitle="Say these lines in the debrief"
+                flush
+              >
+                <table className="table table--compact">
+                  <thead>
+                    <tr>
+                      <th>Actual concept</th>
+                      <th>V1 representation</th>
+                      <th>Risk of misunderstanding</th>
+                      <th>Facilitator disclosure</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.simplifications.map((s) => (
+                      <tr key={s.actual}>
+                        <td className="small">{s.actual}</td>
+                        <td className="small secondary">{s.representation}</td>
+                        <td className="small secondary">{s.risk}</td>
+                        <td className="small">“{s.disclosure}”</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </Card>
+            ),
+          },
+        ]}
+      />
     </div>
   )
 }

@@ -53,7 +53,15 @@ export function useRealtime(sessionId: string | undefined, token: string | null,
       closed = true
       window.clearInterval(ping)
       window.clearTimeout(timer)
-      ws?.close()
+      // Closing a socket that is still connecting makes the browser log "closed before the
+      // connection is established" (React dev mode mounts effects twice); close it once open.
+      if (ws?.readyState === WebSocket.CONNECTING) {
+        const pending = ws
+        pending.onopen = () => pending.close()
+        pending.onmessage = null
+      } else {
+        ws?.close()
+      }
     }
   }, [sessionId, token, teamId, qc])
 

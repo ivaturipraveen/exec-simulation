@@ -17,6 +17,7 @@ import { Button } from '../components/ui/Button'
 import { Field, Input, Select } from '../components/ui/Field'
 import { Callout } from '../components/ui/primitives'
 import { Tabs } from '../components/ui/Tabs'
+import { BrandMark } from '../components/BrandMark'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { auth } from '../lib/storage'
 
@@ -53,7 +54,7 @@ export function Landing() {
     <div className="landing">
       <header className="landing__top">
         <div className="row">
-          <div className="brand-mark">MA</div>
+          <BrandMark />
           <span className="strong">Executive AI Simulation</span>
         </div>
         <div className="row">

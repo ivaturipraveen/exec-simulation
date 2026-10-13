@@ -15,7 +15,7 @@ test('facilitator runs a session; a team plays Round 1, Year 1 results and the b
   await fac.getByRole('button', { name: /Create session/ }).click()
   await expect(fac.getByText('Facilitator console')).toBeVisible()
 
-  const codes = await fac.locator('.team-card__code').allTextContents()
+  const codes = await fac.locator('.tp__code-value').allTextContents()
   expect(codes).toHaveLength(3)
   await fac.getByRole('button', { name: /Start session/ }).click()
   await fac.getByRole('button', { name: /Next stage/ }).click()
@@ -33,11 +33,13 @@ test('facilitator runs a session; a team plays Round 1, Year 1 results and the b
   await team.getByRole('link', { name: /Data room/ }).click()
   await team.locator('.dataroom__item').first().click()
   await expect(team.locator('.dataroom__viewer h2').first()).toBeVisible()
-  await team.getByRole('link', { name: /AI analyst/ }).click()
+  // The analyst is a chat panel on every page: open it from the floating button.
+  await team.getByRole('button', { name: 'Open AI analyst' }).click()
   await team.getByLabel('Your question').fill('Where are complaints concentrated?')
   await team.getByRole('button', { name: 'Send' }).click()
   // With an API key this is a real Claude call (15–25 s); without one it is instant retrieval.
   await expect(team.locator('.analyst__a .md').first()).toBeVisible({ timeout: 60_000 })
+  await team.keyboard.press('Escape')
 
   // Round 1: add two investments, state a thesis, submit.
   await team.getByRole('link', { name: /Invest/ }).click()

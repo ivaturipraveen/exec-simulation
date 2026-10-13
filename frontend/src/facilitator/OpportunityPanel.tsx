@@ -5,6 +5,7 @@ import { useCatalog, useOpportunityMap } from '../api/hooks'
 import type { SessionView } from '../api/types'
 import { OpportunityMatrix } from '../components/OpportunityMatrix'
 import { Button } from '../components/ui/Button'
+import { SectionTabs } from '../components/SectionTabs'
 import { Card } from '../components/ui/Card'
 import { Markdown } from '../components/ui/Markdown'
 import { Field, Input } from '../components/ui/Field'
@@ -77,85 +78,109 @@ export function OpportunityPanel({ session, token }: { session: SessionView; tok
           meta={`Themes enabling ${opp?.foundational_min_links ?? 3}+ opportunities`}
         />
       </div>
-      <div className="grid grid-split">
-        <Card
-          title="Organizational AI Opportunity Map"
-          subtitle="Aggregated from participants who consented"
-        >
-          <OpportunityMatrix
-            themes={catalog?.opportunity.foundational_themes}
-            minLinks={catalog?.opportunity.foundational_min_links}
-            valueCut={v}
-            readinessCut={r}
-            items={data.items.map((o) => ({
-              id: o.id,
-              title: o.title,
-              value: o.value,
-              readiness: o.readiness_avg,
-              foundations: o.foundations,
-              meta: `${o.team} · ${o.participant}${o.owner ? ` · owner ${o.owner}` : ''}`,
-            }))}
-          />
-        </Card>
-        <Card
-          title="Synthesizer"
-          subtitle="Themes, act-now pilots, foundations and the first 90 days"
-          actions={
-            <Button
-              size="sm"
-              variant="primary"
-              icon={<Sparkles />}
-              loading={busy}
-              onClick={synthesize}
-              disabled={!data.items.length}
-            >
-              Synthesize
-            </Button>
-          }
-        >
-          {synthesis ? (
-            <Markdown>{synthesis}</Markdown>
-          ) : (
-            <p className="small muted">
-              Run the synthesizer once participants have captured their opportunities.
-            </p>
-          )}
-        </Card>
-      </div>
-      <Callout tone="neutral">
-        Only consented opportunities are included; named owners appear only on the organization's
-        own map. Retained {opp?.retention_months ?? 12} months unless deletion is requested. Frame
-        follow-up as optional diligence.
-      </Callout>
-      <Card
-        title="Delete opportunity data"
-        subtitle="OD-09: on the organization's request, remove every captured opportunity and consent"
-      >
-        <div className="row" style={{ alignItems: 'flex-end' }}>
-          <div className="grow">
-            <Field label="Audit note">
-              {(id) => (
-                <Input
-                  id={id}
-                  value={note}
-                  maxLength={1000}
-                  onChange={(e) => setNote(e.target.value)}
-                  placeholder="Who asked, and when"
+      <SectionTabs
+        label="Opportunity map sections"
+        sections={[
+          {
+            id: 'map',
+            label: 'Opportunity map',
+            count: data.items.length,
+            content: (
+              <Card
+                title="Organizational AI Opportunity Map"
+                subtitle="Aggregated from participants who consented"
+              >
+                <OpportunityMatrix
+                  themes={catalog?.opportunity.foundational_themes}
+                  minLinks={catalog?.opportunity.foundational_min_links}
+                  valueCut={v}
+                  readinessCut={r}
+                  items={data.items.map((o) => ({
+                    id: o.id,
+                    title: o.title,
+                    value: o.value,
+                    readiness: o.readiness_avg,
+                    foundations: o.foundations,
+                    meta: `${o.team} · ${o.participant}${o.owner ? ` · owner ${o.owner}` : ''}`,
+                  }))}
                 />
-              )}
-            </Field>
-          </div>
-          <Button
-            variant="danger"
-            icon={<Trash2 />}
-            loading={deleting}
-            disabled={!note.trim()}
-            onClick={purge}
-          >
-            Delete
-          </Button>
-        </div>
-      </Card>
+              </Card>
+            ),
+          },
+          {
+            id: 'synth',
+            label: 'Synthesizer',
+            content: (
+              <Card
+                title="Synthesizer"
+                subtitle="Themes, act-now pilots, foundations and the first 90 days"
+                actions={
+                  <Button
+                    size="sm"
+                    variant="primary"
+                    icon={<Sparkles />}
+                    loading={busy}
+                    onClick={synthesize}
+                    disabled={!data.items.length}
+                  >
+                    Synthesize
+                  </Button>
+                }
+              >
+                {synthesis ? (
+                  <Markdown>{synthesis}</Markdown>
+                ) : (
+                  <p className="small muted">
+                    Run the synthesizer once participants have captured their opportunities.
+                  </p>
+                )}
+              </Card>
+            ),
+          },
+          {
+            id: 'privacy',
+            label: 'Data & privacy',
+            content: (
+              <div className="stack">
+                <Callout tone="neutral">
+                  Only consented opportunities are included; named owners appear only on the
+                  organization's own map. Retained {opp?.retention_months ?? 12} months unless
+                  deletion is requested. Frame follow-up as optional diligence.
+                </Callout>
+                <Card
+                  title="Delete opportunity data"
+                  subtitle="OD-09: on the organization's request, remove every captured opportunity and consent"
+                >
+                  <div className="row" style={{ alignItems: 'flex-end' }}>
+                    <div className="grow">
+                      <Field label="Audit note">
+                        {(id) => (
+                          <Input
+                            id={id}
+                            value={note}
+                            maxLength={1000}
+                            onChange={(e) => setNote(e.target.value)}
+                            placeholder="Who asked, and when"
+                          />
+                        )}
+                      </Field>
+                    </div>
+                    <Button
+                      variant="danger"
+                      icon={<Trash2 />}
+                      loading={deleting}
+                      disabled={!note.trim()}
+                      onClick={purge}
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                </Card>
+              </div>
+            ),
+          },
+        ]}
+      />
     </div>
   )
 }

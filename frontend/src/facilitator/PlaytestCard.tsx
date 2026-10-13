@@ -45,10 +45,6 @@ export function PlaytestCard({
       </Card>
     )
   const over = data.run_minutes - data.planned_minutes
-  const maxMin = Math.max(
-    1,
-    ...data.stages.map((s) => Math.max(s.planned_minutes, s.actual_minutes)),
-  )
   return (
     <Card
       title="Playtest report"
@@ -94,10 +90,8 @@ export function PlaytestCard({
                 <th>Stage</th>
                 <th className="num">Planned</th>
                 <th className="num">Actual</th>
-                <th className="num">Δ</th>
-                <th style={{ width: '32%' }}>
-                  <span className="sr-only">Planned vs actual</span>
-                </th>
+                <th className="num">Difference (min)</th>
+                <th style={{ width: '32%' }}>Planned vs actual</th>
               </tr>
             </thead>
             <tbody>
@@ -120,18 +114,39 @@ export function PlaytestCard({
                     )}
                   </td>
                   <td>
-                    <div className="timing-bar" aria-hidden>
-                      <span
-                        className="timing-bar__plan"
-                        style={{ width: `${(s.planned_minutes / maxMin) * 100}%` }}
-                      />
-                      {s.visits > 0 && (
-                        <span
-                          className={`timing-bar__actual ${s.overrun ? 'is-over' : ''}`}
-                          style={{ width: `${(s.actual_minutes / maxMin) * 100}%` }}
-                        />
-                      )}
-                    </div>
+                    {(() => {
+                      // Full-width track = the planned time; the fill is the share actually used.
+                      // Smaller fills animate in faster, so a barely-used stage snaps in quickly.
+                      const share = s.planned_minutes
+                        ? Math.min(1, s.actual_minutes / s.planned_minutes)
+                        : 0
+                      const over = s.actual_minutes - s.planned_minutes
+                      return (
+                        <div
+                          className="timing-track"
+                          title={`${s.actual_minutes} of ${s.planned_minutes} planned minutes`}
+                        >
+                          <div className="timing-track__bar">
+                            <span
+                              className={`timing-track__fill ${over > 0.05 ? 'is-over' : ''}`}
+                              style={
+                                {
+                                  '--fill': `${share * 100}%`,
+                                  '--dur': `${250 + share * 900}ms`,
+                                } as React.CSSProperties
+                              }
+                            />
+                          </div>
+                          <span className="timing-track__label">
+                            {s.visits === 0
+                              ? '—'
+                              : over > 0.05
+                                ? `+${over.toFixed(1)} min over`
+                                : `${Math.round(share * 100)}%`}
+                          </span>
+                        </div>
+                      )
+                    })()}
                   </td>
                 </tr>
               ))}
