@@ -15,17 +15,23 @@ interface DialogProps {
 
 export function Dialog({ open, onClose, title, subtitle, children, footer, wide }: DialogProps) {
   const ref = useRef<HTMLDivElement>(null)
+  // Callers pass a new onClose on every render; keep it in a ref so typing in a field (which
+  // re-renders the caller) does not re-run the effect and pull focus back to the dialog.
+  const closeRef = useRef(onClose)
+  useEffect(() => {
+    closeRef.current = onClose
+  }, [onClose])
   useEffect(() => {
     if (!open) return
     const prev = document.activeElement as HTMLElement | null
-    ref.current?.focus()
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
+    if (!ref.current?.contains(document.activeElement)) ref.current?.focus()
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && closeRef.current()
     document.addEventListener('keydown', onKey)
     return () => {
       document.removeEventListener('keydown', onKey)
       prev?.focus()
     }
-  }, [open, onClose])
+  }, [open])
   if (!open) return null
   return createPortal(
     <div className="dialog-backdrop" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>

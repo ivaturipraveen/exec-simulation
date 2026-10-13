@@ -127,16 +127,16 @@ function LineControls({
           </option>
         ))}
       </Select>
-      {inv.owner_prompt && (
-        <Input
-          aria-label={`${inv.owner_prompt} for ${inv.code}`}
-          placeholder={`${inv.owner_prompt} (name and title)`}
-          value={item.owner ?? ''}
-          maxLength={120}
-          onChange={(e) => onChange({ owner: e.target.value })}
-          className={inv.owner_required && !(item.owner ?? '').trim() ? 'input--attention' : ''}
-        />
-      )}
+      {/* Every card gets a named owner (run of show: "named owners"); cards whose effect depends
+          on one name the role and stay highlighted until it is filled. */}
+      <Input
+        aria-label={`${inv.owner_prompt || 'Owner'} for ${inv.code}`}
+        placeholder={`${inv.owner_prompt || 'Owner'} (name and title)`}
+        value={item.owner ?? ''}
+        maxLength={120}
+        onChange={(e) => onChange({ owner: e.target.value })}
+        className={inv.owner_required && !(item.owner ?? '').trim() ? 'input--attention' : ''}
+      />
     </div>
   )
 }
@@ -600,12 +600,13 @@ function Round2({ team, catalog }: { team: TeamView; catalog: InvestmentView[] }
                         </div>
                       </td>
                       <td>
-                        {i.owner_required && !i.owner ? (
+                        {!i.owner ? (
                           <Input
                             aria-label={`Name owner for ${i.code}`}
                             placeholder="Name an owner"
                             value={ownerFor(i.investment_id) ?? ''}
-                            className="input--attention"
+                            maxLength={120}
+                            className={i.owner_required ? 'input--attention' : ''}
                             onChange={(e) => setOwner(i.investment_id, e.target.value)}
                           />
                         ) : (

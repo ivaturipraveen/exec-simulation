@@ -277,8 +277,15 @@ class GameService:
             def enter(new_index: int) -> None:
                 if not 0 <= new_index <= last:
                     raise InvalidAction("No such stage")
+                # Remember how far the clock got in the stage being left, so a stage re-entered with
+                # Back (e.g. after an accidental Next) resumes its countdown instead of restarting.
+                spent = dict(self._opt(gs, "stage_elapsed", {}))
+                if gs.stage_status in ("running", "paused"):
+                    leaving = self.content.stages[gs.stage_index].id
+                    spent[leaving] = self._elapsed(gs, now)
+                gs.options = {**(gs.options or {}), "stage_elapsed": spent}
                 gs.stage_index = new_index
-                gs.elapsed_before_pause = 0.0
+                gs.elapsed_before_pause = float(spent.get(self.content.stages[new_index].id, 0.0))
                 gs.stage_started_at = now
                 gs.stage_status = "running"
 
@@ -303,10 +310,16 @@ class GameService:
                     raise InvalidAction("Already at the final stage; use 'complete'")
                 enter(gs.stage_index + 1)
             elif action == "previous":
-                enter(max(0, gs.stage_index - 1))
+                if gs.stage_index == 0:
+                    raise InvalidAction("Already at the first stage")
+                self._check_can_return(gs, gs.stage_index - 1)
+                enter(gs.stage_index - 1)
             elif action == "goto":
+                # API/test helper only (the console timeline is read-only): forward jumps only.
                 if index is None:
                     raise InvalidAction("goto requires an index")
+                if gs.stage_status != "not_started" and index < gs.stage_index:
+                    raise Conflict("Use 'previous' to go back one stage")
                 enter(index)
             elif action == "complete":
                 gs.elapsed_before_pause = self._elapsed(gs, now)
@@ -319,8 +332,31 @@ class GameService:
             )
             db.commit()
             view = self._session_view(db, gs)
+            auto_year = self._auto_simulate_year(gs) if action in ("next", "goto") else None
         self._publish(session_id, "session", "team:*")
+        if auto_year is not None:
+            # Pack §9.2 "lock at the timebox": entering a Simulate stage applies every pending draft
+            # and runs the year. Results stay held for the facilitator's review before release.
+            return self.simulate(session_id, auto_year, force=True)
         return view
+
+    def _auto_simulate_year(self, gs: GameSession) -> int | None:
+        """The year to run on entering its Simulate stage, unless the facilitator still owes a decision."""
+        year = {StageKind.SIMULATE_Y1: 1, StageKind.SIMULATE_Y2: 2}.get(self._kind(gs))
+        if year is None or gs.simulated_years != year - 1:
+            return None
+        if year == 2 and not gs.round2_granted:
+            return None  # Round 2 capital is a facilitator decision; simulate by hand once granted
+        return year
+
+    def _check_can_return(self, gs: GameSession, target: int) -> None:
+        """A simulated year cannot be un-run, so Back stops at the Simulate stage that produced it."""
+        for year in range(1, gs.simulated_years + 1):
+            kind = StageKind.SIMULATE_Y1 if year == 1 else StageKind.SIMULATE_Y2
+            if target < self._stage_pos[kind]:
+                raise Conflict(
+                    f"Year {year} has already been simulated, so the session cannot go back before it"
+                )
 
     def set_options(self, session_id: str, updates: dict[str, Any], note: str) -> v.SessionView:
         allowed = {"opmodel_compressed", "include_translation"}

@@ -339,10 +339,10 @@ It prints the **facilitator link** (it contains a secret token, so don't paste i
 3. **Team:** data room → cite H-05 and H-09 in **Diagnose**; ask the analyst one question.
 4. **Facilitator:** Next → **Investment Round 1**.
 5. **Team:** add I1 (name an owner), I10 (name an owner), I14, I17; set I3 to start in Q3; watch the **capacity chart** and warnings; write a thesis; **Submit**.
-6. **Facilitator:** Next → **Simulate Year 1** → *Force-submit drafts and simulate* (or **Lock Round 1** at the time box first). Check the **Results** tab, then **Release Year 1 performance review**. **Team:** Results (it shows "being reviewed" until you release).
+6. **Facilitator:** Next → **Simulate Year 1**. Entering the stage locks Round 1 (unsubmitted drafts are applied, after a confirmation) and runs the year automatically. Check the **Results** tab, then **Release Year 1 performance review**. **Team:** Results (it shows "being reviewed" until you release).
 7. **Facilitator:** Next → **Analyze**. **Team:** Board pitch: fill the five fields, cite artifacts, **Submit pitch**.
 8. **Facilitator:** Next → **Round 2**. **Score** the pitch (wait for the suggestion, adjust, add an audit note, save) → **Grant Round 2 capital**.
-9. **Team:** Round 2: fund I15; thesis; **Submit**. **Facilitator:** Next → **Simulate Year 2** → run it → **Release Year 2 performance review**.
+9. **Team:** Round 2: fund I15; thesis; **Submit**. **Facilitator:** Next → **Simulate Year 2** (runs automatically) → **Release Year 2 performance review**.
 10. **Facilitator:** Next → **Operating model**. **Team:** design the steps; **Submit**.
 11. **Facilitator:** Next → **Crisis** → **Release recommended crisis to all**. **Team:** respond with all six parts.
 12. **Facilitator:** Next → **Final results** → **Release scorecards**, then **Debrief**: Results tab, Answer key.
@@ -394,7 +394,7 @@ It prints the **facilitator link** (it contains a secret token, so don't paste i
 | The second team logged out the first | Use a private window for the second team |
 | AI is slow or busy | 15–25 s is normal; 20 questions per 10 minutes per team |
 | A team has no crisis | A clean portfolio may trigger none; apply a curveball from the Teams tab |
-| Started a stage by mistake | **Back**, or click the stage in the timeline |
+| Pressed Next by mistake | **Back**: the previous stage resumes its countdown where it stopped. The timeline circles are read-only. Back cannot cross a simulated year |
 | Team says "Results are being reviewed" | Release the year from the **Run** tab (Stage actions) |
 | Settings says it is disabled | Set `ADMIN_PASSWORD` in `backend/.env` and restart `make dev` |
 | A setting change didn't affect a running session | Expected: sessions keep a snapshot. Change it in that session's **Session settings** tab |

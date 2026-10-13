@@ -96,9 +96,12 @@ def test_full_session_happy_path(client: TestClient) -> None:
     me = client.get("/api/team", headers=hz).json()
     assert me["initiatives"][-1]["start_label"] == "Y1 Q2" and me["initiatives"][0]["owner"] == OWNER
 
+    # Entering Simulate Year 1 runs the year (lock at the time box); it cannot be run twice.
     session = goto_kind(client, session, ftok, "simulate_y1")
-    assert client.post(f"/api/sessions/{sid}/simulate", json={"year": 2}, headers=fh).status_code == 409
-    assert client.post(f"/api/sessions/{sid}/simulate", json={"year": 1}, headers=fh).status_code == 200
+    assert session["simulated_years"] == 1
+    assert client.post(f"/api/sessions/{sid}/simulate", json={"year": 1}, headers=fh).status_code == 409
+    back = client.post(f"/api/sessions/{sid}/stage", json={"action": "previous"}, headers=fh)
+    assert back.status_code == 409  # a simulated year cannot be un-run
     # Review before release (pack §9.2): the facilitator sees results first.
     assert client.get("/api/team/results/1", headers=auth(teams["heritage"])).status_code == 403
     hz_tid = next(t["team_id"] for t in session["teams"] if t["payer_id"] == "horizon")
@@ -169,7 +172,7 @@ def test_full_session_happy_path(client: TestClient) -> None:
         assert client.post("/api/team/round2/submit", headers=auth(tok)).status_code == 200
 
     session = goto_kind(client, session, ftok, "simulate_y2")
-    assert client.post(f"/api/sessions/{sid}/simulate", json={"year": 2}, headers=fh).status_code == 200
+    assert session["simulated_years"] == 2
     assert client.post(f"/api/sessions/{sid}/results/2/release", headers=fh).status_code == 200
 
     # Operating model with decision dimensions; facilitator can override with a note.
@@ -469,3 +472,26 @@ def test_session_settings_snapshot_and_locks(client: TestClient) -> None:
     client.post(f"/api/sessions/{sid}/simulate", json={"year": 1, "force": True}, headers=fh)
     locked = {"values": {"payer_effectiveness.low": 0.5}, "note": "x"}
     assert client.put(f"/api/sessions/{sid}/settings", json=locked, headers=fh).status_code == 409
+
+
+def test_stage_back_resumes_clock_and_timeline_is_forward_only(client: TestClient) -> None:
+    session, ftok = create_session(client)
+    sid, fh = session["id"], auth(ftok)
+    stage(client, sid, ftok, "start")
+    stage(client, sid, ftok, "next")
+    stage(client, sid, ftok, "pause")
+    with client.app.state.game._db() as db:  # pretend 5 minutes were spent in stage 2
+        from app.db import GameSession
+
+        gs = db.get(GameSession, sid)
+        gs.elapsed_before_pause = 300.0
+        db.add(gs)
+        db.commit()
+    stage(client, sid, ftok, "resume")
+    view = stage(client, sid, ftok, "next")  # accidental Next
+    assert view["clock"]["stage_index"] == 2
+    view = stage(client, sid, ftok, "previous")  # Back: stage 2 resumes, not restarts
+    assert view["clock"]["stage_index"] == 1 and view["clock"]["status"] == "running"
+    assert view["clock"]["remaining_seconds"] <= view["clock"]["duration_seconds"] - 300
+    jump = client.post(f"/api/sessions/{sid}/stage", json={"action": "goto", "index": 0}, headers=fh)
+    assert jump.status_code == 409  # only Back moves backwards
