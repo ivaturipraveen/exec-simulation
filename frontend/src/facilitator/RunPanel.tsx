@@ -1,7 +1,6 @@
 import {
   AlarmClock,
   Eye,
-  Lock,
   Send,
   Trophy,
   ChevronLeft,
@@ -60,10 +59,39 @@ export function RunPanel({ session, token }: { session: SessionView; token: stri
   const stage = session.stages[c.stage_index]
   const last = session.stages.length - 1
   const behind = session.schedule_offset_minutes
+  // A simulated year cannot be un-run, so Back stops at the Simulate stage that produced it.
+  const lastSimIndex =
+    session.simulated_years > 0
+      ? session.stages.findIndex((s) => s.kind === `simulate_y${session.simulated_years}`)
+      : -1
+  const canGoBack = c.stage_index > 0 && c.stage_index - 1 >= lastSimIndex
+  const goNext = () => {
+    // Entering a Simulate stage closes the round and runs the year: confirm if a team is still drafting.
+    const upcoming = session.stages[c.stage_index + 1]
+    const year = upcoming?.kind === 'simulate_y1' ? 1 : upcoming?.kind === 'simulate_y2' ? 2 : 0
+    const runs = year > 0 && !(year === 2 && !session.round2_granted)
+    const drafting = runs
+      ? session.teams.filter((t) => (year === 1 ? !t.round1_submitted : !t.round2_submitted))
+      : []
+    if (
+      drafting.length > 0 &&
+      !window.confirm(
+        `${drafting.map((t) => t.team_name).join(', ')} not submitted yet. Moving on applies ` +
+          `their current draft and runs Year ${year}; a simulated year cannot be undone. Continue?`,
+      )
+    )
+      return
+    run(
+      '/stage',
+      { action: 'next' },
+      'POST',
+      runs ? `Year ${year} simulated: review the results, then release` : undefined,
+    )
+  }
 
   return (
     <div className="stack" style={{ '--gap': '20px' } as React.CSSProperties}>
-      <RunOfShow session={session} onGoto={(i) => run('/stage', { action: 'goto', index: i })} />
+      <RunOfShow session={session} />
 
       {c.status !== 'not_started' && behind >= 2 && (
         <Callout
@@ -132,17 +160,18 @@ export function RunPanel({ session, token }: { session: SessionView; token: stri
                   <>
                     <Button
                       icon={<ChevronLeft />}
-                      disabled={c.stage_index === 0}
+                      disabled={!canGoBack}
+                      title={
+                        canGoBack
+                          ? 'Return to the previous stage; its countdown resumes where it stopped'
+                          : 'A simulated year cannot be undone'
+                      }
                       onClick={() => run('/stage', { action: 'previous' })}
                     >
                       Back
                     </Button>
                     {c.stage_index < last ? (
-                      <Button
-                        variant="primary"
-                        icon={<ChevronRight />}
-                        onClick={() => run('/stage', { action: 'next' })}
-                      >
+                      <Button variant="primary" icon={<ChevronRight />} onClick={goNext}>
                         Next stage
                       </Button>
                     ) : (
@@ -402,10 +431,7 @@ function StageActions({
   const compressed = !!session.options.opmodel_compressed
   const released = (session.options.released_years as number[] | undefined) ?? []
   const unreleased = [1, 2].filter((y) => y <= session.simulated_years && !released.includes(y))
-  const lockable =
-    pending.length > 0 &&
-    session.clock.status !== 'not_started' &&
-    (nextYear === 1 || (nextYear === 2 && session.round2_granted))
+  const simIndex = session.stages.findIndex((s) => s.kind === `simulate_y${nextYear}`)
 
   return (
     <Card title="Stage actions" subtitle="What needs to happen to move on">
@@ -450,55 +476,33 @@ function StageActions({
             </Button>
           </div>
         )}
-        {lockable && (
-          <div className="stack" style={{ '--gap': '6px' } as React.CSSProperties}>
-            <div className="strong small">Lock Round {nextYear} at the time box</div>
-            <span className="small secondary">
-              Applies every team's current draft as submitted. Invalid drafts are dropped.
-            </span>
-            <Button
-              icon={<Lock />}
-              loading={busy}
-              onClick={() =>
-                run(`/rounds/${nextYear}/lock`, undefined, 'POST', `Round ${nextYear} locked`)
-              }
-            >
-              Lock Round {nextYear} ({pending.length} pending)
-            </Button>
-          </div>
-        )}
         {nextYear <= 2 && (
-          <div className="stack" style={{ '--gap': '8px' } as React.CSSProperties}>
-            <div className="strong small">Simulate Year {nextYear}</div>
+          <div className="stack" style={{ '--gap': '6px' } as React.CSSProperties}>
+            <div className="strong small">Year {nextYear} simulation</div>
             {nextYear === 2 && !session.round2_granted ? (
               <span className="small muted">
                 Score the pitches and grant Round 2 capital first.
               </span>
-            ) : pending.length > 0 ? (
-              <>
-                <span className="small secondary">
-                  Waiting on: {pending.map((t) => t.team_name).join(', ')}
-                </span>
-                <Button
-                  loading={busy}
-                  onClick={() =>
-                    run(
-                      '/simulate',
-                      { year: nextYear, force: true },
-                      'POST',
-                      `Year ${nextYear} simulated`,
-                    )
-                  }
-                >
-                  Force-submit drafts and simulate
-                </Button>
-              </>
+            ) : simIndex > session.clock.stage_index ? (
+              <span className="small secondary">
+                Runs automatically when you move to <strong>Simulate Year {nextYear}</strong>; any
+                unsubmitted draft is applied as submitted (invalid drafts are dropped).
+                {pending.length > 0 && (
+                  <> Still drafting: {pending.map((t) => t.team_name).join(', ')}.</>
+                )}
+              </span>
             ) : (
+              // Only reached when Simulate Year 2 was entered before capital was granted.
               <Button
                 variant="primary"
                 loading={busy}
                 onClick={() =>
-                  run('/simulate', { year: nextYear }, 'POST', `Year ${nextYear} simulated`)
+                  run(
+                    '/simulate',
+                    { year: nextYear, force: true },
+                    'POST',
+                    `Year ${nextYear} simulated`,
+                  )
                 }
               >
                 Run Year {nextYear} simulation

@@ -12,14 +12,9 @@ function hm(minutes: number): string {
   return `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`
 }
 
-/** Run of show: every stage with its planned slot, what is done, what is live and how far through the session we are. */
-export function RunOfShow({
-  session,
-  onGoto,
-}: {
-  session: SessionView
-  onGoto: (index: number) => void
-}) {
+/** Run of show: every stage with its planned slot, what is done, what is live and how far through the
+ * session we are. Read-only: only the Back and Next stage buttons move the session. */
+export function RunOfShow({ session }: { session: SessionView }) {
   const c = session.clock
   const remaining = useRemaining(c)
   const started = c.status !== 'not_started'
@@ -43,7 +38,7 @@ export function RunOfShow({
       title="Run of show"
       subtitle={
         started
-          ? `Stage ${c.stage_index + 1} of ${stages.length} · click any stage to jump to it`
+          ? `Stage ${c.stage_index + 1} of ${stages.length} · hover a circle for its time slot`
           : 'Not started yet: press Start below when the room is ready'
       }
       actions={
@@ -100,9 +95,7 @@ export function RunOfShow({
               <button
                 type="button"
                 className={`tp__dot is-${state} ${s.optional ? 'is-optional' : ''}`}
-                onClick={() => started && onGoto(i)}
-                disabled={!started}
-                aria-label={`Stage ${i + 1}, ${title}: ${status}${started ? '. Click to jump here' : ''}`}
+                aria-label={`Stage ${i + 1}, ${title}: ${status}`}
                 aria-describedby={`ros-tip-${i}`}
                 aria-current={state === 'now' ? 'step' : undefined}
               >
