@@ -1106,19 +1106,19 @@ summary,
   transform: translate(0, 4px);
 }
 .tp__dot-item:hover .tp__tip,
-.tp__dot-item:focus-within .tp__tip {
+.tp__dot-item:has(.tp__dot:focus-visible) .tp__tip {
   opacity: 1;
   visibility: visible;
   transform: translate(-50%, 0);
 }
 .tp__dot-item:first-child:hover .tp__tip,
-.tp__dot-item:first-child:focus-within .tp__tip,
+.tp__dot-item:first-child:has(.tp__dot:focus-visible) .tp__tip,
 .tp__dot-item:nth-child(2):hover .tp__tip,
-.tp__dot-item:nth-child(2):focus-within .tp__tip,
+.tp__dot-item:nth-child(2):has(.tp__dot:focus-visible) .tp__tip,
 .tp__dot-item:last-child:hover .tp__tip,
-.tp__dot-item:last-child:focus-within .tp__tip,
+.tp__dot-item:last-child:has(.tp__dot:focus-visible) .tp__tip,
 .tp__dot-item:nth-last-child(2):hover .tp__tip,
-.tp__dot-item:nth-last-child(2):focus-within .tp__tip {
+.tp__dot-item:nth-last-child(2):has(.tp__dot:focus-visible) .tp__tip {
   transform: translate(0, 0);
 }
 .tp__tip-title {
