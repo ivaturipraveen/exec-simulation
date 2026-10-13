@@ -30,9 +30,10 @@ def _configure(connection: Connection) -> None:
 
 def run_offline() -> None:
     from app.core.config import get_settings
+    from app.db import normalize_database_url
 
     context.configure(
-        url=get_settings().database_url,
+        url=normalize_database_url(get_settings().database_url),
         target_metadata=target_metadata,
         literal_binds=True,
         render_as_batch=True,
@@ -47,9 +48,10 @@ def run_online() -> None:
         _configure(connection)
         return
     from app.core.config import get_settings
+    from app.db import normalize_database_url
 
     section = config.get_section(config.config_ini_section, {})
-    section["sqlalchemy.url"] = get_settings().database_url
+    section["sqlalchemy.url"] = normalize_database_url(get_settings().database_url)
     engine = engine_from_config(section, prefix="sqlalchemy.", poolclass=pool.NullPool)
     with engine.connect() as conn:
         _configure(conn)
