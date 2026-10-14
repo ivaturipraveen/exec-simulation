@@ -130,6 +130,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/api/auth/page': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Page */
+    get: operations['page_api_auth_page_get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/api/auth/status': {
     parameters: {
       query?: never
@@ -144,26 +161,6 @@ export interface paths {
     get: operations['status_api_auth_status_get']
     put?: never
     post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/auth/team': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /**
-     * Open Team
-     * @description A team account opens its team in the most recent session that includes it.
-     */
-    post: operations['open_team_api_auth_team_post']
     delete?: never
     options?: never
     head?: never
@@ -2144,6 +2141,44 @@ export interface components {
       /** Password */
       password: string
     }
+    /**
+     * LoginPage
+     * @description Text and layout of the sign-in page (Settings → Sign-in page). Public: shown before sign-in.
+     */
+    LoginPage: {
+      /** Badge */
+      badge: string
+      /** Button */
+      button: string
+      /** Card Subtitle */
+      card_subtitle: string
+      /** Card Title */
+      card_title: string
+      /** Footnote */
+      footnote: string
+      /**
+       * Layout
+       * @enum {string}
+       */
+      layout: 'hero-left' | 'hero-right' | 'centered'
+      /** Lead */
+      lead: string
+      /**
+       * Logo
+       * @enum {string}
+       */
+      logo: 'header' | 'card' | 'both'
+      /** Show Levels */
+      show_levels: boolean
+      /** Show Stats */
+      show_stats: boolean
+      /** Show Ticker */
+      show_ticker: boolean
+      /** Title */
+      title: string
+      /** Title Accent */
+      title_accent: string
+    }
     /** MeasureResult */
     MeasureResult: {
       /** Band */
@@ -3892,6 +3927,26 @@ export interface operations {
       }
     }
   }
+  page_api_auth_page_get: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['LoginPage']
+        }
+      }
+    }
+  }
   status_api_auth_status_get: {
     parameters: {
       query?: never
@@ -3910,37 +3965,6 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['AuthStatus']
-        }
-      }
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['HTTPValidationError']
-        }
-      }
-    }
-  }
-  open_team_api_auth_team_post: {
-    parameters: {
-      query?: never
-      header?: {
-        authorization?: string | null
-      }
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['JoinResult']
         }
       }
       /** @description Validation Error */

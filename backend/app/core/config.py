@@ -60,6 +60,28 @@ class Settings(BaseSettings):
     ai_requests_per_10_min: int = Field(default=20, ge=1)
     ai_effort: Literal["low", "medium", "high"] = "medium"
 
+    # Sign-in page (the front door for players and facilitators). Editable from the Settings screen.
+    login_layout: Literal["hero-left", "hero-right", "centered"] = "hero-left"
+    login_logo: Literal["header", "card", "both"] = "header"
+    login_badge: str = "Executive AI Simulation · Medicare Advantage"
+    login_title: str = "Your health plan is waiting."
+    login_title_accent: str = "Ready to lead?"
+    login_lead: str = (
+        "Step into the C-suite. Read the data room, place scarce capital, survive the crises your "
+        "choices trigger and pitch the board — two simulated years, one leadership team."
+    )
+    login_card_title: str = "Sign in"
+    login_card_subtitle: str = (
+        "Use the email and password from your invitation. We'll take you to the right place."
+    )
+    login_button: str = "Start the simulation"
+    login_footnote: str = (
+        "Authorized participants only. All organizations, members and data in the game are fictional."
+    )
+    login_show_levels: bool = True
+    login_show_stats: bool = True
+    login_show_ticker: bool = True
+
     @field_validator("cors_origins", mode="before")
     @classmethod
     def _split_origins(cls, v: Any) -> Any:

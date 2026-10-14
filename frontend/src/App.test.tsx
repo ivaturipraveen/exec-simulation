@@ -91,7 +91,7 @@ test('unknown route shows not found', async () => {
 test('when sign-in is required, visitors land on the sign-in page and enter after signing in', async () => {
   stubApi({ required: true, signed_in: false })
   renderAt('/')
-  expect(await screen.findByRole('heading', { name: 'Player sign-in' })).toBeInTheDocument()
+  expect(await screen.findByRole('heading', { name: 'Sign in' })).toBeInTheDocument()
   fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'fac@brightcone.ai' } })
   fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'secret' } })
   fireEvent.click(screen.getByRole('button', { name: /Start the simulation/ }))
@@ -103,7 +103,7 @@ test('when sign-in is required, visitors land on the sign-in page and enter afte
 test('a deep link waits behind sign-in', async () => {
   stubApi({ required: true, signed_in: false })
   renderAt('/settings')
-  expect(await screen.findByRole('heading', { name: 'Player sign-in' })).toBeInTheDocument()
+  expect(await screen.findByRole('heading', { name: 'Sign in' })).toBeInTheDocument()
 })
 
 test('a team signs in, then must enter its own join code', async () => {

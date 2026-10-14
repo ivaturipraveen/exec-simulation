@@ -445,6 +445,24 @@ function StageActions({
   const released = (session.options.released_years as number[] | undefined) ?? []
   const unreleased = [1, 2].filter((y) => y <= session.simulated_years && !released.includes(y))
   const simIndex = session.stages.findIndex((s) => s.kind === `simulate_y${nextYear}`)
+  // Each block shows only around the stage that uses it, not for the rest of the session.
+  const at = session.clock.stage_index
+  const indexOf = (kind: string) => session.stages.findIndex((s) => s.kind === kind)
+  // Board pitch scoring and the Round 2 grant: from the board pitch stage until capital is granted
+  // (still shown in Simulate Year 2 if it was entered before the grant, so the year can run).
+  const showBoard = at >= indexOf('invest_r2') && !session.round2_granted
+  // The compress cut is a contingency for the run into the operating model exercise; not after it.
+  const showOpModel = at >= indexOf('simulate_y2') && at <= indexOf('operating_model')
+  // Crises are released and answered in the Crisis stage. After it, the block stays only while a
+  // released crisis still waits for its response (to score it), and offers no new releases.
+  const crisisStage = at === indexOf('crisis')
+  const crisisTeams = crisisStage
+    ? session.teams
+    : session.teams.filter((t) => t.crisis_event_id && !t.crisis_responded)
+  const showCrisis = at >= indexOf('crisis') && crisisTeams.length > 0
+  // Releasing again resets a team's response and score, so the bulk release is offered only once.
+  const noCrisisYet = session.teams.every((t) => !t.crisis_event_id)
+  const showScorecards = at >= indexOf('results')
 
   return (
     <Card title="Stage actions" subtitle="What needs to happen to move on">
@@ -473,22 +491,24 @@ function StageActions({
             </Button>
           </div>
         ))}
-        {session.simulated_years === 2 && !session.options.scorecards_released && (
-          <div className="release-box">
-            <div className="strong small">Final scorecards</div>
-            <span className="small secondary">
-              Release at Final results, then show the dimension profiles side by side.
-            </span>
-            <Button
-              variant="primary"
-              icon={<Trophy />}
-              loading={busy}
-              onClick={() => run('/scorecards/release', undefined, 'POST', 'Scorecards released')}
-            >
-              Release scorecards
-            </Button>
-          </div>
-        )}
+        {showScorecards &&
+          session.simulated_years === 2 &&
+          !session.options.scorecards_released && (
+            <div className="release-box">
+              <div className="strong small">Final scorecards</div>
+              <span className="small secondary">
+                Release at Final results, then show the dimension profiles side by side.
+              </span>
+              <Button
+                variant="primary"
+                icon={<Trophy />}
+                loading={busy}
+                onClick={() => run('/scorecards/release', undefined, 'POST', 'Scorecards released')}
+              >
+                Release scorecards
+              </Button>
+            </div>
+          )}
         {nextYear <= 2 && (
           <div className="stack" style={{ '--gap': '6px' } as React.CSSProperties}>
             <div className="strong small">Year {nextYear} simulation</div>
@@ -523,7 +543,7 @@ function StageActions({
             )}
           </div>
         )}
-        {session.simulated_years >= 1 && !session.round2_granted && (
+        {showBoard && session.simulated_years >= 1 && (
           <div className="stack" style={{ '--gap': '8px' } as React.CSSProperties}>
             <div className="strong small">
               Board pitch and Round 2 capital · {session.round2_mechanic}
@@ -561,7 +581,7 @@ function StageActions({
             })()}
           </div>
         )}
-        {session.simulated_years >= 1 && (
+        {showOpModel && session.simulated_years >= 1 && (
           <div className="stack" style={{ '--gap': '6px' } as React.CSSProperties}>
             <div className="strong small">Operating model exercise</div>
             <label className="checkbox small">
@@ -599,12 +619,12 @@ function StageActions({
               ))}
           </div>
         )}
-        {session.simulated_years >= 2 && (
+        {showCrisis && session.simulated_years >= 2 && (
           <div className="stack" style={{ '--gap': '8px' } as React.CSSProperties}>
             <div className="strong small row" style={{ '--gap': '6px' } as React.CSSProperties}>
               <AlarmClock size={14} aria-hidden /> Crisis — engine recommendation first
             </div>
-            {session.teams.map((t) => {
+            {crisisTeams.map((t) => {
               const list = candidates?.[t.team_id] ?? []
               const chosen = eventFor[t.team_id] ?? list[0]?.event_id ?? ''
               const rec = list.find((x) => x.event_id === chosen)
@@ -701,13 +721,15 @@ function StageActions({
                 </div>
               )
             })}
-            <Button
-              variant="secondary"
-              icon={<Siren />}
-              onClick={() => run('/crisis/assign', {}, 'POST', 'Recommended crises released')}
-            >
-              Release recommended crisis to all
-            </Button>
+            {crisisStage && noCrisisYet && (
+              <Button
+                variant="secondary"
+                icon={<Siren />}
+                onClick={() => run('/crisis/assign', {}, 'POST', 'Recommended crises released')}
+              >
+                Release recommended crisis to all
+              </Button>
+            )}
           </div>
         )}
       </div>

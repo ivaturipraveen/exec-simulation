@@ -1,0 +1,280 @@
+/* Start page (after sign-in): the same game-lobby look as the sign-in page, in both themes.
+   Colors come from the --lp-* tokens (light by default, navy in dark theme). Layout and sizes
+   live in pages.css and game.css. */
+
+.landing {
+  --lp-bg: linear-gradient(160deg, #f6f9fe 0%, #edf3fb 55%, #e6eef9 100%);
+  --lp-ink: #0b2545;
+  --lp-ink-2: #3d5675;
+  --lp-muted: #5b6f88;
+  --lp-hud: #0a6ed1;
+  --lp-title-grad: linear-gradient(120deg, #0b2545 0%, #0b2545 45%, #0a6ed1 78%, #1e8fff 100%);
+  --lp-orb-blue: rgba(30, 143, 255, 0.24);
+  --lp-orb-mint: rgba(30, 143, 255, 0.12);
+  --lp-grid: rgba(10, 110, 209, 0.09);
+  --lp-tile: rgba(255, 255, 255, 0.75);
+  --lp-tile-hover: #ffffff;
+  --lp-tile-line: rgba(11, 37, 69, 0.1);
+  --lp-tile-line-hover: rgba(10, 110, 209, 0.35);
+  --lp-icon-bg: rgba(10, 110, 209, 0.08);
+  --lp-icon-line: rgba(10, 110, 209, 0.2);
+  --lp-panel-shadow: 0 24px 60px rgba(11, 37, 69, 0.12), 0 2px 6px rgba(11, 37, 69, 0.06);
+  --lp-ghost: #3d5675;
+  --lp-ghost-hover-bg: rgba(11, 37, 69, 0.06);
+  --lp-button: linear-gradient(110deg, #0a4fa8, #0a6ed1 55%, #1e8fff);
+
+  --lp-max: 1320px;
+  --lp-gutter: clamp(16px, 2.5vw, 32px);
+
+  position: relative;
+  isolation: isolate;
+  color: var(--lp-ink);
+  background: var(--lp-bg);
+}
+:root[data-theme='dark'] .landing {
+  --lp-bg: linear-gradient(160deg, #04101f 0%, #061a33 45%, #0a2a50 100%);
+  --lp-ink: #ffffff;
+  --lp-ink-2: #c9d8ea;
+  --lp-muted: #8fb0d4;
+  --lp-hud: #6ff0cc;
+  --lp-title-grad: linear-gradient(120deg, #ffffff 0%, #ffffff 40%, #7cc4ff 72%, #6ff0cc 100%);
+  --lp-orb-blue: rgba(30, 143, 255, 0.5);
+  --lp-orb-mint: rgba(20, 199, 159, 0.35);
+  --lp-grid: rgba(111, 240, 204, 0.13);
+  --lp-tile: rgba(255, 255, 255, 0.045);
+  --lp-tile-hover: rgba(255, 255, 255, 0.075);
+  --lp-tile-line: rgba(255, 255, 255, 0.1);
+  --lp-tile-line-hover: rgba(111, 240, 204, 0.3);
+  --lp-icon-bg: rgba(20, 199, 159, 0.14);
+  --lp-icon-line: rgba(20, 199, 159, 0.3);
+  --lp-panel-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 70px rgba(30, 143, 255, 0.14);
+  --lp-ghost: #d6e4f5;
+  --lp-ghost-hover-bg: rgba(255, 255, 255, 0.1);
+  --lp-button: linear-gradient(110deg, #0a6ed1, #0b97b8 60%, #0d9f80);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .landing {
+    --lp-bg: linear-gradient(160deg, #04101f 0%, #061a33 45%, #0a2a50 100%);
+    --lp-ink: #ffffff;
+    --lp-ink-2: #c9d8ea;
+    --lp-muted: #8fb0d4;
+    --lp-hud: #6ff0cc;
+    --lp-title-grad: linear-gradient(120deg, #ffffff 0%, #ffffff 40%, #7cc4ff 72%, #6ff0cc 100%);
+    --lp-orb-blue: rgba(30, 143, 255, 0.5);
+    --lp-orb-mint: rgba(20, 199, 159, 0.35);
+    --lp-grid: rgba(111, 240, 204, 0.13);
+    --lp-tile: rgba(255, 255, 255, 0.045);
+    --lp-tile-hover: rgba(255, 255, 255, 0.075);
+    --lp-tile-line: rgba(255, 255, 255, 0.1);
+    --lp-tile-line-hover: rgba(111, 240, 204, 0.3);
+    --lp-icon-bg: rgba(20, 199, 159, 0.14);
+    --lp-icon-line: rgba(20, 199, 159, 0.3);
+    --lp-panel-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 70px rgba(30, 143, 255, 0.14);
+    --lp-ghost: #d6e4f5;
+    --lp-ghost-hover-bg: rgba(255, 255, 255, 0.1);
+    --lp-button: linear-gradient(110deg, #0a6ed1, #0b97b8 60%, #0d9f80);
+  }
+}
+
+/* ---------- backdrop (same as the sign-in page) ---------- */
+.landing__sky {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.landing__orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  animation: login-drift 18s ease-in-out infinite alternate;
+}
+.landing__orb--blue {
+  width: 520px;
+  height: 520px;
+  left: -140px;
+  top: -160px;
+  background: var(--lp-orb-blue);
+}
+.landing__orb--mint {
+  width: 460px;
+  height: 460px;
+  right: -120px;
+  bottom: -140px;
+  background: var(--lp-orb-mint);
+  animation-delay: -9s;
+}
+.landing__grid {
+  position: absolute;
+  left: -50%;
+  right: -50%;
+  bottom: 0;
+  height: 50%;
+  background-image:
+    linear-gradient(var(--lp-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--lp-grid) 1px, transparent 1px);
+  background-size: 56px 56px;
+  transform: perspective(520px) rotateX(62deg);
+  transform-origin: center bottom;
+  mask-image: linear-gradient(to top, #000 0%, transparent 85%);
+  -webkit-mask-image: linear-gradient(to top, #000 0%, transparent 85%);
+}
+
+/* ---------- header ---------- */
+.landing .landing__top {
+  width: 100%;
+  max-width: var(--lp-max);
+  margin: 0 auto;
+  padding-left: var(--lp-gutter);
+  padding-right: var(--lp-gutter);
+}
+.landing__top .btn--ghost {
+  color: var(--lp-ghost);
+}
+.landing__top .btn--ghost:hover:not(:disabled) {
+  color: var(--lp-ink);
+  background: var(--lp-ghost-hover-bg);
+}
+.landing__top .strong {
+  color: var(--lp-ink);
+}
+
+/* ---------- layout: less space at the sides ---------- */
+@media (min-width: 901px) {
+  .landing .landing__main {
+    max-width: var(--lp-max);
+    padding-left: var(--lp-gutter);
+    padding-right: var(--lp-gutter);
+    justify-content: space-between;
+    grid-template-columns: minmax(0, 720px) minmax(380px, 450px);
+    gap: clamp(28px, 4vw, 64px);
+  }
+}
+
+/* ---------- hero ---------- */
+.landing .page-header__eyebrow {
+  color: var(--lp-hud);
+}
+.landing .landing__title {
+  background: var(--lp-title-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.landing .page-header__eyebrow::before {
+  background: var(--lp-hud);
+}
+.landing .landing__panel .btn--primary {
+  background: var(--lp-button);
+  border-color: transparent;
+}
+.landing .landing__lead {
+  color: var(--lp-ink-2);
+}
+.landing__hero .strong {
+  color: var(--lp-ink);
+}
+.landing__hero .secondary {
+  color: var(--lp-muted);
+}
+.landing .landing__features > li {
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: var(--lp-tile);
+  border: 1px solid var(--lp-tile-line);
+}
+.landing .landing__features > li:hover {
+  background: var(--lp-tile-hover);
+  border-color: var(--lp-tile-line-hover);
+}
+.landing .landing__feature-icon {
+  background: var(--lp-icon-bg);
+  border: 1px solid var(--lp-icon-line);
+  color: var(--lp-hud);
+  box-shadow: none;
+}
+.landing .agenda .upper {
+  color: var(--lp-muted);
+}
+.landing .agenda__list li {
+  background: var(--lp-tile);
+  border-color: var(--lp-tile-line);
+  color: var(--lp-ink);
+}
+.landing .agenda__list .num {
+  color: var(--lp-hud);
+}
+
+/* ---------- start panel: HUD corner brackets, like the sign-in card ---------- */
+.landing .landing__panel {
+  position: relative;
+  overflow: visible;
+  border: 1px solid var(--lp-tile-line);
+  border-radius: 16px;
+  box-shadow: var(--lp-panel-shadow);
+}
+.landing .landing__panel::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  pointer-events: none;
+  --c: var(--lp-hud);
+  background:
+    linear-gradient(var(--c), var(--c)) top left / 22px 2px,
+    linear-gradient(var(--c), var(--c)) top left / 2px 22px,
+    linear-gradient(var(--c), var(--c)) top right / 22px 2px,
+    linear-gradient(var(--c), var(--c)) top right / 2px 22px,
+    linear-gradient(var(--c), var(--c)) bottom left / 22px 2px,
+    linear-gradient(var(--c), var(--c)) bottom left / 2px 22px,
+    linear-gradient(var(--c), var(--c)) bottom right / 22px 2px,
+    linear-gradient(var(--c), var(--c)) bottom right / 2px 22px;
+  background-repeat: no-repeat;
+  opacity: 0.7;
+}
+.landing .landing__footer {
+  color: var(--lp-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing__orb {
+    animation: none;
+  }
+}
+
+/* Facilitate card: New session / Sessions tabs */
+.landing__subtabs {
+  padding: 4px 20px 0;
+}
+.landing__subtabs .tabs {
+  display: flex;
+  width: 100%;
+}
+.landing__subtabs .tabs button {
+  flex: 1;
+  justify-content: center;
+}
+.tab-count {
+  min-width: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+  color: var(--accent-ink);
+  background: var(--accent-soft);
+}
+.facilitate-views {
+  position: relative;
+}
+.facilitate-views__hidden {
+  visibility: hidden;
+}
+.facilitate-views__overlay {
+  position: absolute;
+  inset: 0;
+  padding: inherit;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}

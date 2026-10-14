@@ -2408,6 +2408,82 @@
         "title": "LoginBody",
         "type": "object"
       },
+      "LoginPage": {
+        "description": "Text and layout of the sign-in page (Settings \u2192 Sign-in page). Public: shown before sign-in.",
+        "properties": {
+          "badge": {
+            "title": "Badge",
+            "type": "string"
+          },
+          "button": {
+            "title": "Button",
+            "type": "string"
+          },
+          "card_subtitle": {
+            "title": "Card Subtitle",
+            "type": "string"
+          },
+          "card_title": {
+            "title": "Card Title",
+            "type": "string"
+          },
+          "footnote": {
+            "title": "Footnote",
+            "type": "string"
+          },
+          "layout": {
+            "enum": ["hero-left", "hero-right", "centered"],
+            "title": "Layout",
+            "type": "string"
+          },
+          "lead": {
+            "title": "Lead",
+            "type": "string"
+          },
+          "logo": {
+            "enum": ["header", "card", "both"],
+            "title": "Logo",
+            "type": "string"
+          },
+          "show_levels": {
+            "title": "Show Levels",
+            "type": "boolean"
+          },
+          "show_stats": {
+            "title": "Show Stats",
+            "type": "boolean"
+          },
+          "show_ticker": {
+            "title": "Show Ticker",
+            "type": "boolean"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "title_accent": {
+            "title": "Title Accent",
+            "type": "string"
+          }
+        },
+        "required": [
+          "layout",
+          "logo",
+          "badge",
+          "title",
+          "title_accent",
+          "lead",
+          "card_title",
+          "card_subtitle",
+          "button",
+          "footnote",
+          "show_levels",
+          "show_stats",
+          "show_ticker"
+        ],
+        "title": "LoginPage",
+        "type": "object"
+      },
       "MeasureResult": {
         "properties": {
           "band": {
@@ -6443,6 +6519,25 @@
         "tags": ["auth"]
       }
     },
+    "/api/auth/page": {
+      "get": {
+        "operationId": "page_api_auth_page_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Page",
+        "tags": ["auth"]
+      }
+    },
     "/api/auth/status": {
       "get": {
         "description": "Whether sign-in is required, and who the bearer token (if any) is signed in as.",
@@ -6488,54 +6583,6 @@
           }
         },
         "summary": "Status",
-        "tags": ["auth"]
-      }
-    },
-    "/api/auth/team": {
-      "post": {
-        "description": "A team account opens its team in the most recent session that includes it.",
-        "operationId": "open_team_api_auth_team_post",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "authorization",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Authorization"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/JoinResult"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Open Team",
         "tags": ["auth"]
       }
     },

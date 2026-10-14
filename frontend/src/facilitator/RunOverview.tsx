@@ -27,10 +27,6 @@ export function RunOfShow({ session }: { session: SessionView }) {
   const elapsed = started
     ? Math.min(total, before + Math.min(inStage, current?.duration_minutes ?? 0))
     : 0
-  const stagePct =
-    started && c.duration_seconds && remaining != null
-      ? Math.min(100, Math.max(0, ((c.duration_seconds - remaining) / c.duration_seconds) * 100))
-      : 0
   const next = stages[c.stage_index + 1]
 
   return (
@@ -114,24 +110,6 @@ export function RunOfShow({ session }: { session: SessionView }) {
           )
         })}
       </ol>
-      <div className={`tp__current ${started ? 'is-now' : 'is-idle'}`}>
-        {started && current ? (
-          <>
-            <span className="tp__current-label">Now</span>
-            <span className="tp__current-text">
-              {c.stage_index + 1}. {current.title.replace(' (optional extension)', '')} ·{' '}
-              {current.duration_minutes} min
-            </span>
-            <span className="ros-dots__bar" aria-hidden>
-              <span style={{ width: `${stagePct}%` }} />
-            </span>
-          </>
-        ) : (
-          <span className="tp__current-text">
-            Not started yet · hover a circle to see each stage
-          </span>
-        )}
-      </div>
     </Card>
   )
 }

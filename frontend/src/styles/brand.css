@@ -117,10 +117,10 @@ body {
 :is(.topbar, .fac__top, .settings__top) .strong {
   color: var(--frame-text);
 }
-:is(.topbar, .fac__top, .settings__top, .landing__top) .btn--ghost {
+:is(.topbar, .fac__top, .settings__top) .btn--ghost {
   color: #d6e4f5;
 }
-:is(.topbar, .fac__top, .settings__top, .landing__top) .btn--ghost:hover:not(:disabled) {
+:is(.topbar, .fac__top, .settings__top) .btn--ghost:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.1);
   color: #fff;
 }
@@ -403,64 +403,22 @@ input[type='radio'] {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--mint) 22%, transparent);
 }
 
-/* ---------- landing: navy brand page ---------- */
-.landing,
-:root[data-theme='dark'] .landing {
-  background:
-    radial-gradient(900px 500px at 92% 10%, rgba(20, 199, 159, 0.2), transparent 60%),
-    radial-gradient(900px 520px at 0% 0%, rgba(30, 143, 255, 0.24), transparent 60%),
-    var(--grad-navy);
-  color: #fff;
-}
-.landing__top .strong,
-.landing__title {
-  color: #fff;
-}
-.landing__title {
-  background: linear-gradient(120deg, #ffffff 0%, #ffffff 40%, #7cc4ff 72%, #6ff0cc 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-.landing .page-header__eyebrow {
-  color: #6ff0cc;
-}
-.landing__lead {
-  color: #c9d8ea;
-}
-.landing__hero .strong {
-  color: #fff;
-}
-.landing__hero .secondary {
-  color: #a9bdd6;
-}
-.landing__feature-icon {
-  background: rgba(20, 199, 159, 0.14);
-  border: 1px solid rgba(20, 199, 159, 0.3);
-  color: #6ff0cc;
-  box-shadow: none;
-}
-.landing .agenda .upper {
-  color: #9fb3cc;
-}
-.agenda__list li {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.12);
-  color: #e6eef8;
-}
-.agenda__list .num {
-  color: #6ff0cc;
-}
-.landing__panel {
-  color: var(--text);
-  border: 0;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
-}
-.landing__footer {
-  color: #8aa0bb;
-}
+/* landing page colors: see landing.css */
 
 /* ---------- settings ---------- */
+.settings__top {
+  gap: 12px;
+}
+.settings__divider {
+  width: 1px;
+  height: 24px;
+  background: var(--frame-line);
+}
+@media (max-width: 520px) {
+  .settings__back.btn {
+    padding-inline: 8px;
+  }
+}
 .settings__top .strong {
   color: #fff;
 }
@@ -735,6 +693,25 @@ summary,
   width: 100%;
   height: 100%;
   object-fit: contain;
+}
+.brand-wordmark {
+  display: block;
+  flex: none;
+  max-width: 100%;
+}
+.brand-wordmark--on-dark {
+  display: none;
+}
+:root[data-theme='dark'] .brand-wordmark--on-light {
+  display: none;
+}
+:root[data-theme='dark'] .brand-wordmark--on-dark {
+  display: block;
+}
+/* Divider between the wordmark and the "Facilitator console" label. */
+.fac__heading {
+  padding-left: 14px;
+  border-left: 1px solid var(--frame-line);
 }
 
 /* ---------- facilitator: run of show ---------- */

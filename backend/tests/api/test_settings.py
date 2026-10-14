@@ -128,3 +128,23 @@ def test_admin_can_delete_a_session(admin_client: TestClient) -> None:
     assert c.get(f"/api/sessions/{sid}", headers=auth(ftok)).status_code == 404
     for code in codes:
         assert c.post("/api/join", json={"code": code}).status_code == 404
+
+
+def test_sign_in_page_is_public_and_editable(admin_client: TestClient) -> None:
+    c = admin_client
+    h = _login(c)
+    page = c.get("/api/auth/page", headers={"Authorization": ""}).json()
+    assert page["layout"] == "hero-left" and page["card_title"] == "Sign in" and page["show_ticker"] is True
+    r = c.put(
+        "/api/admin/settings",
+        json={"values": {"login_layout": "centered", "login_title": "Welcome, analysts", "login_badge": ""}},
+        headers=h,
+    )
+    assert r.status_code == 200, r.text
+    page = c.get("/api/auth/page").json()
+    assert (page["layout"], page["title"], page["badge"]) == ("centered", "Welcome, analysts", "")
+    # required text cannot be blank; layout must be one of the options
+    assert c.put("/api/admin/settings", json={"values": {"login_title": " "}}, headers=h).status_code == 422
+    assert (
+        c.put("/api/admin/settings", json={"values": {"login_layout": "grid"}}, headers=h).status_code == 422
+    )

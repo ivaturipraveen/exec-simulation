@@ -11,6 +11,7 @@ from typing import Annotated, Literal
 from fastapi import APIRouter, Header, Request
 from pydantic import BaseModel, Field
 
+from app.api.deps import SettingsDep
 from app.core.accounts import AccountStore, SignedInAccount
 from app.core.errors import DomainError, Forbidden
 
@@ -60,6 +61,31 @@ def _status(request: Request, account: SignedInAccount | None) -> AuthStatus:
         role=account.role,
         payer_id=account.payer_id,
         payer_name=payers[account.payer_id].name if account.payer_id in payers else None,
+    )
+
+
+class LoginPage(BaseModel):
+    """Text and layout of the sign-in page (Settings → Sign-in page). Public: shown before sign-in."""
+
+    layout: Literal["hero-left", "hero-right", "centered"]
+    logo: Literal["header", "card", "both"]
+    badge: str
+    title: str
+    title_accent: str
+    lead: str
+    card_title: str
+    card_subtitle: str
+    button: str
+    footnote: str
+    show_levels: bool
+    show_stats: bool
+    show_ticker: bool
+
+
+@router.get("/page")
+def page(settings: SettingsDep) -> LoginPage:
+    return LoginPage.model_validate(
+        {name: getattr(settings, f"login_{name}") for name in LoginPage.model_fields}
     )
 
 

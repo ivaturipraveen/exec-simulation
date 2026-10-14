@@ -1,0 +1,490 @@
+/* Facilitator console, Run tab: the live stage card, stage actions, team cards and the
+   observation log. Everything is scoped under .run so other tabs keep their own look.
+   Imported last, after landing.css. */
+
+.run {
+  --run-gap: 20px;
+  --run-inner: 14px;
+}
+
+/* uppercase micro labels used across the tab */
+.run .run-label {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ---------- two columns: stage card + stage actions ---------- */
+.run .run__main {
+  gap: var(--run-gap);
+  align-items: stretch;
+}
+.run .run__main > .card {
+  height: 100%;
+  min-width: 0;
+}
+
+/* ---------- live stage card ---------- */
+.run-stage {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.run-stage__head {
+  padding: 20px 22px 18px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--accent-soft) 70%, transparent) 0%,
+    transparent 100%
+  );
+}
+.run-stage__eyebrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--text-2);
+}
+.run-stage__step {
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+}
+.run-stage__slot {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+.run-stage__slot svg {
+  width: 13px;
+  height: 13px;
+}
+.run-stage__title {
+  margin: 8px 0 0;
+  font-size: 24px;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--text);
+}
+.run-stage__question {
+  margin: 6px 0 0;
+  font-size: 14px;
+  color: var(--text-2);
+}
+.run-stage__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--run-inner);
+  padding: 18px 22px 22px;
+}
+
+/* status pill: Live / Paused / Not started / Complete */
+.run-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: var(--surface-sunken);
+}
+.run-status::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.run-status--live {
+  color: var(--good-ink);
+  background: var(--good-soft);
+}
+.run-status--live::before {
+  animation: run-pulse 1.6s ease-in-out infinite;
+}
+.run-status--paused {
+  color: var(--warning-ink);
+  background: var(--warning-soft);
+}
+.run-status--done {
+  color: var(--accent-ink);
+  background: var(--accent-soft);
+}
+@keyframes run-pulse {
+  50% {
+    box-shadow: 0 0 0 4px color-mix(in srgb, currentColor 22%, transparent);
+  }
+}
+
+/* timer + stage controls in one panel */
+.run-control {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px 18px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+.run-control__clock {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.run-control__clock .clock--big {
+  font-size: 44px;
+  line-height: 1.05;
+}
+.run-control__clock .clock--paused:not(.clock--big) {
+  padding: 0;
+  background: none;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+}
+.run-control__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* "Say to the room" script */
+.run .script {
+  align-items: flex-start;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--surface);
+  border: 1px dashed color-mix(in srgb, var(--accent) 35%, var(--border));
+}
+.run .script p {
+  margin-top: 4px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* What happens / Output / Lecture */
+.run-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  margin: 0;
+}
+.run-meta > div {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+.run-meta dd {
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--text);
+}
+
+/* console actions as a checklist */
+.run .console-actions ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 6px;
+  margin-top: 8px;
+}
+.run .console-actions li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--text-2);
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+.run .console-actions li svg {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  margin-top: 1px;
+  color: var(--accent);
+}
+.run .run-stage .callout {
+  border-radius: 12px;
+}
+
+/* ---------- stage actions ---------- */
+.run-actions > .card__header {
+  padding: 20px 22px 0;
+}
+.run-actions > .card__body {
+  padding: 14px 22px 22px;
+}
+.run-steps {
+  display: flex;
+  flex-direction: column;
+}
+.run-steps > * + * {
+  margin-top: 16px;
+}
+.run-steps > .run-step + .run-step {
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+.run-step {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+}
+.run-step__title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text);
+}
+.run-step__title > svg {
+  width: 26px;
+  height: 26px;
+  padding: 6px;
+  border-radius: 8px;
+  color: var(--accent);
+  background: var(--accent-soft);
+  flex: none;
+}
+.run-step > .small,
+.run-step > .xs {
+  line-height: 1.5;
+}
+.run-step > .btn {
+  align-self: flex-start;
+}
+.run-chip {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: var(--surface-sunken);
+}
+
+/* team rows inside a step (pitch scoring, operating-model review) */
+.run-teamlist {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+}
+.run-teamrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 7px 8px 7px 14px;
+}
+.run-teamrow .badge {
+  flex: none;
+}
+.run-teamrow + .run-teamrow {
+  border-top: 1px solid var(--border);
+}
+
+/* release boxes keep their accent fill but match the 12px corners */
+.run .release-box {
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+.run .release-box .btn {
+  margin-top: 2px;
+}
+
+/* crisis rows */
+.run .crisis-row {
+  gap: 8px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-2);
+}
+
+/* ---------- teams section ---------- */
+.run-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.run-section__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 16px;
+  padding: 0 4px;
+}
+.run-section__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 750;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+.run-section__title > svg {
+  width: 18px;
+  height: 18px;
+  color: var(--accent);
+}
+.run-count {
+  min-width: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  line-height: 20px;
+  text-align: center;
+  color: var(--accent-ink);
+  background: var(--accent-soft);
+}
+.run-section__meta {
+  font-size: 13px;
+  color: var(--text-2);
+}
+.run-section__hint {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.run-section > .grid {
+  gap: var(--run-gap);
+}
+
+/* team cards: one joined strip of stats that always fills its rows evenly */
+.run .tp {
+  padding: 20px;
+  gap: 16px;
+}
+.run .tp__stats {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 1px;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--border);
+}
+.run .tp__stats > div {
+  grid-column: span 2;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 0;
+  background: var(--surface-2);
+  transform: none;
+  box-shadow: none;
+}
+.run .tp__stats > div:hover {
+  transform: none;
+  box-shadow: none;
+  background: color-mix(in srgb, var(--accent-soft) 45%, var(--surface-2));
+}
+/* five stats: three on top, two halves below */
+.run .tp__stats > div:nth-child(4):nth-last-child(2),
+.run .tp__stats > div:nth-child(5):last-child,
+/* four stats: two by two */
+.run .tp__stats:has(> div:nth-child(4):last-child) > div {
+  grid-column: span 3;
+}
+.run .tp__stat-label {
+  font-size: 10px;
+}
+.run .tp__stat-value {
+  font-size: 18px;
+}
+
+/* ---------- observation log ---------- */
+.run-obs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.run-obs textarea {
+  min-height: 76px;
+  resize: vertical;
+}
+.run-obs__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+}
+.run-obs__bar > .field {
+  flex: 0 1 240px;
+  min-width: 180px;
+}
+.run-obs__count {
+  margin-left: auto;
+  /* sits on the same line as the button's text */
+  align-self: flex-end;
+  padding-bottom: 11px;
+}
+
+@media (max-width: 760px) {
+  .run-stage__head,
+  .run-stage__body {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .run-actions > .card__header,
+  .run-actions > .card__body {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .run-stage__title {
+    font-size: 21px;
+  }
+  .run-control__clock .clock--big {
+    font-size: 38px;
+  }
+  .run-section__hint {
+    margin-left: 0;
+    width: 100%;
+  }
+  .run-obs__bar > .field {
+    flex: 1 1 100%;
+  }
+  .run-obs__bar > .btn {
+    flex: 1 1 auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .run-status--live::before {
+    animation: none;
+  }
+}

@@ -34,7 +34,8 @@ import { EditionPanel } from './EditionPanel'
 import { SessionSettingsPanel } from './SessionSettingsPanel'
 import { OpportunityPanel } from './OpportunityPanel'
 import { ResultsPanel } from './ResultsPanel'
-import { BrandMark } from '../components/BrandMark'
+import { BrandWordmark } from '../components/BrandWordmark'
+import { useConfirm } from '../components/ui/toastContext'
 import { RunPanel } from './RunPanel'
 import { TeamsPanel } from './TeamsPanel'
 import type { SessionView } from '../api/types'
@@ -46,6 +47,7 @@ export function FacilitatorConsole() {
   const { sessionId = '' } = useParams()
   const [params, setParams] = useSearchParams()
   const navigate = useNavigate()
+  const confirm = useConfirm()
   const [token, setToken] = useState(() => {
     const fromLink = params.get('token')
     if (fromLink) auth.setFacilitator(sessionId, fromLink)
@@ -78,11 +80,13 @@ export function FacilitatorConsole() {
       <StageAnnouncer session={session} enabled={voice} />
       <header className="fac__top">
         <Link to="/" className="row" style={{ color: 'inherit', textDecoration: 'none' }}>
-          <BrandMark />
+          <BrandWordmark />
         </Link>
-        <div className="grow">
+        <div className="grow fac__heading">
           <div className="xs muted upper">Facilitator console</div>
-          <div className="strong">{session.name}</div>
+          {session.name !== 'Executive AI Simulation' && (
+            <div className="strong">{session.name}</div>
+          )}
         </div>
         <div className="row">
           <Countdown clock={session.clock} />
@@ -125,14 +129,20 @@ export function FacilitatorConsole() {
             size="sm"
             variant="ghost"
             icon={<LogOut />}
-            aria-label="Log out"
-            title="Log out of this console on this device"
+            aria-label="Leave console"
+            title="Leave this console and go back to the start page"
             iconOnly
-            onClick={() => {
+            onClick={async () => {
+              // Leaves this session's console on this device only; the facilitator stays signed in.
               if (
-                window.confirm(
-                  'Log out of this facilitator console? You will need the facilitator link or token to come back.',
-                )
+                await confirm({
+                  title: 'Leave this console?',
+                  message:
+                    "You'll go back to the start page and stay signed in. The session keeps running for the teams; reopen it any time from Facilitate → Sessions.",
+                  tone: 'info',
+                  confirmLabel: 'Leave console',
+                  cancelLabel: 'Stay',
+                })
               ) {
                 auth.clearFacilitator(session.id)
                 navigate('/')

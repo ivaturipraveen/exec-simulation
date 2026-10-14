@@ -1392,8 +1392,6 @@ dl.grid > div,
   .landing__features > li {
     padding: clamp(10px, 1.6vh, 14px) 14px;
     border-radius: 14px;
-    background: rgba(255, 255, 255, 0.045);
-    border: 1px solid rgba(255, 255, 255, 0.09);
     backdrop-filter: blur(6px);
     transition:
       background 180ms var(--ease-out),
@@ -1401,38 +1399,24 @@ dl.grid > div,
       transform 180ms var(--ease-out);
   }
   .landing__features > li:hover {
-    background: rgba(255, 255, 255, 0.075);
-    border-color: rgba(111, 240, 204, 0.3);
     transform: translateY(-2px);
   }
   .landing__features .strong {
     font-size: 14px;
     margin-bottom: 2px;
   }
-  .landing__features .small {
-    color: #a9bdd6;
-  }
   /* Agenda: small heading + glass chips */
   .agenda .upper {
-    color: #8fd9e3 !important;
     font-size: 10.5px;
     letter-spacing: 0.08em;
   }
   .agenda__list {
     gap: 6px;
   }
-  .agenda__list li {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.1);
-  }
   /* Join card: soft glow edge, level with the headline */
   .landing__panel {
     align-self: center;
     border-radius: 20px;
-    box-shadow:
-      0 0 0 1px rgba(111, 240, 204, 0.18),
-      0 24px 60px rgba(0, 0, 0, 0.35),
-      0 0 80px rgba(30, 143, 255, 0.12);
   }
   .landing__panel > div:first-child {
     padding: 12px 20px 0 !important;
@@ -1440,10 +1424,4 @@ dl.grid > div,
   .landing__panel > .card__body {
     padding: 18px 22px 24px;
   }
-  .landing__footer {
-    color: #7f95b1;
-  }
-}
-:root[data-theme='light'] .landing__features > li {
-  background: rgba(255, 255, 255, 0.06);
 }
