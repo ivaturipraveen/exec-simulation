@@ -40,9 +40,6 @@ class Settings(BaseSettings):
     cors_origins: Annotated[list[str], NoDecode] = ["http://localhost:5180", "http://127.0.0.1:5180"]
     api_port: int = 8800
     web_port: int = 5180
-    admin_password: SecretStr | None = Field(
-        default=None, description="Opens the Settings screen. Settings are disabled while unset."
-    )
     secret_key: SecretStr | None = Field(
         default=None, description="Token signing key; generated into data/.secret when unset (local only)"
     )
@@ -87,8 +84,6 @@ class Settings(BaseSettings):
             raise ValueError("SECRET_KEY must be set outside local/test environments")
         if self.anthropic_api_key is not None and not self.anthropic_api_key.get_secret_value().strip():
             self.anthropic_api_key = None
-        if self.admin_password is not None and not self.admin_password.get_secret_value().strip():
-            self.admin_password = None
         return self
 
     @property

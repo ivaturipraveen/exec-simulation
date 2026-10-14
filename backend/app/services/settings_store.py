@@ -675,7 +675,7 @@ class SystemInfo(BaseModel):
     cors_origins: list[str]
     ai_configured: bool
     signing_key: str
-    admin_password_set: bool
+    sign_in_accounts: int
 
 
 class ReviewEntry(BaseModel):
@@ -774,6 +774,7 @@ class SettingsStore:
     base_content: ContentBundle
     version: str
     on_change: Callable[[ContentBundle], None] | None = None
+    count_accounts: Callable[[], int] = lambda: 0
     overrides: dict[str, Any] = field(default_factory=dict)
     review: dict[str, dict[str, Any]] = field(default_factory=dict)
     _lock: threading.RLock = field(default_factory=threading.RLock)
@@ -860,7 +861,7 @@ class SettingsStore:
             cors_origins=s.cors_origins,
             ai_configured=s.ai_configured,
             signing_key="set in backend/.env" if s.secret_key else "generated locally (data/.secret)",
-            admin_password_set=s.admin_password is not None,
+            sign_in_accounts=self.count_accounts(),
         )
         return SettingsView(fields=fields, system=system, review=self.review_entries())
 

@@ -1,17 +1,6 @@
 {
   "components": {
     "schemas": {
-      "AdminStatus": {
-        "properties": {
-          "enabled": {
-            "title": "Enabled",
-            "type": "boolean"
-          }
-        },
-        "required": ["enabled"],
-        "title": "AdminStatus",
-        "type": "object"
-      },
       "AnalystAnswer": {
         "properties": {
           "answer": {
@@ -223,6 +212,66 @@
         },
         "required": ["question"],
         "title": "AskBody",
+        "type": "object"
+      },
+      "AuthStatus": {
+        "properties": {
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "payer_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payer Id"
+          },
+          "payer_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payer Name"
+          },
+          "required": {
+            "title": "Required",
+            "type": "boolean"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "enum": ["facilitator", "team"],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Role"
+          },
+          "signed_in": {
+            "title": "Signed In",
+            "type": "boolean"
+          }
+        },
+        "required": ["required", "signed_in"],
+        "title": "AuthStatus",
         "type": "object"
       },
       "BaseBody": {
@@ -2342,6 +2391,12 @@
       },
       "LoginBody": {
         "properties": {
+          "email": {
+            "maxLength": 254,
+            "minLength": 1,
+            "title": "Email",
+            "type": "string"
+          },
           "password": {
             "maxLength": 256,
             "minLength": 1,
@@ -2349,19 +2404,8 @@
             "type": "string"
           }
         },
-        "required": ["password"],
+        "required": ["email", "password"],
         "title": "LoginBody",
-        "type": "object"
-      },
-      "LoginOut": {
-        "properties": {
-          "token": {
-            "title": "Token",
-            "type": "string"
-          }
-        },
-        "required": ["token"],
-        "title": "LoginOut",
         "type": "object"
       },
       "MeasureResult": {
@@ -4880,10 +4924,6 @@
       },
       "SystemInfo": {
         "properties": {
-          "admin_password_set": {
-            "title": "Admin Password Set",
-            "type": "boolean"
-          },
           "ai_configured": {
             "title": "Ai Configured",
             "type": "boolean"
@@ -4927,6 +4967,10 @@
             "title": "Log Level",
             "type": "string"
           },
+          "sign_in_accounts": {
+            "title": "Sign In Accounts",
+            "type": "integer"
+          },
           "signing_key": {
             "title": "Signing Key",
             "type": "string"
@@ -4954,7 +4998,7 @@
           "cors_origins",
           "ai_configured",
           "signing_key",
-          "admin_password_set"
+          "sign_in_accounts"
         ],
         "title": "SystemInfo",
         "type": "object"
@@ -5894,6 +5938,81 @@
         ],
         "title": "YearReport",
         "type": "object"
+      },
+      "app__api__routes__admin__LoginOut": {
+        "properties": {
+          "token": {
+            "title": "Token",
+            "type": "string"
+          }
+        },
+        "required": ["token"],
+        "title": "LoginOut",
+        "type": "object"
+      },
+      "app__api__routes__auth__LoginOut": {
+        "properties": {
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "payer_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payer Id"
+          },
+          "payer_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payer Name"
+          },
+          "required": {
+            "title": "Required",
+            "type": "boolean"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "enum": ["facilitator", "team"],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Role"
+          },
+          "signed_in": {
+            "title": "Signed In",
+            "type": "boolean"
+          },
+          "token": {
+            "title": "Token",
+            "type": "string"
+          }
+        },
+        "required": ["required", "signed_in", "token"],
+        "title": "LoginOut",
+        "type": "object"
       }
     }
   },
@@ -5903,45 +6022,6 @@
   },
   "openapi": "3.1.0",
   "paths": {
-    "/api/admin/login": {
-      "post": {
-        "operationId": "login_api_admin_login_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LoginBody"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LoginOut"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Login",
-        "tags": ["admin"]
-      }
-    },
     "/api/admin/review/{item_id}": {
       "put": {
         "operationId": "review_api_admin_review__item_id__put",
@@ -6059,6 +6139,56 @@
         "tags": ["admin"]
       }
     },
+    "/api/admin/sessions/{session_id}": {
+      "delete": {
+        "description": "Delete a session, its teams and its activity log (admins only; cannot be undone).",
+        "operationId": "delete_session_api_admin_sessions__session_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "session_id",
+            "required": true,
+            "schema": {
+              "title": "Session Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Session",
+        "tags": ["admin"]
+      }
+    },
     "/api/admin/sessions/{session_id}/token": {
       "post": {
         "description": "Open any session's facilitator console (admins only).",
@@ -6095,7 +6225,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoginOut"
+                  "$ref": "#/components/schemas/app__api__routes__admin__LoginOut"
                 }
               }
             },
@@ -6274,24 +6404,139 @@
         "tags": ["admin"]
       }
     },
-    "/api/admin/status": {
-      "get": {
-        "description": "Whether Settings are enabled (ADMIN_PASSWORD set in .env).",
-        "operationId": "status_api_admin_status_get",
+    "/api/auth/login": {
+      "post": {
+        "operationId": "login_api_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginBody"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AdminStatus"
+                  "$ref": "#/components/schemas/app__api__routes__auth__LoginOut"
                 }
               }
             },
             "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Login",
+        "tags": ["auth"]
+      }
+    },
+    "/api/auth/status": {
+      "get": {
+        "description": "Whether sign-in is required, and who the bearer token (if any) is signed in as.",
+        "operationId": "status_api_auth_status_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthStatus"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
           }
         },
         "summary": "Status",
-        "tags": ["admin"]
+        "tags": ["auth"]
+      }
+    },
+    "/api/auth/team": {
+      "post": {
+        "description": "A team account opens its team in the most recent session that includes it.",
+        "operationId": "open_team_api_auth_team_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JoinResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Open Team",
+        "tags": ["auth"]
       }
     },
     "/api/catalog": {
@@ -6335,7 +6580,26 @@
     },
     "/api/join": {
       "post": {
+        "description": "Join a team by code. When sign-in is on, a team account can only join its own team.",
         "operationId": "join_api_join_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -6375,6 +6639,24 @@
     "/api/sessions": {
       "post": {
         "operationId": "create_session_api_sessions_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {

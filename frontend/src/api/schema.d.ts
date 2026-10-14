@@ -4,23 +4,6 @@
  */
 
 export interface paths {
-  '/api/admin/login': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Login */
-    post: operations['login_api_admin_login_post']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
   '/api/admin/review/{item_id}': {
     parameters: {
       query?: never
@@ -50,6 +33,26 @@ export interface paths {
     put?: never
     post?: never
     delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/admin/sessions/{session_id}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    /**
+     * Delete Session
+     * @description Delete a session, its teams and its activity log (admins only; cannot be undone).
+     */
+    delete: operations['delete_session_api_admin_sessions__session_id__delete']
     options?: never
     head?: never
     patch?: never
@@ -110,7 +113,24 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/api/admin/status': {
+  '/api/auth/login': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Login */
+    post: operations['login_api_auth_login_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/auth/status': {
     parameters: {
       query?: never
       header?: never
@@ -119,11 +139,31 @@ export interface paths {
     }
     /**
      * Status
-     * @description Whether Settings are enabled (ADMIN_PASSWORD set in .env).
+     * @description Whether sign-in is required, and who the bearer token (if any) is signed in as.
      */
-    get: operations['status_api_admin_status_get']
+    get: operations['status_api_auth_status_get']
     put?: never
     post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/auth/team': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Open Team
+     * @description A team account opens its team in the most recent session that includes it.
+     */
+    post: operations['open_team_api_auth_team_post']
     delete?: never
     options?: never
     head?: never
@@ -176,7 +216,10 @@ export interface paths {
     }
     get?: never
     put?: never
-    /** Join */
+    /**
+     * Join
+     * @description Join a team by code. When sign-in is on, a team account can only join its own team.
+     */
     post: operations['join_api_join_post']
     delete?: never
     options?: never
@@ -1172,11 +1215,6 @@ export interface paths {
 export type webhooks = Record<string, never>
 export interface components {
   schemas: {
-    /** AdminStatus */
-    AdminStatus: {
-      /** Enabled */
-      enabled: boolean
-    }
     /** AnalystAnswer */
     AnalystAnswer: {
       /** Answer */
@@ -1260,6 +1298,21 @@ export interface components {
       mode: 'ask' | 'challenge' | 'explain' | 'pitch' | 'opportunity'
       /** Question */
       question: string
+    }
+    /** AuthStatus */
+    AuthStatus: {
+      /** Email */
+      email?: string | null
+      /** Payer Id */
+      payer_id?: string | null
+      /** Payer Name */
+      payer_name?: string | null
+      /** Required */
+      required: boolean
+      /** Role */
+      role?: ('facilitator' | 'team') | null
+      /** Signed In */
+      signed_in: boolean
     }
     /** BaseBody */
     BaseBody: {
@@ -2086,13 +2139,10 @@ export interface components {
     }
     /** LoginBody */
     LoginBody: {
+      /** Email */
+      email: string
       /** Password */
       password: string
-    }
-    /** LoginOut */
-    LoginOut: {
-      /** Token */
-      token: string
     }
     /** MeasureResult */
     MeasureResult: {
@@ -3192,8 +3242,6 @@ export interface components {
     }
     /** SystemInfo */
     SystemInfo: {
-      /** Admin Password Set */
-      admin_password_set: boolean
       /** Ai Configured */
       ai_configured: boolean
       /** Api Port */
@@ -3214,6 +3262,8 @@ export interface components {
       environment: string
       /** Log Level */
       log_level: string
+      /** Sign In Accounts */
+      sign_in_accounts: number
       /** Signing Key */
       signing_key: string
       /** Version */
@@ -3547,6 +3597,28 @@ export interface components {
       /** Year */
       year: number
     }
+    /** LoginOut */
+    app__api__routes__admin__LoginOut: {
+      /** Token */
+      token: string
+    }
+    /** LoginOut */
+    app__api__routes__auth__LoginOut: {
+      /** Email */
+      email?: string | null
+      /** Payer Id */
+      payer_id?: string | null
+      /** Payer Name */
+      payer_name?: string | null
+      /** Required */
+      required: boolean
+      /** Role */
+      role?: ('facilitator' | 'team') | null
+      /** Signed In */
+      signed_in: boolean
+      /** Token */
+      token: string
+    }
   }
   responses: never
   parameters: never
@@ -3556,39 +3628,6 @@ export interface components {
 }
 export type $defs = Record<string, never>
 export interface operations {
-  login_api_admin_login_post: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['LoginBody']
-      }
-    }
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['LoginOut']
-        }
-      }
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['HTTPValidationError']
-        }
-      }
-    }
-  }
   review_api_admin_review__item_id__put: {
     parameters: {
       query?: never
@@ -3657,6 +3696,37 @@ export interface operations {
       }
     }
   }
+  delete_session_api_admin_sessions__session_id__delete: {
+    parameters: {
+      query?: never
+      header?: {
+        authorization?: string | null
+      }
+      path: {
+        session_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   facilitator_token_api_admin_sessions__session_id__token_post: {
     parameters: {
       query?: never
@@ -3676,7 +3746,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['LoginOut']
+          'application/json': components['schemas']['app__api__routes__admin__LoginOut']
         }
       }
       /** @description Validation Error */
@@ -3789,10 +3859,45 @@ export interface operations {
       }
     }
   }
-  status_api_admin_status_get: {
+  login_api_auth_login_post: {
     parameters: {
       query?: never
       header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['LoginBody']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['app__api__routes__auth__LoginOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  status_api_auth_status_get: {
+    parameters: {
+      query?: never
+      header?: {
+        authorization?: string | null
+      }
       path?: never
       cookie?: never
     }
@@ -3804,7 +3909,47 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['AdminStatus']
+          'application/json': components['schemas']['AuthStatus']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  open_team_api_auth_team_post: {
+    parameters: {
+      query?: never
+      header?: {
+        authorization?: string | null
+      }
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['JoinResult']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
         }
       }
     }
@@ -3852,7 +3997,9 @@ export interface operations {
   join_api_join_post: {
     parameters: {
       query?: never
-      header?: never
+      header?: {
+        authorization?: string | null
+      }
       path?: never
       cookie?: never
     }
@@ -3885,7 +4032,9 @@ export interface operations {
   create_session_api_sessions_post: {
     parameters: {
       query?: never
-      header?: never
+      header?: {
+        authorization?: string | null
+      }
       path?: never
       cookie?: never
     }

@@ -256,7 +256,7 @@ Not a prompt-engineering or coding class, a vendor demo, an exact CMS formula, a
 - Each setting shows its source (content file, `backend/.env`, or saved in the UI), its env var name, and whether it applies live or to new sessions. Reset returns it to the `backend/.env`/content value.
 - Content review: confirm or change each §12 checklist item and each assumption row, with a note.
 - Sessions: every session with an "Open console" link. System: version, database (masked), AI model, whether a key is set (never the key).
-- Precedence: `content/game.yaml` → `backend/.env` → saved in Settings. Secrets (`ANTHROPIC_API_KEY`, `SECRET_KEY`, `ADMIN_PASSWORD`) are `backend/.env`-only.
+- Precedence: `content/game.yaml` → `backend/.env` → saved in Settings. Secrets (`ANTHROPIC_API_KEY`, `SECRET_KEY`) are `backend/.env`-only; sign-in accounts are in the database with hashed passwords.
 
 **Start page:** agenda built from the run-of-show; create a session with the payers to include and team names, and defaults taken from Settings.
 
@@ -570,7 +570,7 @@ Legend: `[x]` done · `[~]` draft · `[ ]` to do · `(C)` content or expert task
 ```
 Exec Simulation/
 ├── README.md · Makefile · .editorconfig
-├── backend/.env                 ← API configuration (game rules, AI, ADMIN_PASSWORD); never committed
+├── backend/.env                 ← API configuration (game rules, AI); never committed
 ├── frontend/.env                ← dev port, API proxy target, VITE_API_URL; never committed
 ├── content/                     ← game.yaml · measures · kpis · investments · events · stages · workflow ·
 │                                  rubrics · reference · payers/ · dataroom/ (90 artifacts)

@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
 
-from app.api.deps import ContentDep, GameDep
+from app.api.deps import ContentDep, GameDep, SignedIn
 from app.schemas import views as v
 
 router = APIRouter(tags=["public"])
@@ -18,5 +18,6 @@ class JoinRequest(BaseModel):
 
 
 @router.post("/join")
-def join(body: JoinRequest, game: GameDep) -> v.JoinResult:
-    return game.join(body.code)
+def join(body: JoinRequest, game: GameDep, account: SignedIn) -> v.JoinResult:
+    """Join a team by code. When sign-in is on, a team account can only join its own team."""
+    return game.join(body.code, payer_id=account.payer_id if account and account.role == "team" else None)

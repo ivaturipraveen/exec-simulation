@@ -439,21 +439,27 @@ class GameService:
                 return code
         raise DomainError("Could not allocate a join code")
 
-    def join(self, code: str) -> v.JoinResult:
+    def join(self, code: str, *, payer_id: str | None = None) -> v.JoinResult:
+        """Join by code; a team account (``payer_id``) may only join its own company's team."""
         with self._db() as db:
             row = db.exec(select(Team).where(Team.join_code == code.strip().upper())).first()
             if row is None:
                 raise NotFound("No team uses that join code")
-            self._session(db, row.session_id)
-            self._log(db, row.session_id, "team_joined", "team", row.id)
-            db.commit()
-            return v.JoinResult(
-                token=issue_token(self.secret, "team", row.id),
-                team_id=row.id,
-                session_id=row.session_id,
-                team_name=row.name,
-                payer_name=self.content.payers[row.payer_id].name,
-            )
+            if payer_id is not None and row.payer_id != payer_id:
+                raise Forbidden("That join code is not for your team. Use your own team's join code.")
+            return self._join_row(db, row)
+
+    def _join_row(self, db: Session, row: Team) -> v.JoinResult:
+        self._session(db, row.session_id)
+        self._log(db, row.session_id, "team_joined", "team", row.id)
+        db.commit()
+        return v.JoinResult(
+            token=issue_token(self.secret, "team", row.id),
+            team_id=row.id,
+            session_id=row.session_id,
+            team_name=row.name,
+            payer_name=self.content.payers[row.payer_id].name,
+        )
 
     def session_view(self, session_id: str) -> v.SessionView:
         with self._db() as db:

@@ -1,4 +1,4 @@
-"""Settings screen API: admin login, layered values, validation, live application, review sign-off."""
+"""Settings screen API: facilitator access, layered values, validation, live application, review sign-off."""
 
 import pytest
 from fastapi.testclient import TestClient
@@ -7,36 +7,45 @@ from app.core.config import Settings
 from app.main import create_app
 from tests.api.helpers import auth, create_session, join_all
 
+FACILITATOR = {"email": "facilitator@example.com", "password": "fac-pass-1x"}
+
 
 @pytest.fixture
 def admin_client(settings: Settings):
-    s = settings.model_copy(update={"admin_password": "s3cret-pass"})
-    s.admin_password = __import__("pydantic").SecretStr("s3cret-pass")
-    with TestClient(create_app(s)) as c:
+    app = create_app(settings)
+    app.state.accounts.upsert(FACILITATOR["email"], FACILITATOR["password"], "facilitator")
+    with TestClient(app) as c:
+        c.headers.update(_login(c))  # the signed-in facilitator; per-request tokens still override it
         yield c
 
 
 def _login(c: TestClient) -> dict[str, str]:
-    r = c.post("/api/admin/login", json={"password": "s3cret-pass"})
+    r = c.post("/api/auth/login", json=FACILITATOR)
     assert r.status_code == 200, r.text
     return auth(r.json()["token"])
 
 
-def test_settings_disabled_without_admin_password(client: TestClient) -> None:
-    assert client.get("/api/admin/status").json() == {"enabled": False}
-    assert client.post("/api/admin/login", json={"password": "x"}).status_code == 403
+def test_settings_open_locally_without_sign_in(client: TestClient) -> None:
+    assert client.get("/api/admin/settings").status_code == 200
 
 
-def test_login_and_access_control(admin_client: TestClient) -> None:
+def test_settings_closed_in_production_without_sign_in(settings: Settings) -> None:
+    s = settings.model_copy(update={"environment": "production"})
+    with TestClient(create_app(s)) as c:
+        assert c.get("/api/admin/settings").status_code == 403
+
+
+def test_access_control(admin_client: TestClient) -> None:
     c = admin_client
-    assert c.post("/api/admin/login", json={"password": "wrong"}).status_code == 403
+    signed_in = c.headers.pop("Authorization")
     assert c.get("/api/admin/settings").status_code == 401
+    c.headers["Authorization"] = signed_in
     _, ftok = create_session(c)
-    assert c.get("/api/admin/settings", headers=auth(ftok)).status_code == 403  # facilitator ≠ admin
-    view = c.get("/api/admin/settings", headers=_login(c)).json()
+    assert c.get("/api/admin/settings", headers=auth(ftok)).status_code == 401  # session token ≠ sign-in
+    view = c.get("/api/admin/settings").json()
     keys = {f["key"]: f for f in view["fields"]}
     assert keys["round2_base_musd"]["value"] == 8.0 and keys["anthropic_model"]["source"] == "env"
-    assert view["system"]["admin_password_set"] is True and "ANTHROPIC" not in str(view["system"])
+    assert view["system"]["sign_in_accounts"] == 1 and "ANTHROPIC" not in str(view["system"])
     assert {r["id"] for r in view["review"]} >= {"RC-1", "OD-01", "B-01"}
 
 
@@ -111,7 +120,7 @@ def test_admin_can_delete_a_session(admin_client: TestClient) -> None:
     codes = [t["join_code"] for t in session["teams"]]
     admin = _login(c)
     # Only admins may delete; facilitators and unknown ids are refused.
-    assert c.delete(f"/api/admin/sessions/{sid}", headers=auth(ftok)).status_code == 403
+    assert c.delete(f"/api/admin/sessions/{sid}", headers=auth(ftok)).status_code == 401
     assert c.delete("/api/admin/sessions/nope", headers=admin).status_code == 404
     assert c.delete(f"/api/admin/sessions/{sid}", headers=admin).status_code == 204
     # The session, its teams (join codes) and its listing are gone.

@@ -12,6 +12,7 @@ import {
   Pause,
   Play,
   Quote,
+  Volume2,
   Scissors,
   Siren,
 } from 'lucide-react'
@@ -26,6 +27,7 @@ import {
 } from '../api/hooks'
 import type { SessionView, Severity, TeamProgress, TeamView } from '../api/types'
 import { Countdown } from '../components/Countdown'
+import { speak, stageAnnouncement, voiceSupported } from './voiceAnnouncer'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { Field, Input, Select, Textarea } from '../components/ui/Field'
@@ -193,10 +195,21 @@ export function RunPanel({ session, token }: { session: SessionView; token: stri
             {stage.transition_script && (
               <div className="script">
                 <Quote size={15} aria-hidden />
-                <div>
+                <div className="grow">
                   <div className="upper muted">Say</div>
                   <p>{stage.transition_script}</p>
                 </div>
+                {voiceSupported && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    icon={<Volume2 />}
+                    iconOnly
+                    aria-label="Read the stage announcement aloud"
+                    title="Read aloud to the room"
+                    onClick={() => speak(stageAnnouncement(session, session.clock.stage_index))}
+                  />
+                )}
               </div>
             )}
             <div

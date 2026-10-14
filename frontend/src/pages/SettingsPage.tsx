@@ -3,8 +3,6 @@ import {
   BadgeCheck,
   ClipboardCheck,
   ExternalLink,
-  KeyRound,
-  LogOut,
   RotateCcw,
   Save,
   Server,
@@ -16,8 +14,10 @@ import {
   Trophy,
   Trash2,
 } from 'lucide-react'
-import { useEffect, useMemo, useState, type FormEvent } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
+import { authStatusKey } from '../api/auth'
 import { ApiError, errorMessage, request } from '../api/client'
 import type { ReviewEntry, SessionRow, SettingView, SettingsView } from '../api/types'
 import { BrandMark } from '../components/BrandMark'
@@ -26,10 +26,10 @@ import { SettingControl } from '../components/SettingControl'
 import { formatSetting } from '../lib/settings'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
-import { Field, Input, Textarea } from '../components/ui/Field'
+import { Textarea } from '../components/ui/Field'
 import { Badge, Callout, Empty, Loading } from '../components/ui/primitives'
 import { useToast } from '../components/ui/toastContext'
-import { adminAuth, auth } from '../lib/storage'
+import { auth, signIn } from '../lib/storage'
 
 const GROUP_ORDER = [
   'Session defaults',
@@ -58,13 +58,9 @@ const GROUP_ICON: Record<string, typeof SlidersHorizontal> = {
 }
 
 export function SettingsPage() {
-  const [token, setToken] = useState<string | null>(() => adminAuth.get())
-  const [enabled, setEnabled] = useState<boolean | null>(null)
-  useEffect(() => {
-    request<{ enabled: boolean }>('GET', '/admin/status')
-      .then((r) => setEnabled(r.enabled))
-      .catch(() => setEnabled(false))
-  }, [])
+  const queryClient = useQueryClient()
+  // Settings open for the signed-in facilitator (sign-in is checked before this page renders).
+  const token = signIn.get()
   return (
     <div className="settings">
       <header className="settings__top">
@@ -74,116 +70,32 @@ export function SettingsPage() {
         </Link>
         <span className="grow" />
         <ThemeToggle />
-        {token && (
-          <Button
-            variant="ghost"
-            size="sm"
-            icon={<LogOut />}
-            onClick={() => {
-              adminAuth.clear()
-              setToken(null)
-            }}
-            aria-label="Log out"
-            title="Log out of Settings"
-            iconOnly
-          />
-        )}
       </header>
-      {enabled === null ? (
-        <Loading />
-      ) : !enabled ? (
-        <div className="settings__gate">
-          <Card title="Settings are disabled">
-            <p className="secondary">
-              Set <code>ADMIN_PASSWORD</code> in <code>backend/.env</code> and restart the app to
-              manage settings here. Every setting can also be configured in{' '}
-              <code>backend/.env</code> and <code>content/game.yaml</code>.
-            </p>
-          </Card>
-        </div>
-      ) : token ? (
-        <SettingsWorkspace
-          token={token}
-          onExpired={() => {
-            adminAuth.clear()
-            setToken(null)
-          }}
-        />
-      ) : (
-        <Login
-          onToken={(t) => {
-            adminAuth.set(t)
-            setToken(t)
-          }}
-        />
-      )}
+      <SettingsWorkspace
+        token={token}
+        onExpired={() => {
+          signIn.clear()
+          void queryClient.invalidateQueries({ queryKey: authStatusKey })
+        }}
+      />
     </div>
   )
 }
 
-function Login({ onToken }: { onToken: (t: string) => void }) {
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const [busy, setBusy] = useState(false)
-  const submit = async (e: FormEvent) => {
-    e.preventDefault()
-    setBusy(true)
-    setError(null)
-    try {
-      const r = await request<{ token: string }>('POST', '/admin/login', { body: { password } })
-      onToken(r.token)
-    } catch (err) {
-      setError(errorMessage(err))
-    } finally {
-      setBusy(false)
-    }
-  }
-  return (
-    <div className="settings__gate">
-      <Card
-        title={
-          <span className="row">
-            <KeyRound size={16} aria-hidden /> Settings
-          </span>
-        }
-        subtitle="Enter the ADMIN_PASSWORD from backend/.env"
-      >
-        <form className="stack" onSubmit={submit}>
-          {error && <Callout tone="critical">{error}</Callout>}
-          <Field label="Admin password">
-            {(id) => (
-              <Input
-                id={id}
-                type="password"
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                autoFocus
-              />
-            )}
-          </Field>
-          <Button type="submit" variant="primary" block loading={busy} disabled={!password}>
-            Open settings
-          </Button>
-        </form>
-      </Card>
-    </div>
-  )
-}
-
-function SettingsWorkspace({ token, onExpired }: { token: string; onExpired: () => void }) {
+function SettingsWorkspace({ token, onExpired }: { token: string | null; onExpired: () => void }) {
   const [view, setView] = useState<SettingsView | null>(null)
   const [section, setSection] = useState<Section>('Session defaults')
   const [draft, setDraft] = useState<Record<string, unknown>>({})
   const [saving, setSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const toast = useToast()
 
   const load = async () => {
     try {
       setView(await request<SettingsView>('GET', '/admin/settings', { token }))
     } catch (e) {
-      if (e instanceof ApiError && (e.status === 401 || e.status === 403)) onExpired()
-      else toast(errorMessage(e), 'error')
+      if (e instanceof ApiError && e.status === 401) onExpired()
+      else setError(errorMessage(e))
     }
   }
   useEffect(() => {
@@ -197,6 +109,14 @@ function SettingsWorkspace({ token, onExpired }: { token: string; onExpired: () 
     return by
   }, [view])
 
+  if (error)
+    return (
+      <div className="settings__gate">
+        <Callout tone="critical" title="Settings are unavailable">
+          {error}
+        </Callout>
+      </div>
+    )
   if (!view) return <Loading label="Loading settings…" />
   const pending = Object.keys(draft).length
   const save = async () => {
@@ -427,7 +347,7 @@ function ReviewEditor({
   entries,
   onView,
 }: {
-  token: string
+  token: string | null
   entries: ReviewEntry[]
   onView: (v: SettingsView) => void
 }) {
@@ -535,7 +455,7 @@ function ReviewEditor({
   )
 }
 
-function SessionsList({ token }: { token: string }) {
+function SessionsList({ token }: { token: string | null }) {
   const [rows, setRows] = useState<SessionRow[] | null>(null)
   const navigate = useNavigate()
   const toast = useToast()
@@ -684,7 +604,12 @@ function SystemCard({ view }: { view: SettingsView }) {
         : 'Not set — the analyst runs in retrieval-only mode',
     ],
     ['Token signing key', s.signing_key],
-    ['Admin password', s.admin_password_set ? 'Set in backend/.env' : 'Not set'],
+    [
+      'Sign-in accounts',
+      s.sign_in_accounts
+        ? `${s.sign_in_accounts} set in backend/.env`
+        : 'None — the sign-in page is off',
+    ],
   ]
   return (
     <div className="stack" style={{ '--gap': '16px' } as React.CSSProperties}>

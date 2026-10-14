@@ -14,6 +14,7 @@ from fastapi.staticfiles import StaticFiles
 from app import __version__
 from app.api.router import api_router
 from app.api.routes import ws
+from app.core.accounts import AccountStore
 from app.core.config import Settings, get_settings
 from app.core.errors import NotFound, install_error_handlers
 from app.core.logging import configure_logging
@@ -71,7 +72,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         game.options.pitch_ai_suggest = settings.pitch_ai_suggest
         game.options.opportunity_retention_days = settings.opportunity_retention_days
 
-    store = SettingsStore(engine, settings, content, __version__)
+    accounts = AccountStore(engine)
+    store = SettingsStore(engine, settings, content, __version__, count_accounts=accounts.count)
 
     @asynccontextmanager
     async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
@@ -87,6 +89,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.game = game
     app.state.analyst = analyst
     app.state.settings_store = store
+    app.state.accounts = accounts
     store.on_change = apply_settings
     apply_settings(store.content)
     game.purge_expired()

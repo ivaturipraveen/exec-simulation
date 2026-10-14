@@ -1,5 +1,26 @@
 import { expect, test, type Page } from '@playwright/test'
 
+/**
+ * When the app has sign-in on (accounts in the database), sign in first. The facilitator page uses
+ * E2E_LOGIN_EMAIL / E2E_LOGIN_PASSWORD; the team page uses E2E_TEAM_EMAIL / E2E_TEAM_PASSWORD,
+ * which must be the CommunityCare Alliance account (the first team in the console).
+ */
+async function signInIfAsked(page: Page, who: 'facilitator' | 'team') {
+  const form = page.getByRole('heading', { name: 'Player sign-in' })
+  const start = page.getByRole('heading', { level: 1 })
+  await expect(form.or(start).first()).toBeVisible()
+  if (!(await form.isVisible())) return
+  const prefix = who === 'facilitator' ? 'E2E_LOGIN' : 'E2E_TEAM'
+  const email = process.env[`${prefix}_EMAIL`]
+  const password = process.env[`${prefix}_PASSWORD`]
+  if (!email || !password)
+    throw new Error(`Sign-in is on: set ${prefix}_EMAIL and ${prefix}_PASSWORD`)
+  await page.getByLabel('Email').fill(email)
+  await page.getByLabel('Password').fill(password)
+  await page.getByRole('button', { name: /Start the simulation/ }).click()
+  await expect(start).toBeVisible()
+}
+
 /** Full facilitator + team flow through the UI (T-095). Requires `make dev`. */
 test('facilitator runs a session; a team plays Round 1, Year 1 results and the board pitch', async ({
   browser,
@@ -10,7 +31,10 @@ test('facilitator runs a session; a team plays Round 1, Year 1 results and the b
 
   // Facilitator creates a session from the landing page.
   await fac.goto('/')
-  await fac.getByRole('tab', { name: /Facilitate/ }).click()
+  await signInIfAsked(fac, 'facilitator')
+  // Without sign-in the start page has tabs; the signed-in facilitator sees only Facilitate.
+  const facilitateTab = fac.getByRole('tab', { name: /Facilitate/ })
+  if (await facilitateTab.isVisible()) await facilitateTab.click()
   await fac.getByLabel('Session name').fill('E2E pilot')
   await fac.getByRole('button', { name: /Create session/ }).click()
   await expect(fac.getByText('Facilitator console')).toBeVisible()
@@ -25,6 +49,7 @@ test('facilitator runs a session; a team plays Round 1, Year 1 results and the b
   const team = await (await browser.newContext()).newPage()
   team.on('pageerror', (e) => errors.push(String(e)))
   await team.goto('/')
+  await signInIfAsked(team, 'team')
   await team.getByLabel('Team join code').fill(codes[0].trim())
   await team.getByRole('button', { name: /Enter workspace/ }).click()
   await expect(team.locator('.topbar')).toContainText('Diagnose')

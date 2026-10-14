@@ -32,6 +32,14 @@ def database_url(tmp_path: Path) -> Iterator[str]:
     admin.dispose()
 
 
+@pytest.fixture(autouse=True)
+def _reset_sign_in_limits() -> None:
+    """The sign-in rate limiter is per process; start every test with a clean slate."""
+    from app.api.routes import auth
+
+    auth._FAILURES.clear()
+
+
 @pytest.fixture
 def settings(tmp_path: Path, database_url: str) -> Settings:
     return Settings(
