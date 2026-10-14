@@ -102,6 +102,7 @@
 /* ---------- 4. Game-menu tabs: pills on a track ---------- */
 .section-tabs > .tabs,
 .stack > .tabs,
+.page-header .tabs,
 .card .tabs {
   display: inline-flex;
   align-self: flex-start;
@@ -114,6 +115,7 @@
 }
 .section-tabs > .tabs button,
 .stack > .tabs button,
+.page-header .tabs button,
 .card .tabs button {
   margin: 0;
   padding: 8px 14px;
@@ -127,12 +129,14 @@
 }
 .section-tabs > .tabs button:hover,
 .stack > .tabs button:hover,
+.page-header .tabs button:hover,
 .card .tabs button:hover {
   color: var(--text);
   background: color-mix(in srgb, var(--surface) 60%, transparent);
 }
 .section-tabs > .tabs button[aria-selected='true'],
 .stack > .tabs button[aria-selected='true'],
+.page-header .tabs button[aria-selected='true'],
 .card .tabs button[aria-selected='true'] {
   background: var(--surface);
   color: var(--accent-ink);
@@ -142,6 +146,7 @@
 }
 :root[data-theme='dark'] .section-tabs > .tabs button[aria-selected='true'],
 :root[data-theme='dark'] .stack > .tabs button[aria-selected='true'],
+:root[data-theme='dark'] .page-header .tabs button[aria-selected='true'],
 :root[data-theme='dark'] .card .tabs button[aria-selected='true'] {
   background: color-mix(in srgb, var(--accent) 22%, var(--surface-2));
   color: #fff;
@@ -997,6 +1002,12 @@ dl.grid > div,
 .override-row .input,
 .override-row .select {
   height: 36px;
+}
+/* a choice plus its severity, sharing the input column of an override row */
+.override-pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 110px;
+  gap: 8px;
 }
 @media (max-width: 560px) {
   .override-row {

@@ -1384,16 +1384,6 @@ summary,
   color: var(--text-2);
   max-width: 720px;
 }
-.ss-panel__count {
-  flex: none;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-muted);
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-}
 .ss-panel__lock,
 .ss-panel__check {
   display: flex;

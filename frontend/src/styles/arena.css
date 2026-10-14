@@ -548,7 +548,7 @@
 
 /* =====================================================================================
    Same world as the sign-in page and team lobby: the workspace uses the lobby's palette
-   (--l-* tokens), pulsing badges, terminal card bars, scanlines, HUD corner brackets and a
+   (--l-* tokens), pulsing badges, terminal card bars, scanlines and a
    live ticker of the team's own numbers in the sidebar corner.
    ===================================================================================== */
 .shell--arena {
@@ -664,7 +664,8 @@
 }
 
 /* ---------- cards: lobby card skin with a terminal title bar ---------- */
-.shell--arena .content .card {
+/* pinned (sticky) panels keep their own positioning */
+.shell--arena .content .card:not(.dataroom__list, .invest__cart) {
   position: relative;
   border-radius: 16px;
   border-color: var(--l-card-line);
@@ -714,68 +715,6 @@
 .shell--arena .content .card > .card__header .card__subtitle {
   color: var(--l-muted);
 }
-/* HUD corner brackets lock on to the card under the pointer */
-.shell--arena .content .card::before {
-  content: '';
-  position: absolute;
-  inset: -5px;
-  pointer-events: none;
-  --c: var(--l-hud);
-  background:
-    linear-gradient(var(--c), var(--c)) top left / 18px 2px,
-    linear-gradient(var(--c), var(--c)) top left / 2px 18px,
-    linear-gradient(var(--c), var(--c)) top right / 18px 2px,
-    linear-gradient(var(--c), var(--c)) top right / 2px 18px,
-    linear-gradient(var(--c), var(--c)) bottom left / 18px 2px,
-    linear-gradient(var(--c), var(--c)) bottom left / 2px 18px,
-    linear-gradient(var(--c), var(--c)) bottom right / 18px 2px,
-    linear-gradient(var(--c), var(--c)) bottom right / 2px 18px;
-  background-repeat: no-repeat;
-  opacity: 0;
-  transform: scale(1.015);
-  transition:
-    opacity 180ms,
-    transform 180ms;
-}
-.shell--arena .content .card:hover::before,
-.shell--arena .content .card:focus-within::before {
-  opacity: 0.75;
-  transform: none;
-}
-.shell--arena .content .card .card::before {
-  display: none;
-}
-
-/* the company hero and the stage banner keep their brackets on, like the lobby card */
-.shell--arena :is(.hero, .stage-banner) {
-  overflow: visible;
-}
-.shell--arena :is(.hero, .stage-banner)::before {
-  content: '';
-  display: block;
-  position: absolute;
-  inset: -6px;
-  width: auto;
-  height: auto;
-  border-radius: 0;
-  pointer-events: none;
-  --c: var(--l-hud);
-  background:
-    linear-gradient(var(--c), var(--c)) top left / 22px 2px,
-    linear-gradient(var(--c), var(--c)) top left / 2px 22px,
-    linear-gradient(var(--c), var(--c)) top right / 22px 2px,
-    linear-gradient(var(--c), var(--c)) top right / 2px 22px,
-    linear-gradient(var(--c), var(--c)) bottom left / 22px 2px,
-    linear-gradient(var(--c), var(--c)) bottom left / 2px 22px,
-    linear-gradient(var(--c), var(--c)) bottom right / 22px 2px,
-    linear-gradient(var(--c), var(--c)) bottom right / 2px 22px;
-  background-repeat: no-repeat;
-  opacity: 0.7;
-}
-.shell--arena :is(.hero, .stage-banner)::after {
-  border-radius: inherit;
-}
-
 /* ---------- live ticker in the sidebar corner: the team's own numbers ---------- */
 .shell--arena .sidebar__footer {
   padding: 0;
