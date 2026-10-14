@@ -228,9 +228,13 @@ export function RunPanel({ session, token }: { session: SessionView; token: stri
                     variant="ghost"
                     icon={<Volume2 />}
                     iconOnly
-                    aria-label="Read the stage announcement aloud"
-                    title="Read aloud to the room"
-                    onClick={() => speak(stageAnnouncement(session, session.clock.stage_index))}
+                    aria-label="Read the stage announcement aloud again"
+                    title="Read it to the room again (it plays automatically when the stage starts)"
+                    onClick={() =>
+                      speak(stageAnnouncement(session, session.clock.stage_index), {
+                        interrupt: true,
+                      })
+                    }
                   />
                 )}
               </div>

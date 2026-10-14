@@ -93,6 +93,34 @@ test('calls out five minutes, one minute and time up', () => {
   expect(spoken).toHaveLength(3)
 })
 
+test('reads in a female voice when the device has one, and a new stage interrupts the old one', () => {
+  const voices = [
+    { name: 'Alex', lang: 'en-US' },
+    { name: 'Daniel', lang: 'en-GB' },
+    { name: 'Samantha', lang: 'en-US' },
+  ]
+  const used: { voice: unknown }[] = []
+  let cancelled = 0
+  Object.defineProperty(window, 'speechSynthesis', {
+    configurable: true,
+    value: {
+      getVoices: () => voices,
+      cancel: () => cancelled++,
+      speak: (u: { text: string; voice: unknown }) => {
+        spoken.push(u.text)
+        used.push(u)
+      },
+    },
+  })
+  const { rerender } = renderHook(({ s }) => useStageAnnouncer(s, true), {
+    initialProps: { s: session(0, 'not_started', 720) },
+  })
+  rerender({ s: session(0, 'running', 720) })
+  expect(spoken).toHaveLength(1)
+  expect(used[0].voice).toBe(voices[2])
+  expect(cancelled).toBe(1)
+})
+
 test('stays silent when turned off', () => {
   const { rerender } = renderHook(({ s }) => useStageAnnouncer(s, false), {
     initialProps: { s: session(0, 'not_started', 720) },
