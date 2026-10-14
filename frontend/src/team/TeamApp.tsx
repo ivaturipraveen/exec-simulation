@@ -20,6 +20,7 @@ import { ApiError } from '../api/client'
 import { useCatalog, useTeam } from '../api/hooks'
 import { useRealtime } from '../api/realtime'
 import type { TeamView } from '../api/types'
+import { BrandWordmark } from '../components/BrandWordmark'
 import { Countdown } from '../components/Countdown'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { Button } from '../components/ui/Button'
@@ -304,6 +305,9 @@ function Sidebar({ team }: { team: TeamView }) {
   const missionsDone = missions.filter((i) => i.done).length
   return (
     <aside className="sidebar">
+      <div className="sidebar__logo">
+        <BrandWordmark followTheme height={30} />
+      </div>
       <div className="sidebar__brand">
         <div className="brand-mark">{team.team_name.slice(0, 1).toUpperCase()}</div>
         <div className="stack grow" style={{ '--gap': '0px' } as React.CSSProperties}>
