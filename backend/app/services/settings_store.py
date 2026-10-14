@@ -50,6 +50,8 @@ class FieldSpec:
     env: str | None = None
     session_editable: bool = False
     lock_after_year1: bool = False
+    max_length: int = 200  # text fields
+    allow_empty: bool = False  # text fields: blank hides that piece of text
 
     @property
     def scope(self) -> str:
@@ -77,6 +79,16 @@ G_AI = "AI analyst"
 G_MODEL = "Model parameters"
 G_SCORE = "Scorecard"
 G_PILOT = "Pilot targets"
+G_LOGIN = "Sign-in page"
+
+
+def _login_text(key: str, label: str, help: str = "", **kw: Any) -> FieldSpec:
+    return FieldSpec(key, G_LOGIN, label, "text", "runtime", help, env=key.upper(), **kw)
+
+
+def _login_toggle(key: str, label: str, help: str = "") -> FieldSpec:
+    return FieldSpec(key, G_LOGIN, label, "bool", "runtime", help, env=key.upper())
+
 
 FIELDS: tuple[FieldSpec, ...] = (
     # ---------------------------------------------------------------- session defaults
@@ -327,6 +339,58 @@ FIELDS: tuple[FieldSpec, ...] = (
         max=500,
         step=1,
         env="AI_REQUESTS_PER_10_MIN",
+    ),
+    # ---------------------------------------------------------------- sign-in page
+    FieldSpec(
+        "login_layout",
+        G_LOGIN,
+        "Layout",
+        "enum",
+        "runtime",
+        "hero-left: intro on the left, sign-in card on the right. hero-right: the reverse. "
+        "centered: one column with the card in the middle. Phones always use one column.",
+        options=("hero-left", "hero-right", "centered"),
+        env="LOGIN_LAYOUT",
+    ),
+    FieldSpec(
+        "login_logo",
+        G_LOGIN,
+        "Logo position",
+        "enum",
+        "runtime",
+        "Where the Brightcone.ai logo appears: the top bar, the top of the sign-in card, or both.",
+        options=("header", "card", "both"),
+        env="LOGIN_LOGO",
+    ),
+    _login_text(
+        "login_badge", "Badge", "Small label above the headline. Leave blank to hide.", allow_empty=True
+    ),
+    _login_text("login_title", "Headline"),
+    _login_text(
+        "login_title_accent",
+        "Headline, second line",
+        "Shown in the brand gradient. Leave blank to hide.",
+        allow_empty=True,
+    ),
+    _login_text("login_lead", "Intro paragraph", "Leave blank to hide.", max_length=400, allow_empty=True),
+    _login_text("login_card_title", "Card title"),
+    _login_text(
+        "login_card_subtitle", "Card subtitle", "Leave blank to hide.", max_length=300, allow_empty=True
+    ),
+    _login_text("login_button", "Sign-in button"),
+    _login_text(
+        "login_footnote",
+        "Fine print under the button",
+        "Leave blank to hide.",
+        max_length=300,
+        allow_empty=True,
+    ),
+    _login_toggle("login_show_levels", "Show the level path", "Diagnose → Invest → Pitch → Lead."),
+    _login_toggle(
+        "login_show_stats", "Show the game stats", "Health plans, investment cards, crises, years."
+    ),
+    _login_toggle(
+        "login_show_ticker", "Show the live-feed ticker", "Scrolling market signals along the bottom."
     ),
     # ---------------------------------------------------------------- model parameters (pack §5)
     _p(
@@ -733,7 +797,7 @@ def coerce(spec: FieldSpec, value: Any) -> Any:
             return str(value)
         if spec.kind == "text":
             text = str(value).strip()
-            if not text or len(text) > 200:
+            if (not text and not spec.allow_empty) or len(text) > spec.max_length:
                 raise ValueError
             return text
         number = int(value) if spec.kind == "int" else float(value)

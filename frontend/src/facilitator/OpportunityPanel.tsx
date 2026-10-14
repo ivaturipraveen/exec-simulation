@@ -10,7 +10,7 @@ import { Card } from '../components/ui/Card'
 import { Markdown } from '../components/ui/Markdown'
 import { Field, Input } from '../components/ui/Field'
 import { Callout, Loading, Stat } from '../components/ui/primitives'
-import { useToast } from '../components/ui/toastContext'
+import { useConfirm, useToast } from '../components/ui/toastContext'
 
 export function OpportunityPanel({ session, token }: { session: SessionView; token: string }) {
   const { data } = useOpportunityMap(session.id, token, true)
@@ -20,6 +20,7 @@ export function OpportunityPanel({ session, token }: { session: SessionView; tok
   const [note, setNote] = useState('')
   const [deleting, setDeleting] = useState(false)
   const toast = useToast()
+  const confirm = useConfirm()
   if (!data) return <Loading />
   const c = data.counts
   const opp = catalog?.opportunity
@@ -27,9 +28,13 @@ export function OpportunityPanel({ session, token }: { session: SessionView; tok
   const r = opp?.act_now_readiness ?? 4
   const purge = async () => {
     if (
-      !window.confirm(
-        'Delete every captured opportunity and consent record in this session? This cannot be undone.',
-      )
+      !(await confirm({
+        title: 'Delete all opportunity data?',
+        message:
+          'Every captured opportunity and consent record in this session is removed. This cannot be undone.',
+        tone: 'danger',
+        confirmLabel: 'Delete data',
+      }))
     )
       return
     setDeleting(true)

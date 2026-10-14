@@ -6,7 +6,7 @@ import { expect, test, type Page } from '@playwright/test'
  * which must be the CommunityCare Alliance account (the first team in the console).
  */
 async function signInIfAsked(page: Page, who: 'facilitator' | 'team') {
-  const form = page.getByRole('heading', { name: 'Player sign-in' })
+  const form = page.getByRole('heading', { name: 'Sign in' })
   const start = page.getByRole('heading', { level: 1 })
   await expect(form.or(start).first()).toBeVisible()
   if (!(await form.isVisible())) return

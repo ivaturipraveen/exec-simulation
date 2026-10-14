@@ -3,6 +3,7 @@ import {
   BadgeCheck,
   ClipboardCheck,
   ExternalLink,
+  LogIn,
   RotateCcw,
   Save,
   Server,
@@ -20,7 +21,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { authStatusKey } from '../api/auth'
 import { ApiError, errorMessage, request } from '../api/client'
 import type { ReviewEntry, SessionRow, SettingView, SettingsView } from '../api/types'
-import { BrandMark } from '../components/BrandMark'
+import { BrandWordmark } from '../components/BrandWordmark'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { SettingControl } from '../components/SettingControl'
 import { formatSetting } from '../lib/settings'
@@ -28,7 +29,7 @@ import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { Textarea } from '../components/ui/Field'
 import { Badge, Callout, Empty, Loading } from '../components/ui/primitives'
-import { useToast } from '../components/ui/toastContext'
+import { useConfirm, useToast } from '../components/ui/toastContext'
 import { auth, signIn } from '../lib/storage'
 
 const GROUP_ORDER = [
@@ -38,6 +39,7 @@ const GROUP_ORDER = [
   'Model parameters',
   'Scorecard',
   'Pilot targets',
+  'Sign-in page',
 ]
 const SPECIAL = ['Content review', 'Sessions', 'System'] as const
 type Section = string
@@ -55,20 +57,34 @@ const GROUP_ICON: Record<string, typeof SlidersHorizontal> = {
   'Model parameters': SlidersHorizontal,
   Scorecard: Trophy,
   'Pilot targets': Target,
+  'Sign-in page': LogIn,
 }
 
 export function SettingsPage() {
   const queryClient = useQueryClient()
   // Settings open for the signed-in facilitator (sign-in is checked before this page renders).
   const token = signIn.get()
+  const navigate = useNavigate()
+  // Back to wherever Settings was opened from; a direct link has no history here, so go home.
+  const back = () => ((window.history.state?.idx ?? 0) > 0 ? navigate(-1) : navigate('/'))
   return (
     <div className="settings">
       <header className="settings__top">
         <Link to="/" className="row" style={{ color: 'inherit', textDecoration: 'none' }}>
-          <BrandMark />
-          <span className="strong">Executive AI Simulation</span>
+          <BrandWordmark />
         </Link>
         <span className="grow" />
+        <Button
+          size="sm"
+          variant="ghost"
+          icon={<ArrowLeft />}
+          onClick={back}
+          className="settings__back"
+          title="Back to the previous page"
+        >
+          Back
+        </Button>
+        <span className="settings__divider" aria-hidden />
         <ThemeToggle />
       </header>
       <SettingsWorkspace
@@ -247,6 +263,8 @@ const GROUP_INTRO: Record<string, string> = {
     'Content Pack §5. Changes apply to new sessions; use `make calibrate` to see their effect on the reference portfolios.',
   Scorecard: 'Content Pack §10.1. The five dimension weights must sum to 100%.',
   'Pilot targets': 'Docx §21 success indicators shown on the Activity tab.',
+  'Sign-in page':
+    'The front door for players and facilitators. Applies immediately: reload the sign-in page to see it.',
 }
 
 function GroupEditor({
@@ -459,6 +477,7 @@ function SessionsList({ token }: { token: string | null }) {
   const [rows, setRows] = useState<SessionRow[] | null>(null)
   const navigate = useNavigate()
   const toast = useToast()
+  const confirm = useConfirm()
   useEffect(() => {
     request<SessionRow[]>('GET', '/admin/sessions', { token })
       .then(setRows)
@@ -480,9 +499,13 @@ function SessionsList({ token }: { token: string | null }) {
         ? `"${rows?.find((r) => r.id === ids[0])?.name ?? ids[0]}"`
         : `all ${ids.length} sessions`
     if (
-      !window.confirm(
-        `Delete ${label}? Teams, decisions and the activity log are removed permanently. This cannot be undone.`,
-      )
+      !(await confirm({
+        title: `Delete ${label}?`,
+        message:
+          'Teams, decisions and the activity log are removed permanently. This cannot be undone.',
+        tone: 'danger',
+        confirmLabel: ids.length === 1 ? 'Delete session' : 'Delete all',
+      }))
     )
       return
     setDeleting(ids.length === 1 ? ids[0] : 'all')

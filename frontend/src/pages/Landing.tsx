@@ -3,7 +3,9 @@ import {
   Building2,
   Clock4,
   LineChart,
+  ListChecks,
   LogOut,
+  Plus,
   Presentation,
   ShieldCheck,
   Siren,
@@ -19,7 +21,9 @@ import { Button } from '../components/ui/Button'
 import { Field, Input, Select } from '../components/ui/Field'
 import { Callout } from '../components/ui/primitives'
 import { Tabs } from '../components/ui/Tabs'
-import { BrandMark } from '../components/BrandMark'
+import { BrandWordmark } from '../components/BrandWordmark'
+import { sessionsKey, useSessions } from '../api/sessions'
+import { SessionsBrowser } from '../components/SessionsBrowser'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { authStatusKey, useAuthStatus } from '../api/auth'
 import { auth, signIn } from '../lib/storage'
@@ -53,10 +57,14 @@ export function Landing() {
   const [tab, setTab] = useState<'join' | 'run'>('join')
   return (
     <div className="landing">
+      <div className="landing__sky" aria-hidden>
+        <span className="landing__orb landing__orb--blue" />
+        <span className="landing__orb landing__orb--mint" />
+        <span className="landing__grid" />
+      </div>
       <header className="landing__top">
         <div className="row">
-          <BrandMark />
-          <span className="strong">Executive AI Simulation</span>
+          <BrandWordmark followTheme />
         </div>
         <div className="row">
           {!isTeam && (
@@ -130,9 +138,7 @@ export function Landing() {
                   <Presentation size={16} aria-hidden /> Facilitate
                 </h2>
               </div>
-              <div className="card__body">
-                <RunForm />
-              </div>
+              <FacilitatePanel />
             </>
           ) : (
             <>
@@ -161,7 +167,13 @@ export function Landing() {
                   ]}
                 />
               </div>
-              <div className="card__body">{tab === 'join' ? <JoinForm /> : <RunForm />}</div>
+              {tab === 'join' ? (
+                <div className="card__body">
+                  <JoinForm />
+                </div>
+              ) : (
+                <FacilitatePanel />
+              )}
             </>
           )}
         </section>
@@ -171,6 +183,65 @@ export function Landing() {
         illustrative.
       </footer>
     </div>
+  )
+}
+
+/** New session form, plus every session on the server when this browser may manage them. */
+function FacilitatePanel() {
+  const { data: sessions, isError } = useSessions()
+  const [view, setView] = useState<'new' | 'sessions'>('new')
+  if (isError) {
+    return (
+      <div className="card__body">
+        <RunForm showResume />
+      </div>
+    )
+  }
+  return (
+    <>
+      <div className="landing__subtabs">
+        <Tabs
+          label="Facilitate"
+          value={view}
+          onChange={setView}
+          tabs={[
+            {
+              id: 'new',
+              label: (
+                <>
+                  <Plus size={15} aria-hidden /> New session
+                </>
+              ),
+            },
+            {
+              id: 'sessions',
+              label: (
+                <>
+                  <ListChecks size={15} aria-hidden /> Sessions
+                  {sessions && <span className="tab-count">{sessions.length}</span>}
+                </>
+              ),
+            },
+          ]}
+        />
+      </div>
+      {/* The form always sets the card's height; the sessions list scrolls inside the same space,
+          so switching tabs never resizes the card (and keeps what was typed in the form). */}
+      <div className="card__body facilitate-views">
+        <div
+          className={view === 'new' ? undefined : 'facilitate-views__hidden'}
+          inert={view !== 'new'}
+          aria-hidden={view !== 'new' || undefined}
+        >
+          <RunForm />
+        </div>
+        {view === 'sessions' && (
+          <div className="facilitate-views__overlay">
+            <SessionsBrowser />
+          </div>
+        )}
+      </div>
+    </>
   )
 }
 
@@ -267,8 +338,9 @@ function JoinForm({ teamName }: { teamName?: string }) {
   )
 }
 
-function RunForm() {
+function RunForm({ showResume = false }: { showResume?: boolean }) {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const [name, setName] = useState('Executive AI Simulation')
   const [mechanic, setMechanic] = useState('')
   const [mode, setMode] = useState('')
@@ -303,6 +375,7 @@ function RunForm() {
         },
       })
       auth.setFacilitator(r.session.id, r.facilitator_token)
+      void queryClient.invalidateQueries({ queryKey: sessionsKey })
       navigate(`/facilitator/${r.session.id}`)
     } catch (err) {
       setError(errorMessage(err))
@@ -402,7 +475,7 @@ function RunForm() {
           Create session
         </Button>
       </form>
-      {known.length > 0 && (
+      {showResume && known.length > 0 && (
         <div className="stack" style={{ '--gap': '6px' } as React.CSSProperties}>
           <div className="upper muted">Resume a session</div>
           {known.map((id) => (

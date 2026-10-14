@@ -1,10 +1,9 @@
-import { BellRing, Check, Copy, Siren } from 'lucide-react'
+import { Check, Copy, Star } from 'lucide-react'
 import type { SessionView, TeamProgress } from '../api/types'
-import { Card } from '../components/ui/Card'
-import { Badge } from '../components/ui/primitives'
 import { useToast } from '../components/ui/toastContext'
-import { clockText, money, payerSuffix } from '../lib/format'
+import { money, payerSuffix } from '../lib/format'
 import { useRemaining } from '../lib/useRemaining'
+import { teamSteps } from './teamStatus'
 
 /** Minutes → "h:mm" (e.g. 205 → "3:25"). */
 function hm(minutes: number): string {
@@ -12,8 +11,10 @@ function hm(minutes: number): string {
   return `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`
 }
 
-/** Run of show: every stage with its planned slot, what is done, what is live and how far through the
- * session we are. Read-only: only the Back and Next stage buttons move the session. */
+const shortTitle = (title: string) => title.replace(' (optional extension)', '')
+
+/** Run of show as a level track: every stage with its planned slot, what is done and what is live,
+ * plus the session clock and the schedule. Read-only: only Back and Next stage move the session. */
 export function RunOfShow({ session }: { session: SessionView }) {
   const c = session.clock
   const remaining = useRemaining(c)
@@ -27,48 +28,39 @@ export function RunOfShow({ session }: { session: SessionView }) {
   const elapsed = started
     ? Math.min(total, before + Math.min(inStage, current?.duration_minutes ?? 0))
     : 0
-  const stagePct =
-    started && c.duration_seconds && remaining != null
-      ? Math.min(100, Math.max(0, ((c.duration_seconds - remaining) / c.duration_seconds) * 100))
-      : 0
   const next = stages[c.stage_index + 1]
+  const behind = Math.round(session.schedule_offset_minutes)
+  const schedule = !started
+    ? null
+    : behind >= 2
+      ? { tone: behind >= 10 ? 'bad' : 'warn', text: `${behind} min behind` }
+      : behind <= -2
+        ? { tone: 'good', text: `${-behind} min ahead` }
+        : { tone: 'good', text: 'On schedule' }
 
   return (
-    <Card
-      title="Run of show"
-      subtitle={
-        started
-          ? `Stage ${c.stage_index + 1} of ${stages.length} · hover a circle for its time slot`
-          : 'Not started yet: press Start below when the room is ready'
-      }
-      actions={
-        <div className="ros__summary">
-          <div>
-            <span className="ros__label">Session time</span>
-            <span className="ros__value num">
+    <section className="card hq-track" aria-label="Run of show">
+      <div className="hq-track__head">
+        <span className="hq-label">Run of show</span>
+        <div className="hq-track__stats">
+          <span className="hq-stat">
+            <span className="hq-label">Session</span>
+            <span className="num">
               {hm(elapsed)} <span className="muted">/ {hm(total)}</span>
             </span>
-          </div>
-          {started && remaining != null && (
-            <div>
-              <span className="ros__label">This stage</span>
-              <span className={`ros__value num ${remaining < 0 ? 'ros__value--over' : ''}`}>
-                {remaining < 0 ? `+${clockText(-remaining)} over` : `${clockText(remaining)} left`}
-              </span>
-            </div>
-          )}
+          </span>
           {next && (
-            <div>
-              <span className="ros__label">Up next</span>
-              <span className="ros__value">
-                {next.start} {next.title.replace(' (optional extension)', '')}
+            <span className="hq-stat">
+              <span className="hq-label">Up next</span>
+              <span>
+                <span className="num muted">{next.start}</span> {shortTitle(next.title)}
               </span>
-            </div>
+            </span>
           )}
+          {schedule && <span className={`hq-chip hq-chip--${schedule.tone}`}>{schedule.text}</span>}
         </div>
-      }
-    >
-      <ol className="tp__dots ros-dots" aria-label="Stages">
+      </div>
+      <ol className="tp__dots ros-dots hq-track__dots" aria-label="Stages">
         {stages.map((s, i) => {
           const state = !started
             ? 'todo'
@@ -81,7 +73,7 @@ export function RunOfShow({ session }: { session: SessionView }) {
             .split(':')
             .map(Number)
             .reduce((h, m) => h * 60 + m)
-          const title = s.title.replace(' (optional extension)', '')
+          const title = shortTitle(s.title)
           const status =
             state === 'done'
               ? 'Done'
@@ -114,121 +106,18 @@ export function RunOfShow({ session }: { session: SessionView }) {
           )
         })}
       </ol>
-      <div className={`tp__current ${started ? 'is-now' : 'is-idle'}`}>
-        {started && current ? (
-          <>
-            <span className="tp__current-label">Now</span>
-            <span className="tp__current-text">
-              {c.stage_index + 1}. {current.title.replace(' (optional extension)', '')} ·{' '}
-              {current.duration_minutes} min
-            </span>
-            <span className="ros-dots__bar" aria-hidden>
-              <span style={{ width: `${stagePct}%` }} />
-            </span>
-          </>
-        ) : (
-          <span className="tp__current-text">
-            Not started yet · hover a circle to see each stage
-          </span>
-        )}
-      </div>
-    </Card>
+    </section>
   )
 }
 
-type Step = {
-  label: string
-  kinds: string[]
-  done: boolean
-  value: string
-}
-
-/** One team at a glance: join code, its progress through the workshop in stage order, key numbers and alerts. */
+/** One team at a glance: where it is and its key numbers. What needs the facilitator is listed once,
+ * in "Needs you", not repeated here. Before the start the join code leads; then it shrinks. */
 export function TeamProgressCard({ t, session }: { t: TeamProgress; session: SessionView }) {
   const toast = useToast()
-  const c = session.clock
-  const stageKind = c.status === 'not_started' ? '' : c.stage_kind
-  const indexOf = (kinds: string[]) => {
-    const idx = session.stages.findIndex((s) => kinds.includes(s.kind))
-    return idx < 0 ? Number.POSITIVE_INFINITY : idx
-  }
-  const steps: Step[] = [
-    {
-      label: 'Diagnose priorities',
-      kinds: ['diagnose'],
-      done: t.priorities > 0,
-      value: t.priorities > 0 ? `${t.priorities} set · ${t.evidence_cited} cited` : '',
-    },
-    {
-      label: 'Investment Round 1',
-      kinds: ['invest_r1'],
-      done: t.round1_submitted,
-      value: t.round1_submitted ? 'Submitted' : '',
-    },
-    {
-      label: 'Board pitch',
-      kinds: ['analyze', 'invest_r2'],
-      done: t.pitch_submitted,
-      value: t.pitch_total != null ? `${t.pitch_total}/15` : t.pitch_submitted ? 'To score' : '',
-    },
-    {
-      label: 'Investment Round 2',
-      kinds: ['invest_r2'],
-      done: t.round2_submitted,
-      value: t.round2_submitted ? 'Submitted' : '',
-    },
-    {
-      label: 'Operating model',
-      kinds: ['operating_model'],
-      done: t.opmodel_submitted,
-      value:
-        t.opmodel_total != null ? `${t.opmodel_total}/12` : t.opmodel_submitted ? 'Submitted' : '',
-    },
-    {
-      label: 'Crisis response',
-      kinds: ['crisis'],
-      done: t.crisis_responded,
-      value:
-        t.crisis_total != null
-          ? `${t.crisis_total}/18`
-          : t.crisis_event_id
-            ? `${t.crisis_event_id.toUpperCase()} ${t.crisis_severity ?? ''} live`
-            : '',
-    },
-    {
-      label: 'Opportunity map',
-      kinds: ['translate'],
-      done: t.opportunities > 0,
-      value: t.opportunities > 0 ? `${t.opportunities} captured` : '',
-    },
-  ]
+  const started = session.clock.status !== 'not_started'
+  const steps = teamSteps(t, session)
   const doneCount = steps.filter((s) => s.done).length
-  const started = c.status !== 'not_started'
-  const crisisStageIndex = indexOf(['crisis'])
-  const states = steps.map((s, index) => {
-    const now = started && s.kinds.includes(stageKind) && !s.done
-    const missed =
-      started && !s.done && !now && c.stage_index > Math.max(...s.kinds.map((k) => indexOf([k])))
-    const state = s.done ? 'done' : now ? 'now' : missed ? 'missed' : 'todo'
-    const noCrisis =
-      s.kinds.includes('crisis') &&
-      !t.crisis_event_id &&
-      started &&
-      c.stage_index >= crisisStageIndex
-    const status =
-      s.value ||
-      (noCrisis
-        ? 'No crisis fired (clean portfolio). Assign one from the Teams tab if you want one.'
-        : state === 'now'
-          ? 'Working on it now'
-          : state === 'missed'
-            ? 'Not submitted'
-            : 'Coming up')
-    return { ...s, index, state, status }
-  })
-  // The step to call out under the circles: the live one, else the first missed one.
-  const current =
-    states.find((s) => s.state === 'now') ?? states.find((s) => s.state === 'missed') ?? null
+  const live = steps.find((s) => s.state === 'now')
 
   const copy = async () => {
     try {
@@ -238,32 +127,41 @@ export function TeamProgressCard({ t, session }: { t: TeamProgress; session: Ses
       toast('Copy is blocked in this browser; read the code out instead', 'error')
     }
   }
+  const code = (
+    <button
+      type="button"
+      className={`tp__code ${started ? 'tp__code--small' : ''}`}
+      onClick={copy}
+      title="Copy join code"
+    >
+      <span className="tp__code-label">Join code</span>
+      <span className="tp__code-value">{t.join_code}</span>
+      <Copy aria-hidden />
+    </button>
+  )
 
   return (
-    <section className="card tp" aria-label={t.team_name}>
-      <header className="tp__head">
+    <section className="card tp hq-team" aria-label={t.team_name}>
+      <header className="hq-team__head">
         <div className="grow">
           <div className="tp__name">{t.team_name}</div>
           {payerSuffix(t.team_name, t.payer_name) && (
             <div className="tp__payer">{t.payer_name}</div>
           )}
         </div>
-        <button type="button" className="tp__code" onClick={copy} title="Copy join code">
-          <span className="tp__code-label">Join code</span>
-          <span className="tp__code-value">{t.join_code}</span>
-          <Copy aria-hidden />
-        </button>
+        {code}
       </header>
 
-      <div className="tp__progress">
-        <div className="tp__progress-text">
-          <span className="strong">Progress</span>
-          <span className="muted num">
-            {doneCount} of {steps.length} done
+      <div className="hq-team__progress">
+        <div className="hq-team__xp-row">
+          <span className="hq-label">Progress</span>
+          <span className="num strong small">
+            {doneCount}
+            <span className="muted">/{steps.length}</span>
           </span>
         </div>
         <ol className="tp__dots" aria-label="Workshop steps">
-          {states.map((s, i) => (
+          {steps.map((s, i) => (
             <li key={s.label} className={`tp__dot-item is-${s.state}`}>
               <button
                 type="button"
@@ -282,94 +180,49 @@ export function TeamProgressCard({ t, session }: { t: TeamProgress; session: Ses
             </li>
           ))}
         </ol>
-        <div className={`tp__current is-${current ? current.state : 'idle'}`}>
-          {current ? (
-            <>
-              <span className="tp__current-label">
-                {current.state === 'now' ? 'Now' : 'Needs attention'}
-              </span>
-              <span className="tp__current-text">
-                {current.index + 1}. {current.label} · {current.status}
-              </span>
-            </>
-          ) : (
-            <span className="tp__current-text">
-              {!started
-                ? 'Waiting for the session to start'
-                : doneCount === steps.length
-                  ? 'All steps complete'
-                  : 'Nothing due in this stage · hover a circle for details'}
-            </span>
-          )}
+        <div className="hq-team__now small">
+          {!started
+            ? 'Waiting for the session to start'
+            : live
+              ? `${live.label} · ${live.status}`
+              : doneCount === steps.length
+                ? 'All steps complete'
+                : 'Nothing due in this stage'}
         </div>
       </div>
 
-      <div className="tp__stats">
+      <div className="hq-team__stats">
         <div>
-          <span className="tp__stat-label">Capital left</span>
-          <span className="tp__stat-value num">{money(t.available_musd)}</span>
-          <span className="tp__stat-sub">of {money(t.granted_musd)}</span>
+          <span className="hq-label">Capital left</span>
+          <span className="hq-team__value num">{money(t.available_musd)}</span>
+          <span className="xs muted">of {money(t.granted_musd)}</span>
         </div>
         <div>
-          <span className="tp__stat-label">Root causes</span>
-          <span className="tp__stat-value num">
-            {t.root_causes_cited}/{t.root_causes_total}
+          <span className="hq-label">Root causes</span>
+          <span className="hq-team__value num">
+            {t.root_causes_cited}
+            <span className="muted">/{t.root_causes_total}</span>
           </span>
-          <span className="tp__stat-sub">evidenced</span>
+          <span className="xs muted">evidenced</span>
         </div>
-        <div>
-          <span className="tp__stat-label">AI queries</span>
-          <span className="tp__stat-value num">{t.ai_requests}</span>
-          <span className="tp__stat-sub">asked</span>
-        </div>
-        {t.stars_projected != null && (
+        {t.stars_projected != null ? (
           <div>
-            <span className="tp__stat-label">Stars</span>
-            <span className="tp__stat-value num">★ {t.stars_projected.toFixed(1)}</span>
-            <span className="tp__stat-sub">projected</span>
+            <span className="hq-label">Stars</span>
+            <span className="hq-team__value num">
+              <Star aria-hidden className="hq-star" /> {t.stars_projected.toFixed(1)}
+            </span>
+            <span className="xs muted">
+              {t.score_total != null ? `score ${t.score_total.toFixed(0)}/100` : 'projected'}
+            </span>
           </div>
-        )}
-        {t.score_total != null && (
+        ) : (
           <div>
-            <span className="tp__stat-label">Score</span>
-            <span className="tp__stat-value num">{t.score_total.toFixed(0)}</span>
-            <span className="tp__stat-sub">of 100</span>
+            <span className="hq-label">AI queries</span>
+            <span className="hq-team__value num">{t.ai_requests}</span>
+            <span className="xs muted">asked</span>
           </div>
         )}
       </div>
-
-      {(t.needs_nudge ||
-        (t.capacity_peak != null && t.capacity_peak > 1) ||
-        t.pitch_figures.length > 0 ||
-        t.crisis_event_id) && (
-        <div className="tp__alerts">
-          {t.needs_nudge && (
-            <Badge tone="warning" icon={<BellRing aria-hidden />}>
-              Nudge: no evidence cited yet
-            </Badge>
-          )}
-          {t.capacity_peak != null && t.capacity_peak > 1 && (
-            <Badge
-              tone={t.capacity_peak > session.rules.capacity_overrun_cap ? 'critical' : 'warning'}
-            >
-              Capacity peak {Math.round(t.capacity_peak * 100)}%
-            </Badge>
-          )}
-          {t.pitch_figures.length > 0 && (
-            <Badge tone="warning">Unsourced figure: {t.pitch_figures.join(', ')}</Badge>
-          )}
-          {t.crisis_event_id &&
-            (t.crisis_responded ? (
-              <Badge tone="good" icon={<Siren aria-hidden />}>
-                Crisis {t.crisis_event_id.toUpperCase()} handled
-              </Badge>
-            ) : (
-              <Badge tone="critical" icon={<Siren aria-hidden />}>
-                Crisis {t.crisis_event_id.toUpperCase()} live · {t.crisis_severity}
-              </Badge>
-            ))}
-        </div>
-      )}
     </section>
   )
 }
