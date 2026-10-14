@@ -14,24 +14,51 @@ const WARNINGS = [5 * 60, 60, 0] // seconds left at which the time is called out
 
 export const voiceSupported = typeof window !== 'undefined' && 'speechSynthesis' in window
 
+// Browsers load voices asynchronously; ask early so the first announcement already has them.
+if (voiceSupported) {
+  window.speechSynthesis.getVoices()
+  window.speechSynthesis.addEventListener?.('voiceschanged', () =>
+    window.speechSynthesis.getVoices(),
+  )
+}
+
+/** Female English voices by name across macOS/iOS, Chrome, Edge/Windows and Android. */
+const FEMALE =
+  /female|samantha|ava|allison|susan|zoe|karen|moira|tessa|serena|victoria|fiona|kate|nicky|joanna|salli|kendra|kimberly|aria|jenny|zira|michelle|emma|libby|sonia|natasha|google us english|google uk english female/i
+const MALE =
+  /\bmale\b|daniel|alex|fred|tom\b|aaron|arthur|guy|david|mark|ryan|eric|oliver|george|google uk english male/i
+const QUALITY = /natural|neural|premium|enhanced|google/i
+
+/** A female English voice when the device has one, the best available otherwise. */
 function pickVoice(): SpeechSynthesisVoice | undefined {
   const voices = window.speechSynthesis.getVoices().filter((v) => v.lang.startsWith('en'))
+  const female = voices.filter((v) => FEMALE.test(v.name) && !MALE.test(v.name))
   return (
-    voices.find((v) => /natural|neural|google/i.test(v.name) && v.lang === 'en-US') ??
+    female.find((v) => v.lang === 'en-US' && QUALITY.test(v.name)) ??
+    female.find((v) => v.lang === 'en-US') ??
+    female[0] ??
+    voices.find((v) => v.lang === 'en-US' && !MALE.test(v.name)) ??
     voices.find((v) => v.lang === 'en-US') ??
     voices[0]
   )
 }
 
-/** Speak now (queued after anything already being read). */
-export function speak(text: string): void {
+/**
+ * Speak `text`. Queued after anything already being read, unless `interrupt` is set: then
+ * whatever is playing stops first (a new stage, or the facilitator replaying the line).
+ */
+export function speak(text: string, { interrupt = false }: { interrupt?: boolean } = {}): void {
   if (!('speechSynthesis' in window) || !text.trim()) return
+  const synth = window.speechSynthesis
+  if (interrupt) synth.cancel()
+  // Chrome can leave the engine paused after a while, which silently drops new speech.
+  synth.resume?.()
   const u = new SpeechSynthesisUtterance(text)
   const voice = pickVoice()
   if (voice) u.voice = voice
   u.lang = voice?.lang ?? 'en-US'
   u.rate = 0.95
-  window.speechSynthesis.speak(u)
+  synth.speak(u)
 }
 
 export function stopSpeaking(): void {
@@ -83,7 +110,8 @@ export function useStageAnnouncer(session: SessionView, enabled: boolean): void 
     const key = `${clock.stage_index}:start`
     if (seen.has(key)) return
     seen.add(key)
-    if (enabled) speak(stageAnnouncement(session, clock.stage_index))
+    // A new stage replaces anything still being read about the last one.
+    if (enabled) speak(stageAnnouncement(session, clock.stage_index), { interrupt: true })
   }, [clock.stage_index, clock.status, enabled, session, seen])
 
   useEffect(() => {
