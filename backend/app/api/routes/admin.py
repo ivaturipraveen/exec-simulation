@@ -1,11 +1,8 @@
 """Settings (admin). Everything configurable in backend/.env and content/game.yaml can be overridden
-here; secrets stay in backend/.env. Access requires ADMIN_PASSWORD from backend/.env."""
+here; secrets stay in backend/.env. Access requires the facilitator sign-in (see app.core.accounts)."""
 
 from __future__ import annotations
 
-import hmac
-import time
-from collections import defaultdict, deque
 from datetime import datetime
 from typing import Any, Literal
 
@@ -14,57 +11,16 @@ from pydantic import BaseModel, Field
 from sqlmodel import Session, select
 
 from app.api.deps import Admin
-from app.core.errors import DomainError, Forbidden, NotFound
+from app.core.errors import NotFound
 from app.core.security import issue_token
 from app.db import GameSession, Team
 from app.services.settings_store import SettingsView
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
-_FAILURES: dict[str, deque[float]] = defaultdict(deque)
-_WINDOW_S, _MAX_FAILURES = 300, 5
-
-
-class TooManyAttempts(DomainError):
-    status_code = 429
-    code = "too_many_attempts"
-
-
-class LoginBody(BaseModel):
-    password: str = Field(min_length=1, max_length=256)
-
 
 class LoginOut(BaseModel):
     token: str
-
-
-class AdminStatus(BaseModel):
-    enabled: bool
-
-
-@router.get("/status")
-def status(request: Request) -> AdminStatus:
-    """Whether Settings are enabled (ADMIN_PASSWORD set in backend/.env)."""
-    return AdminStatus(enabled=request.app.state.settings.admin_password is not None)
-
-
-@router.post("/login")
-def login(body: LoginBody, request: Request) -> LoginOut:
-    settings = request.app.state.settings
-    if settings.admin_password is None:
-        raise Forbidden("Settings are disabled: set ADMIN_PASSWORD in backend/.env and restart")
-    client = request.client.host if request.client else "local"
-    now = time.monotonic()
-    attempts = _FAILURES[client]
-    while attempts and now - attempts[0] > _WINDOW_S:
-        attempts.popleft()
-    if len(attempts) >= _MAX_FAILURES:
-        raise TooManyAttempts("Too many attempts — wait five minutes")
-    if not hmac.compare_digest(body.password.encode(), settings.admin_password.get_secret_value().encode()):
-        attempts.append(now)
-        raise Forbidden("Incorrect password")
-    attempts.clear()
-    return LoginOut(token=issue_token(request.app.state.secret, "admin", "global"))
 
 
 @router.get("/settings")

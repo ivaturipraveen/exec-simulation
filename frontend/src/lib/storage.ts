@@ -72,29 +72,17 @@ export const auth = {
   },
 }
 
-const ADMIN_KEY = 'execsim.admin'
+const SIGN_IN_KEY = 'execsim.signin'
 
-/** Settings (admin) token lives only for the browser tab session. */
-export const adminAuth = {
+/** Site sign-in token (when the server requires sign-in). Kept until the user signs out. */
+export const signIn = {
   get(): string | null {
-    try {
-      return window.sessionStorage.getItem(ADMIN_KEY)
-    } catch {
-      return null
-    }
+    return storage.get(SIGN_IN_KEY)
   },
   set(token: string): void {
-    try {
-      window.sessionStorage.setItem(ADMIN_KEY, token)
-    } catch {
-      /* ignore */
-    }
+    storage.set(SIGN_IN_KEY, token)
   },
   clear(): void {
-    try {
-      window.sessionStorage.removeItem(ADMIN_KEY)
-    } catch {
-      /* ignore */
-    }
+    storage.remove(SIGN_IN_KEY)
   },
 }

@@ -15,6 +15,7 @@ import './styles/theme.css'
 import './styles/responsive.css'
 import './styles/brand.css'
 import './styles/game.css'
+import './styles/login.css'
 
 initTheme()
 

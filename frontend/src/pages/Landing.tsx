@@ -3,11 +3,13 @@ import {
   Building2,
   Clock4,
   LineChart,
+  LogOut,
   Presentation,
   ShieldCheck,
   Siren,
   Users,
 } from 'lucide-react'
+import { useQueryClient } from '@tanstack/react-query'
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { errorMessage, request } from '../api/client'
@@ -19,37 +21,36 @@ import { Callout } from '../components/ui/primitives'
 import { Tabs } from '../components/ui/Tabs'
 import { BrandMark } from '../components/BrandMark'
 import { ThemeToggle } from '../components/ThemeToggle'
-import { auth } from '../lib/storage'
+import { authStatusKey, useAuthStatus } from '../api/auth'
+import { auth, signIn } from '../lib/storage'
 
 const FEATURES = [
   {
     icon: Building2,
     title: 'Three asymmetric health plans',
-    text: 'A PE-backed challenger, a 15-year incumbent and a provider-sponsored plan — each with three hidden root causes in a 30-file data room.',
+    text: 'Each with hidden root causes.',
   },
   {
     icon: LineChart,
     title: '18 cards, conditional effects',
-    text: 'Payer fit, prerequisites, adoption, capacity and diminishing returns decide what lands. Leading KPIs move first; Stars follow a rating year later.',
+    text: 'Fit, timing and capacity decide.',
   },
   {
     icon: Siren,
     title: 'Crises your choices trigger',
-    text: 'Seven events, fired by your portfolio. Containment, ownership and honesty are scored; concealment scores zero.',
+    text: 'Honesty scores; concealment does not.',
   },
-  {
-    icon: ShieldCheck,
-    title: 'Governance as a mechanic',
-    text: 'Decide where humans decide, AI assists and agents act. Controls, adoption and recoverability score — autonomy alone does not.',
-  },
+  { icon: ShieldCheck, title: 'Governance as a mechanic', text: 'Controls beat raw autonomy.' },
 ]
 
 export function Landing() {
-  const [tab, setTab] = useState<'join' | 'run'>('join')
+  const { data: status } = useAuthStatus()
+  const isTeam = status?.role === 'team'
   const { data: catalog } = useCatalog()
   const core = catalog?.stages.filter((s) => !s.optional) ?? []
-  const optional = catalog?.stages.find((s) => s.optional)
   const coreMinutes = core.reduce((n, s) => n + s.duration_minutes, 0)
+  const isFacilitator = status?.role === 'facilitator'
+  const [tab, setTab] = useState<'join' | 'run'>('join')
   return (
     <div className="landing">
       <header className="landing__top">
@@ -58,10 +59,13 @@ export function Landing() {
           <span className="strong">Executive AI Simulation</span>
         </div>
         <div className="row">
-          <Link to="/settings" className="btn btn--ghost btn--sm">
-            Settings
-          </Link>
+          {!isTeam && (
+            <Link to="/settings" className="btn btn--ghost btn--sm">
+              Settings
+            </Link>
+          )}
           <ThemeToggle />
+          <SignOutButton />
         </div>
       </header>
       <main className="landing__main">
@@ -69,9 +73,7 @@ export function Landing() {
           <div className="page-header__eyebrow">Medicare Advantage · Leadership workshop</div>
           <h1 className="landing__title">Lead a health plan through its AI transformation.</h1>
           <p className="landing__lead">
-            Diagnose an ambiguous data room with an AI analyst, place scarce capital, live with
-            delayed Stars and business consequences, then translate what you learned into an AI
-            Opportunity Map for your own organization.
+            Diagnose, invest, pitch the board and lead through a crisis — as one executive team.
           </p>
           <ul className="list-reset landing__features">
             {FEATURES.map(({ icon: Icon, title, text }) => (
@@ -90,51 +92,78 @@ export function Landing() {
               </li>
             ))}
           </ul>
-          <div className="agenda" aria-label="Run of show">
-            <span className="upper muted row" style={{ '--gap': '6px' } as React.CSSProperties}>
-              <Clock4 size={13} aria-hidden /> {coreMinutes} minutes
-              {optional &&
-                ` + optional ${optional.duration_minutes}-minute ${optional.title.split(' (')[0].toLowerCase()}`}
-            </span>
-            <ol className="agenda__list">
-              {core
-                .filter((s) => !['simulate_y1', 'simulate_y2', 'results'].includes(s.kind))
-                .map((s) => (
-                  <li key={s.id}>
-                    <span className="num">{s.start}</span>
-                    {s.title.replace(' and briefing', '').replace(' (break)', '')}
-                  </li>
-                ))}
-            </ol>
-          </div>
+          {core.length > 0 && (
+            <div className="agenda" aria-label="Run of show">
+              <span className="upper muted row" style={{ '--gap': '6px' } as React.CSSProperties}>
+                <Clock4 size={13} aria-hidden /> {coreMinutes} minutes
+              </span>
+              <ol className="agenda__list">
+                {core
+                  .filter((s) => !['simulate_y1', 'simulate_y2', 'results'].includes(s.kind))
+                  .map((s) => (
+                    <li key={s.id}>
+                      <span className="num">{s.start}</span>
+                      {s.title.replace(' and briefing', '').replace(' (break)', '')}
+                    </li>
+                  ))}
+              </ol>
+            </div>
+          )}
         </section>
         <section className="card landing__panel" aria-label="Get started">
-          <div style={{ padding: '6px 20px 0' }}>
-            <Tabs
-              label="Get started"
-              value={tab}
-              onChange={setTab}
-              tabs={[
-                {
-                  id: 'join',
-                  label: (
-                    <>
-                      <Users size={15} aria-hidden /> Join your team
-                    </>
-                  ),
-                },
-                {
-                  id: 'run',
-                  label: (
-                    <>
-                      <Presentation size={15} aria-hidden /> Facilitate
-                    </>
-                  ),
-                },
-              ]}
-            />
-          </div>
-          <div className="card__body">{tab === 'join' ? <JoinForm /> : <RunForm />}</div>
+          {isTeam ? (
+            <>
+              <div className="card__head">
+                <h2 className="card__title row">
+                  <Users size={16} aria-hidden /> Your team
+                </h2>
+              </div>
+              <div className="card__body">
+                <JoinForm teamName={status?.payer_name ?? 'your team'} />
+              </div>
+            </>
+          ) : isFacilitator ? (
+            // The signed-in facilitator only creates or resumes sessions.
+            <>
+              <div className="card__head">
+                <h2 className="card__title row">
+                  <Presentation size={16} aria-hidden /> Facilitate
+                </h2>
+              </div>
+              <div className="card__body">
+                <RunForm />
+              </div>
+            </>
+          ) : (
+            <>
+              <div style={{ padding: '6px 20px 0' }}>
+                <Tabs
+                  label="Get started"
+                  value={tab}
+                  onChange={setTab}
+                  tabs={[
+                    {
+                      id: 'join',
+                      label: (
+                        <>
+                          <Users size={15} aria-hidden /> Join your team
+                        </>
+                      ),
+                    },
+                    {
+                      id: 'run',
+                      label: (
+                        <>
+                          <Presentation size={15} aria-hidden /> Facilitate
+                        </>
+                      ),
+                    },
+                  ]}
+                />
+              </div>
+              <div className="card__body">{tab === 'join' ? <JoinForm /> : <RunForm />}</div>
+            </>
+          )}
         </section>
       </main>
       <footer className="landing__footer muted small">
@@ -145,19 +174,42 @@ export function Landing() {
   )
 }
 
-function JoinForm() {
+function SignOutButton() {
+  const { data } = useAuthStatus()
+  const queryClient = useQueryClient()
+  if (!data?.required) return null
+  return (
+    <button
+      className="btn btn--ghost btn--sm btn--icon"
+      type="button"
+      onClick={() => {
+        signIn.clear()
+        queryClient.setQueryData(authStatusKey, { required: true, signed_in: false, email: null })
+      }}
+      aria-label="Sign out"
+      title={data.email ? `Sign out ${data.email}` : 'Sign out'}
+    >
+      <LogOut aria-hidden />
+    </button>
+  )
+}
+
+/** Join by code. A signed-in team account must use its own team's code. */
+function JoinForm({ teamName }: { teamName?: string }) {
   const navigate = useNavigate()
   const [code, setCode] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const existing = auth.team()
 
   async function submit(e: FormEvent) {
     e.preventDefault()
     setBusy(true)
     setError(null)
     try {
-      const r = await request<JoinResult>('POST', '/join', { body: { code: code.trim() } })
+      const r = await request<JoinResult>('POST', '/join', {
+        token: signIn.get(),
+        body: { code: code.trim() },
+      })
       auth.setTeam({
         token: r.token,
         teamId: r.team_id,
@@ -176,7 +228,14 @@ function JoinForm() {
   return (
     <form className="stack" style={{ '--gap': '16px' } as React.CSSProperties} onSubmit={submit}>
       <p className="secondary">
-        Enter the six-character code your facilitator shared for your team.
+        {teamName ? (
+          <>
+            Signed in as <span className="strong">{teamName}</span>. Enter your team&apos;s
+            six-character join code from your facilitator.
+          </>
+        ) : (
+          'Enter the six-character code your facilitator shared for your team.'
+        )}
       </p>
       <Field label="Team join code" error={error}>
         {(id) => (
@@ -204,11 +263,6 @@ function JoinForm() {
       >
         Enter workspace
       </Button>
-      {existing && (
-        <Button variant="ghost" block onClick={() => navigate('/team')}>
-          Continue as {existing.teamName}
-        </Button>
-      )}
     </form>
   )
 }
@@ -236,6 +290,7 @@ function RunForm() {
     setError(null)
     try {
       const r = await request<CreatedSession>('POST', '/sessions', {
+        token: signIn.get(),
         body: {
           name,
           round2_mechanic: mechanic || null,

@@ -6,6 +6,7 @@ from typing import Annotated
 
 from fastapi import Depends, Header, Request
 
+from app.core.accounts import AccountStore, SignedInAccount
 from app.core.config import Settings
 from app.core.errors import Forbidden, Unauthorized
 from app.core.security import Principal, verify_token
@@ -51,12 +52,40 @@ def require_facilitator(session_id: str, principal: Annotated[Principal, Depends
     return session_id
 
 
-def require_admin(principal: Annotated[Principal, Depends(_principal)]) -> str:
-    if principal.role != "admin":
-        raise Forbidden("Settings access required")
-    return principal.subject_id
+def _signed_in(
+    request: Request, authorization: Annotated[str | None, Header()] = None
+) -> SignedInAccount | None:
+    """The signed-in account, or None when no account exists yet (sign-in is off)."""
+    store: AccountStore = request.app.state.accounts
+    if not store.login_required:
+        return None
+    token = authorization[7:].strip() if authorization and authorization.lower().startswith("bearer ") else ""
+    account = store.from_token(request.app.state.secret, token) if token else None
+    if account is None:
+        raise Unauthorized("Sign in first")
+    return account
+
+
+SignedIn = Annotated[SignedInAccount | None, Depends(_signed_in)]
+
+
+def require_facilitator_account(account: SignedIn) -> None:
+    if account is not None and account.role != "facilitator":
+        raise Forbidden("Only the facilitator can do this")
+
+
+def require_admin(request: Request, account: SignedIn) -> str:
+    """Settings: the signed-in facilitator. Without sign-in configured, open only on local/test."""
+    if account is None:
+        if request.app.state.settings.environment not in ("local", "test"):
+            raise Forbidden("Settings need a facilitator account: add one with scripts/manage_accounts.py")
+        return "local"
+    if account.role != "facilitator":
+        raise Forbidden("Only the facilitator can open Settings")
+    return account.email
 
 
 TeamId = Annotated[str, Depends(require_team)]
 Admin = Annotated[str, Depends(require_admin)]
+FacilitatorAccount = Annotated[None, Depends(require_facilitator_account)]
 FacilitatorSession = Annotated[str, Depends(require_facilitator)]

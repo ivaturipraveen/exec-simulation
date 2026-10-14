@@ -1,7 +1,9 @@
 import { lazy, Suspense, useLayoutEffect } from 'react'
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import { Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom'
+import { SignInGate } from './components/SignInGate'
 import { Loading } from './components/ui/primitives'
 import { Landing } from './pages/Landing'
+import { LoginPage } from './pages/LoginPage'
 import { NotFound } from './pages/NotFound'
 
 const TeamApp = lazy(() => import('./team/TeamApp').then((m) => ({ default: m.TeamApp })))
@@ -29,13 +31,30 @@ export function App() {
     <Suspense fallback={<Loading />}>
       <ScrollToTop />
       <Routes>
-        <Route index element={<Landing />} />
-        <Route path="team/*" element={<TeamApp />} />
-        <Route path="facilitator/:sessionId/*" element={<FacilitatorConsole />} />
-        <Route path="facilitator" element={<Navigate to="/" replace />} />
-        <Route path="projector/:sessionId" element={<ProjectorView />} />
-        <Route path="settings" element={<SettingsPage />} />
-        <Route path="*" element={<NotFound />} />
+        <Route path="login" element={<LoginPage />} />
+        <Route
+          element={
+            <SignInGate>
+              <Outlet />
+            </SignInGate>
+          }
+        >
+          <Route index element={<Landing />} />
+          <Route path="team/*" element={<TeamApp />} />
+          <Route
+            element={
+              <SignInGate facilitatorOnly>
+                <Outlet />
+              </SignInGate>
+            }
+          >
+            <Route path="facilitator/:sessionId/*" element={<FacilitatorConsole />} />
+            <Route path="projector/:sessionId" element={<ProjectorView />} />
+            <Route path="settings" element={<SettingsPage />} />
+          </Route>
+          <Route path="facilitator" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<NotFound />} />
+        </Route>
       </Routes>
     </Suspense>
   )

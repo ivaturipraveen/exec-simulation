@@ -1,8 +1,8 @@
 """Stateless HMAC-signed role tokens.
 
 Tokens are ``<role>.<subject_id>.<signature>``. Facilitator tokens grant control of one
-session; team tokens grant access to one team's workspace; the admin token (issued after the
-``ADMIN_PASSWORD`` check) opens global Settings. Hidden content (root causes,
+session; team tokens grant access to one team's workspace; user tokens are sign-ins to a
+facilitator or team account (see ``app.core.accounts``). The facilitator account also opens Settings. Hidden content (root causes,
 answer keys, formulas) is only ever served to facilitator tokens.
 """
 
@@ -15,7 +15,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
 
-Role = Literal["facilitator", "team", "admin"]
+Role = Literal["facilitator", "team", "user"]
 
 
 @dataclass(frozen=True)
@@ -45,7 +45,7 @@ def issue_token(secret: str, role: Role, subject_id: str) -> str:
 
 def verify_token(secret: str, token: str) -> Principal | None:
     parts = token.split(".")
-    if len(parts) != 3 or parts[0] not in ("facilitator", "team", "admin"):
+    if len(parts) != 3 or parts[0] not in ("facilitator", "team", "user"):
         return None
     role, subject_id, signature = parts
     expected = _sign(secret, role, subject_id)  # type: ignore[arg-type]

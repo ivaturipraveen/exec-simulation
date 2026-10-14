@@ -83,6 +83,20 @@ class AppSetting(SQLModel, table=True):
     updated_at: datetime = Field(default_factory=utcnow)
 
 
+class Account(SQLModel, table=True):
+    """A sign-in: the facilitator, or one team (``payer_id``). Passwords are stored only as hashes."""
+
+    __tablename__ = "accounts"
+
+    id: int | None = Field(default=None, primary_key=True)
+    email: str = Field(index=True, unique=True)
+    password_hash: str
+    role: str  # facilitator | team
+    payer_id: str | None = None
+    created_at: datetime = Field(default_factory=utcnow)
+    updated_at: datetime = Field(default_factory=utcnow)
+
+
 BACKEND_DIR = Path(__file__).resolve().parent.parent
 BASELINE_REVISION = "0001"
 
@@ -133,7 +147,9 @@ def migrate(engine: Engine) -> None:
         tables = set(inspect(conn).get_table_names())
         cfg.attributes["connection"] = conn
         if "game_sessions" in tables and "alembic_version" not in tables:
-            SQLModel.metadata.create_all(conn)
+            # Only the baseline tables: later tables come from their own migrations.
+            baseline = [GameSession.__table__, Team.__table__, EventLog.__table__, AppSetting.__table__]
+            SQLModel.metadata.create_all(conn, tables=baseline)
             _add_missing_columns(conn)
             command.stamp(cfg, BASELINE_REVISION)
             log.info("Adopted an existing database at migration %s", BASELINE_REVISION)
@@ -149,6 +165,8 @@ def _add_missing_columns(conn: Connection) -> None:
     if conn.dialect.name != "sqlite":
         return
     for table in SQLModel.metadata.sorted_tables:
+        if table.name == Account.__tablename__:
+            continue
         existing = {row[1] for row in conn.exec_driver_sql(f"PRAGMA table_info({table.name})")}
         for col in table.columns:
             if col.name in existing:

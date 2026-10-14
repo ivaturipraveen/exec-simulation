@@ -1,5 +1,5 @@
-"""Facilitator endpoints. Session creation is open locally; everything else needs the
-session's facilitator token."""
+"""Facilitator endpoints. Creating a session needs the facilitator sign-in (when sign-in is on);
+everything else needs the session's facilitator token."""
 
 from typing import Annotated, Any, Literal
 
@@ -7,7 +7,7 @@ from fastapi import APIRouter, Path, Request
 from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel, Field
 
-from app.api.deps import FacilitatorSession, GameDep
+from app.api.deps import FacilitatorAccount, FacilitatorSession, GameDep
 from app.schemas import views as v
 from app.services.exports import session_summary_markdown
 from app.services.game import StageAction
@@ -28,7 +28,7 @@ class CreateSessionBody(BaseModel):
 
 
 @router.post("", status_code=201)
-def create_session(body: CreateSessionBody, game: GameDep) -> v.CreatedSession:
+def create_session(body: CreateSessionBody, game: GameDep, _: FacilitatorAccount) -> v.CreatedSession:
     return game.create_session(
         body.name, body.seed, body.round2_mechanic, body.payer_ids, body.sim_mode, body.team_names
     )

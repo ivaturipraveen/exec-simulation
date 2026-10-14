@@ -10,6 +10,8 @@ import {
   MonitorPlay,
   PlayCircle,
   Users,
+  Volume2,
+  VolumeX,
   Wifi,
   WifiOff,
 } from 'lucide-react'
@@ -35,6 +37,8 @@ import { ResultsPanel } from './ResultsPanel'
 import { BrandMark } from '../components/BrandMark'
 import { RunPanel } from './RunPanel'
 import { TeamsPanel } from './TeamsPanel'
+import type { SessionView } from '../api/types'
+import { speak, useStageAnnouncer, useVoiceEnabled, voiceSupported } from './voiceAnnouncer'
 
 type Tab = 'run' | 'teams' | 'key' | 'results' | 'map' | 'activity' | 'edition' | 'settings'
 
@@ -51,6 +55,7 @@ export function FacilitatorConsole() {
     if (params.has('token')) setParams({}, { replace: true }) // keep the token out of the address bar
   }, [params, setParams])
   const [tab, setTab] = useState<Tab>('run')
+  const [voice, setVoice] = useVoiceEnabled()
   const { data: session, error, isPending } = useSession(sessionId, token)
   const connected = useRealtime(token ? sessionId : undefined, token)
 
@@ -70,6 +75,7 @@ export function FacilitatorConsole() {
 
   return (
     <div className="fac">
+      <StageAnnouncer session={session} enabled={voice} />
       <header className="fac__top">
         <Link to="/" className="row" style={{ color: 'inherit', textDecoration: 'none' }}>
           <BrandMark />
@@ -95,6 +101,25 @@ export function FacilitatorConsole() {
           >
             {connected ? 'Live' : 'Offline'}
           </Badge>
+          {voiceSupported && (
+            <Button
+              size="sm"
+              variant="ghost"
+              icon={voice ? <Volume2 /> : <VolumeX />}
+              iconOnly
+              aria-pressed={voice}
+              aria-label={voice ? 'Turn the voice announcer off' : 'Turn the voice announcer on'}
+              title={
+                voice
+                  ? 'Voice announcer on: reads each stage and calls out the time'
+                  : 'Voice announcer off'
+              }
+              onClick={() => {
+                setVoice(!voice)
+                if (!voice) speak('Voice announcer on.')
+              }}
+            />
+          )}
           <ThemeToggle />
           <Button
             size="sm"
@@ -201,6 +226,12 @@ export function FacilitatorConsole() {
       </main>
     </div>
   )
+}
+
+/** Reads each stage aloud as it starts and calls out the time left (see voiceAnnouncer.ts). */
+function StageAnnouncer({ session, enabled }: { session: SessionView; enabled: boolean }) {
+  useStageAnnouncer(session, enabled)
+  return null
 }
 
 function TokenGate({

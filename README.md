@@ -30,7 +30,7 @@ Each service has its own configuration file (templates: `backend/.env.example`, 
 - **AI:** key, model, effort, limits.
 - **Game rules:** `SIM_MODE`, `ROUND2_MECHANIC`, `ROUND2_BASE_MUSD`, `CONFIDENCE_BAND`, `SIM_DEFAULT_SEED`, `INCLUDE_TRANSLATION`, `PITCH_AI_SUGGEST`, `OPPORTUNITY_RETENTION_DAYS`.
 
-Blank game values fall back to `content/game.yaml`. Set `ADMIN_PASSWORD` to enable the **Settings** screen (`/settings`, linked from the start page). There you can change about 70 settings without editing files: session defaults, facilitation, the AI analyst, model parameters (§5), scorecard weights and pilot targets. Each one shows its source and env var. Precedence is `content/game.yaml` → `backend/.env` → saved in Settings. Runtime settings apply immediately; game settings apply to new sessions, because each session keeps a snapshot (adjust one session from its console's **Session settings** tab, with an audit note). Secrets stay in `backend/.env` only. The same screen holds the Content Pack §12 review sign-off and a list of sessions.
+Blank game values fall back to `content/game.yaml`. Sign-in accounts live in the database (`accounts` table, passwords stored as scrypt hashes): one facilitator account and one account per team. Add them with `cd backend && python scripts/manage_accounts.py add facilitator you@example.com` and `... add team team@example.com --payer horizon` (`list`, `set-password` and `remove` also exist; pass `--database-url` to manage another database such as production). Once an account exists the app opens with a sign-in page; after signing in, a team account enters its join code, which must be its own team's. The signed-in facilitator opens the **Settings** screen (`/settings`, linked from the start page) with no extra password; without any account set, Settings open only locally. There you can change about 70 settings without editing files: session defaults, facilitation, the AI analyst, model parameters (§5), scorecard weights and pilot targets. Each one shows its source and env var. Precedence is `content/game.yaml` → `backend/.env` → saved in Settings. Runtime settings apply immediately; game settings apply to new sessions, because each session keeps a snapshot (adjust one session from its console's **Session settings** tab, with an audit note). Secrets stay in `backend/.env` only. The same screen holds the Content Pack §12 review sign-off and a list of sessions.
 
 The AI analyst uses Claude when `ANTHROPIC_API_KEY` is set; otherwise it runs in retrieval-only mode.
 
@@ -44,7 +44,7 @@ The API and the UI can run as two services. Set `VITE_API_URL` on the UI build s
 | Build | `pip install -r requirements.lock` | `npm ci && npm run build` |
 | Start / publish | `uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1` | publish `dist` |
 | Health check | `/api/health` | — |
-| Env | `ENVIRONMENT=production`, `SECRET_KEY`, `ADMIN_PASSWORD`, `ANTHROPIC_API_KEY`, `CORS_ORIGINS=<UI URL>`, `PYTHON_VERSION` | `VITE_API_URL=<API URL>`, `NODE_VERSION` |
+| Env | `ENVIRONMENT=production`, `SECRET_KEY`, `ANTHROPIC_API_KEY`, `CORS_ORIGINS=<UI URL>`, `PYTHON_VERSION` | `VITE_API_URL=<API URL>`, `NODE_VERSION` |
 | Extra | A persistent disk at `/var/data` with `DATA_DIR=/var/data` and `DATABASE_URL=sqlite:////var/data/exec_sim.db`; without it, sessions are lost on every deploy or restart | Rewrite rule `/*` → `/index.html` so deep links work |
 
 Use one API worker: live updates (WebSocket) and the session lock are in-process.
