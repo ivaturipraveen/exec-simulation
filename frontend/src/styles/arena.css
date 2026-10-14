@@ -762,3 +762,19 @@
     animation: none !important;
   }
 }
+
+/* ---------- Brightcone logo at the top of the team sidebar ---------- */
+.sidebar__logo {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--l-tile-line, rgba(255, 255, 255, 0.08));
+}
+@media (max-width: 960px) {
+  .sidebar__logo {
+    padding: 10px 16px 8px;
+  }
+  .sidebar__logo .brand-wordmark {
+    height: 24px !important;
+  }
+}
