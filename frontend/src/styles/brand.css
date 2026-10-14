@@ -1557,10 +1557,19 @@ summary,
   margin-left: auto;
 }
 
-/* On phones the wrapped facilitator header scrolls away instead of covering a third of the screen. */
+/* On phones the wrapped facilitator header scrolls away instead of covering a third of the screen;
+   the tab bar alone stays pinned. */
 @media (max-width: 760px) {
+  .fac__pinned {
+    display: contents;
+  }
   .fac__top {
     position: static;
+  }
+  .fac__tabs {
+    position: sticky;
+    top: 0;
+    z-index: 30;
   }
 }
 
