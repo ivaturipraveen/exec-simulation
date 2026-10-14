@@ -18,6 +18,7 @@ import './styles/game.css'
 import './styles/login.css'
 import './styles/landing.css'
 import './styles/run.css'
+import './styles/arena.css'
 
 initTheme()
 
