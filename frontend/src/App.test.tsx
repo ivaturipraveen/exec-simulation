@@ -125,11 +125,11 @@ test('a team signs in, then must enter its own join code', async () => {
   fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'secret' } })
   fireEvent.click(screen.getByRole('button', { name: /Start the simulation/ }))
   const code = await screen.findByLabelText('Team join code')
-  expect(screen.getByText('Horizon Health')).toBeInTheDocument()
+  expect(screen.getByText(/Team lobby · Horizon Health/)).toBeInTheDocument()
   expect(screen.queryByRole('tab', { name: /Facilitate/ })).not.toBeInTheDocument()
   expect(screen.queryByRole('link', { name: 'Settings' })).not.toBeInTheDocument()
   fireEvent.change(code, { target: { value: 'WRONG1' } })
-  fireEvent.click(screen.getByRole('button', { name: /Enter workspace/ }))
+  fireEvent.click(screen.getByRole('button', { name: /Enter the boardroom/ }))
   expect(await screen.findByText(/not for your team/)).toBeInTheDocument()
 })
 

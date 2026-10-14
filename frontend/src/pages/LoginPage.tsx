@@ -20,9 +20,8 @@ import {
 import { useState, type FormEvent } from 'react'
 import { Navigate, useSearchParams } from 'react-router-dom'
 import { errorMessage, request } from '../api/client'
-import logoOnDark from '../assets/brightcone-logo-on-dark.png'
-import logoOnLight from '../assets/brightcone-logo-on-light.png'
 import { authStatusKey, useAuthStatus, type AuthStatus } from '../api/auth'
+import { BrandLogo as Logo } from '../components/BrandLogo'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { Button } from '../components/ui/Button'
 import { Loading } from '../components/ui/primitives'
@@ -117,31 +116,6 @@ export function LoginPage() {
     return <Navigate to={to} replace />
   }
   return <LoginScreen />
-}
-
-/** The logo in both colorways; CSS shows the one that suits the current theme. */
-function Logo({ className, label }: { className: string; label?: boolean }) {
-  return (
-    <span className={`login__logo ${className}`}>
-      <img
-        className="login__logo-img login__logo-img--light"
-        src={logoOnLight}
-        alt={label ? 'Brightcone.ai — Clarity. Focus. Impact' : ''}
-        width={647}
-        height={150}
-        draggable={false}
-      />
-      <img
-        className="login__logo-img login__logo-img--dark"
-        src={logoOnDark}
-        alt=""
-        aria-hidden
-        width={647}
-        height={150}
-        draggable={false}
-      />
-    </span>
-  )
 }
 
 function LoginScreen() {

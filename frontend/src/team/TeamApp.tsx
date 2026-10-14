@@ -71,6 +71,20 @@ export function TeamApp() {
   }
   if (isPending || !team) return <Loading label="Opening your workspace…" />
 
+  const stageCount =
+    catalog?.stages.filter((s) => team.include_translation || !s.optional).length ?? 13
+  // How far through the whole game the team is: finished stages plus the running one's share.
+  const c = team.clock
+  const progress =
+    c.status === 'not_started'
+      ? 0
+      : Math.min(
+          100,
+          ((c.stage_index + Math.min(1, c.elapsed_seconds / Math.max(1, c.duration_seconds))) /
+            stageCount) *
+            100,
+        )
+
   const leave = () => {
     auth.clearTeam()
     navigate('/')
@@ -78,7 +92,12 @@ export function TeamApp() {
 
   return (
     <AnalystProvider team={team}>
-      <div className="shell">
+      <div className="shell shell--arena">
+        <div className="arena-sky" aria-hidden>
+          <span className="arena-sky__orb arena-sky__orb--blue" />
+          <span className="arena-sky__orb arena-sky__orb--mint" />
+          <span className="arena-sky__grid" />
+        </div>
         <Sidebar team={team} />
         <div className="main">
           <header className="topbar">
@@ -86,14 +105,24 @@ export function TeamApp() {
               className="grow row topbar__stage"
               style={{ '--gap': '12px' } as React.CSSProperties}
             >
-              <div className="stack" style={{ '--gap': '0px' } as React.CSSProperties}>
-                <span className="xs muted upper">
-                  {team.clock.status === 'not_started'
-                    ? 'Waiting to start'
-                    : `Stage ${team.clock.stage_index + 1} of ${catalog?.stages.filter((s) => team.include_translation || !s.optional).length ?? 13}`}
-                </span>
-                <span className="strong">{team.clock.stage_title}</span>
-              </div>
+              <span
+                className="hud-level"
+                title={
+                  team.clock.status === 'not_started'
+                    ? 'Waiting for the facilitator to start'
+                    : `Stage ${team.clock.stage_index + 1} of ${stageCount}`
+                }
+              >
+                {team.clock.status === 'not_started' ? (
+                  'Lobby'
+                ) : (
+                  <>
+                    Level <b>{team.clock.stage_index + 1}</b>
+                    <span>/{stageCount}</span>
+                  </>
+                )}
+              </span>
+              <span className="strong topbar__title">{team.clock.stage_title}</span>
               <Countdown clock={team.clock} />
             </div>
             <div className="row" style={{ '--gap': '12px' } as React.CSSProperties}>
@@ -119,6 +148,9 @@ export function TeamApp() {
                 iconOnly
               />
             </div>
+            <span className="hud-progress" aria-hidden>
+              <span style={{ width: `${progress}%` }} />
+            </span>
           </header>
           <main className="content">
             {error && !team ? (
@@ -144,6 +176,44 @@ export function TeamApp() {
         </div>
       </div>
     </AnalystProvider>
+  )
+}
+
+/** A live feed of the team's own numbers in the sidebar corner, like the lobby's market ticker. */
+function TeamTicker({ team }: { team: TeamView }) {
+  const p = team.payer
+  const feed = [
+    { label: 'Stage', value: team.clock.stage_title },
+    {
+      label: 'Stars (simulated)',
+      value: `${p.starting_stars.toFixed(1)}★`,
+      delta: `target ${p.target_stars.toFixed(1)}`,
+    },
+    { label: 'Members', value: p.members.toLocaleString() },
+    { label: 'Capital available', value: money(team.ledger.available), good: true },
+    { label: 'Committed', value: money(team.ledger.committed) },
+    { label: 'Capacity / quarter', value: `${p.capacity_per_quarter} pts` },
+    { label: 'Data readiness', value: `${p.data_readiness} / 5` },
+    { label: '4-Star bonus', value: money(p.bonus_value_musd, 1), good: true },
+    { label: team.session_name, value: 'Simulated data · fictional organizations' },
+  ]
+  return (
+    <div className="team-ticker" aria-hidden>
+      <span className="login__ticker-tag">Live · {p.name}</span>
+      <div className="login__ticker-window">
+        {/* two copies back to back, so the loop has no seam */}
+        <div className="login__ticker-track">
+          {[...feed, ...feed].map((f, i) => (
+            <span key={i} className="login__tick">
+              <span className="login__tick-label">{f.label}</span>
+              <span className="login__tick-value">{f.value}</span>
+              {f.delta && <span className="login__tick-delta">{f.delta}</span>}
+              {f.good && <span className="login__tick-delta is-good">▲</span>}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
   )
 }
 
@@ -230,11 +300,14 @@ function Sidebar({ team }: { team: TeamView }) {
     },
   ]
   const groups = [...new Set(items.map((i) => i.group))]
+  const missions = items.filter((i) => i.done !== undefined)
+  const missionsDone = missions.filter((i) => i.done).length
   return (
     <aside className="sidebar">
       <div className="sidebar__brand">
         <div className="brand-mark">{team.team_name.slice(0, 1).toUpperCase()}</div>
         <div className="stack grow" style={{ '--gap': '0px' } as React.CSSProperties}>
+          <span className="sidebar__kicker">Boardroom</span>
           <span className="strong" style={{ fontSize: 13.5 }}>
             {team.team_name}
           </span>
@@ -277,10 +350,19 @@ function Sidebar({ team }: { team: TeamView }) {
           </div>
         ))}
       </nav>
-      <div className="sidebar__footer xs muted">
-        {team.session_name}
-        <br />
-        Simulated data · fictional organizations
+      <div className="mission" title="Decisions your team has submitted">
+        <div className="mission__head">
+          <Trophy aria-hidden /> Mission progress
+          <b>
+            {missionsDone}/{missions.length}
+          </b>
+        </div>
+        <div className="mission__bar" aria-hidden>
+          <span style={{ width: `${(missionsDone / Math.max(1, missions.length)) * 100}%` }} />
+        </div>
+      </div>
+      <div className="sidebar__footer">
+        <TeamTicker team={team} />
       </div>
     </aside>
   )

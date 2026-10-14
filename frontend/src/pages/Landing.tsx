@@ -4,7 +4,6 @@ import {
   Clock4,
   LineChart,
   ListChecks,
-  LogOut,
   Plus,
   Presentation,
   ShieldCheck,
@@ -16,7 +15,7 @@ import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { errorMessage, request } from '../api/client'
 import { useCatalog } from '../api/hooks'
-import type { CreatedSession, JoinResult } from '../api/types'
+import type { CreatedSession } from '../api/types'
 import { Button } from '../components/ui/Button'
 import { Field, Input, Select } from '../components/ui/Field'
 import { Callout } from '../components/ui/primitives'
@@ -25,7 +24,9 @@ import { BrandWordmark } from '../components/BrandWordmark'
 import { sessionsKey, useSessions } from '../api/sessions'
 import { SessionsBrowser } from '../components/SessionsBrowser'
 import { ThemeToggle } from '../components/ThemeToggle'
-import { authStatusKey, useAuthStatus } from '../api/auth'
+import { joinTeam, useAuthStatus } from '../api/auth'
+import { SignOutButton } from '../components/SignOutButton'
+import { TeamLobby } from './TeamLobby'
 import { auth, signIn } from '../lib/storage'
 
 const FEATURES = [
@@ -55,6 +56,8 @@ export function Landing() {
   const coreMinutes = core.reduce((n, s) => n + s.duration_minutes, 0)
   const isFacilitator = status?.role === 'facilitator'
   const [tab, setTab] = useState<'join' | 'run'>('join')
+  // A signed-in team goes to its own lobby to enter the join code.
+  if (isTeam) return <TeamLobby teamName={status?.payer_name ?? 'your team'} />
   return (
     <div className="landing">
       <div className="landing__sky" aria-hidden>
@@ -67,11 +70,9 @@ export function Landing() {
           <BrandWordmark followTheme />
         </div>
         <div className="row">
-          {!isTeam && (
-            <Link to="/settings" className="btn btn--ghost btn--sm">
-              Settings
-            </Link>
-          )}
+          <Link to="/settings" className="btn btn--ghost btn--sm">
+            Settings
+          </Link>
           <ThemeToggle />
           <SignOutButton />
         </div>
@@ -119,18 +120,7 @@ export function Landing() {
           )}
         </section>
         <section className="card landing__panel" aria-label="Get started">
-          {isTeam ? (
-            <>
-              <div className="card__head">
-                <h2 className="card__title row">
-                  <Users size={16} aria-hidden /> Your team
-                </h2>
-              </div>
-              <div className="card__body">
-                <JoinForm teamName={status?.payer_name ?? 'your team'} />
-              </div>
-            </>
-          ) : isFacilitator ? (
+          {isFacilitator ? (
             // The signed-in facilitator only creates or resumes sessions.
             <>
               <div className="card__head">
@@ -245,28 +235,8 @@ function FacilitatePanel() {
   )
 }
 
-function SignOutButton() {
-  const { data } = useAuthStatus()
-  const queryClient = useQueryClient()
-  if (!data?.required) return null
-  return (
-    <button
-      className="btn btn--ghost btn--sm btn--icon"
-      type="button"
-      onClick={() => {
-        signIn.clear()
-        queryClient.setQueryData(authStatusKey, { required: true, signed_in: false, email: null })
-      }}
-      aria-label="Sign out"
-      title={data.email ? `Sign out ${data.email}` : 'Sign out'}
-    >
-      <LogOut aria-hidden />
-    </button>
-  )
-}
-
-/** Join by code. A signed-in team account must use its own team's code. */
-function JoinForm({ teamName }: { teamName?: string }) {
+/** Join by code (when sign-in is off; signed-in teams use the TeamLobby). */
+function JoinForm() {
   const navigate = useNavigate()
   const [code, setCode] = useState('')
   const [busy, setBusy] = useState(false)
@@ -277,17 +247,7 @@ function JoinForm({ teamName }: { teamName?: string }) {
     setBusy(true)
     setError(null)
     try {
-      const r = await request<JoinResult>('POST', '/join', {
-        token: signIn.get(),
-        body: { code: code.trim() },
-      })
-      auth.setTeam({
-        token: r.token,
-        teamId: r.team_id,
-        sessionId: r.session_id,
-        teamName: r.team_name,
-        payerName: r.payer_name,
-      })
+      await joinTeam(code)
       navigate('/team')
     } catch (err) {
       setError(errorMessage(err))
@@ -299,14 +259,7 @@ function JoinForm({ teamName }: { teamName?: string }) {
   return (
     <form className="stack" style={{ '--gap': '16px' } as React.CSSProperties} onSubmit={submit}>
       <p className="secondary">
-        {teamName ? (
-          <>
-            Signed in as <span className="strong">{teamName}</span>. Enter your team&apos;s
-            six-character join code from your facilitator.
-          </>
-        ) : (
-          'Enter the six-character code your facilitator shared for your team.'
-        )}
+        Enter the six-character code your facilitator shared for your team.
       </p>
       <Field label="Team join code" error={error}>
         {(id) => (

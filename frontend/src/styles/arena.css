@@ -1,0 +1,825 @@
+/* Game feel for the team side: the lobby's code "boarding pass" and the workspace HUD
+   (sky backdrop, level badge, game progress bar, mission meter). Loaded after login.css. */
+
+/* ---------- team lobby: six code cells over one real input ---------- */
+.lobby__code {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+  cursor: text;
+}
+.lobby__code-input {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  font-size: 16px; /* no zoom-on-focus on iOS */
+  color: transparent;
+  caret-color: transparent;
+  background: transparent;
+  cursor: text;
+}
+.lobby__cell {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 58px;
+  border-radius: 12px;
+  font-family: var(--login-mono);
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--l-ink);
+  background: var(--l-field);
+  border: 1.5px solid var(--l-field-line);
+  transition:
+    border-color 160ms,
+    box-shadow 160ms,
+    transform 160ms;
+}
+.lobby__cell.is-filled {
+  border-color: var(--l-node-line);
+  animation: lobby-pop 180ms ease-out;
+}
+.lobby__cell.is-active {
+  border-color: var(--l-hud);
+  box-shadow: 0 0 0 4px var(--l-badge-bg);
+}
+/* blinking caret in the cell being typed */
+.lobby__cell.is-active:not(.is-filled)::after {
+  content: '';
+  width: 2px;
+  height: 26px;
+  border-radius: 1px;
+  background: var(--l-hud);
+  animation: lobby-caret 1s steps(1) infinite;
+}
+.lobby__code:has(input[aria-invalid='true']) .lobby__cell {
+  border-color: rgba(229, 72, 77, 0.6);
+}
+.lobby .login__error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.lobby .login__error svg {
+  flex: none;
+  width: 16px;
+  height: 16px;
+}
+@keyframes lobby-pop {
+  50% {
+    transform: scale(1.06);
+  }
+}
+@keyframes lobby-caret {
+  50% {
+    opacity: 0;
+  }
+}
+@media (max-width: 400px) {
+  .lobby__code {
+    gap: 6px;
+  }
+  .lobby__cell {
+    height: 50px;
+    font-size: 22px;
+  }
+}
+
+/* ---------- team workspace: sky behind the content ---------- */
+.shell--arena {
+  --arena-bg: linear-gradient(160deg, #f6f9fe 0%, #edf3fb 55%, #e6eef9 100%);
+  --arena-orb-blue: rgba(30, 143, 255, 0.16);
+  --arena-orb-mint: rgba(20, 199, 159, 0.12);
+  --arena-grid: rgba(10, 110, 209, 0.07);
+  position: relative;
+  isolation: isolate;
+}
+:root[data-theme='dark'] .shell--arena {
+  --arena-bg: linear-gradient(160deg, #04101f 0%, #061a33 50%, #08223f 100%);
+  --arena-orb-blue: rgba(30, 143, 255, 0.28);
+  --arena-orb-mint: rgba(20, 199, 159, 0.2);
+  --arena-grid: rgba(111, 240, 204, 0.08);
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme='light'])) .shell--arena {
+    --arena-bg: linear-gradient(160deg, #04101f 0%, #061a33 50%, #08223f 100%);
+    --arena-orb-blue: rgba(30, 143, 255, 0.28);
+    --arena-orb-mint: rgba(20, 199, 159, 0.2);
+    --arena-grid: rgba(111, 240, 204, 0.08);
+  }
+}
+.shell--arena .main {
+  background: transparent;
+}
+.arena-sky {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--arena-bg);
+}
+.arena-sky__orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  animation: arena-drift 22s ease-in-out infinite alternate;
+}
+.arena-sky__orb--blue {
+  width: 560px;
+  height: 560px;
+  right: -160px;
+  top: -180px;
+  background: var(--arena-orb-blue);
+}
+.arena-sky__orb--mint {
+  width: 480px;
+  height: 480px;
+  left: 18%;
+  bottom: -220px;
+  background: var(--arena-orb-mint);
+  animation-delay: -11s;
+}
+.arena-sky__grid {
+  position: absolute;
+  left: -50%;
+  right: -50%;
+  bottom: 0;
+  height: 45%;
+  background-image:
+    linear-gradient(var(--arena-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--arena-grid) 1px, transparent 1px);
+  background-size: 56px 56px;
+  transform: perspective(520px) rotateX(62deg);
+  transform-origin: center bottom;
+  mask-image: linear-gradient(to top, #000 0%, transparent 85%);
+  -webkit-mask-image: linear-gradient(to top, #000 0%, transparent 85%);
+}
+@keyframes arena-drift {
+  to {
+    transform: translate(-50px, 40px) scale(1.08);
+  }
+}
+
+/* ---------- top bar as a game HUD ---------- */
+.shell--arena .topbar {
+  position: sticky;
+  overflow: hidden;
+}
+.hud-level {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  flex: none;
+  padding: 5px 11px;
+  border-radius: 999px;
+  font-family: var(--login-mono, ui-monospace, monospace);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6ff0cc;
+  background: rgba(20, 199, 159, 0.12);
+  border: 1px solid rgba(20, 199, 159, 0.35);
+  box-shadow: 0 0 16px rgba(20, 199, 159, 0.18);
+  white-space: nowrap;
+}
+.hud-level b {
+  font-size: 15px;
+  color: #fff;
+}
+.hud-level span {
+  color: #8fb0d4;
+}
+.topbar__title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.shell--arena .topbar .clock {
+  box-shadow: 0 0 18px rgba(30, 143, 255, 0.28);
+}
+/* the whole game's progress along the bottom edge of the bar */
+.hud-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.08);
+}
+.hud-progress > span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #1e8fff, #13b4c8, #14c79f);
+  box-shadow: 0 0 10px rgba(20, 199, 159, 0.7);
+  transition: width 600ms ease;
+}
+
+/* ---------- sidebar: mission meter and a glowing current page ---------- */
+.mission {
+  margin: 0 12px 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+}
+.mission__head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8fb0d4;
+}
+.mission__head svg {
+  width: 14px;
+  height: 14px;
+  color: #6ff0cc;
+}
+.mission__head b {
+  margin-left: auto;
+  font-size: 13px;
+  letter-spacing: 0;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+.mission__bar {
+  height: 6px;
+  margin-top: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.09);
+  overflow: hidden;
+}
+.mission__bar > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #1e8fff, #14c79f);
+  box-shadow: 0 0 10px rgba(20, 199, 159, 0.6);
+  transition: width 600ms ease;
+}
+.shell--arena .sidebar .nav-item.active {
+  box-shadow:
+    0 0 0 1px rgba(20, 199, 159, 0.35),
+    0 0 18px rgba(20, 199, 159, 0.18);
+}
+
+@media (max-width: 960px) {
+  .mission {
+    display: none;
+  }
+}
+@media (max-width: 640px) {
+  .topbar__title {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .arena-sky__orb,
+  .lobby__cell,
+  .lobby__cell::after {
+    animation: none !important;
+  }
+}
+
+/* =====================================================================================
+   Boardroom: every team page and tab sits on frosted-glass panels over the sky. Dark theme
+   keeps the navy frame; light theme turns the whole room light (no navy bars or banners).
+   ===================================================================================== */
+
+/* ---------- glass panels (both themes) ---------- */
+.shell--arena {
+  --room-panel: rgba(255, 255, 255, 0.8);
+  --room-panel-line: rgba(11, 37, 69, 0.08);
+  --room-panel-shadow: 0 10px 30px rgba(11, 37, 69, 0.07), 0 1px 3px rgba(11, 37, 69, 0.05);
+}
+:root[data-theme='dark'] .shell--arena {
+  --room-panel: rgba(10, 24, 44, 0.72);
+  --room-panel-line: rgba(124, 196, 255, 0.12);
+  --room-panel-shadow: 0 14px 40px rgba(0, 0, 0, 0.35);
+}
+.shell--arena .content :is(.card, .stat) {
+  background: var(--room-panel);
+  border-color: var(--room-panel-line);
+  box-shadow: var(--room-panel-shadow);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+}
+.shell--arena .content .card :is(.card, .stat) {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+}
+.shell--arena .content .tabs,
+.shell--arena .content .segmented {
+  background: var(--room-panel);
+  border-color: var(--room-panel-line);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* the boardroom name plate above the team name */
+.sidebar__kicker {
+  display: block;
+  font-family: var(--login-mono, ui-monospace, monospace);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #6ff0cc;
+}
+
+/* ---------- light theme: a light room ---------- */
+:root[data-theme='light'] .shell--arena {
+  --room-ink: #0b2545;
+  --room-ink-2: #3d5675;
+  --room-muted: #5b6f88;
+  --room-line: rgba(11, 37, 69, 0.08);
+  --room-glass: rgba(255, 255, 255, 0.82);
+  --room-blue: #0a6ed1;
+  --room-mint: #0a8a6c;
+}
+
+/* sidebar */
+:root[data-theme='light'] .shell--arena .sidebar {
+  background: var(--room-glass);
+  border-right: 1px solid var(--room-line);
+  color: var(--room-ink-2);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+}
+:root[data-theme='light'] .shell--arena .sidebar__brand {
+  background: transparent;
+  border-bottom-color: var(--room-line);
+}
+:root[data-theme='light'] .shell--arena .sidebar__brand .strong {
+  color: var(--room-ink);
+}
+:root[data-theme='light'] .shell--arena :is(.sidebar__brand .muted, .nav-group__label) {
+  color: var(--room-muted);
+}
+:root[data-theme='light'] .shell--arena .sidebar__kicker {
+  color: var(--room-mint);
+}
+:root[data-theme='light'] .shell--arena .nav-item {
+  color: var(--room-ink-2);
+}
+:root[data-theme='light'] .shell--arena .nav-item svg {
+  color: var(--room-muted);
+}
+:root[data-theme='light'] .shell--arena .nav-item:hover {
+  background: rgba(10, 110, 209, 0.06);
+  color: var(--room-ink);
+}
+:root[data-theme='light'] .shell--arena .nav-item.active {
+  background: linear-gradient(90deg, rgba(10, 110, 209, 0.12), rgba(20, 199, 159, 0.08));
+  color: var(--room-ink);
+  box-shadow:
+    0 0 0 1px rgba(10, 110, 209, 0.22),
+    0 6px 16px rgba(10, 110, 209, 0.1);
+}
+:root[data-theme='light'] .shell--arena .nav-item.active svg {
+  color: var(--room-blue);
+}
+:root[data-theme='light'] .shell--arena .sidebar__footer {
+  border-top-color: var(--room-line);
+  color: var(--room-muted);
+}
+:root[data-theme='light'] .shell--arena .mission {
+  background: rgba(10, 110, 209, 0.05);
+  border-color: var(--room-line);
+}
+:root[data-theme='light'] .shell--arena .mission__head {
+  color: var(--room-muted);
+}
+:root[data-theme='light'] .shell--arena .mission__head svg {
+  color: var(--room-mint);
+}
+:root[data-theme='light'] .shell--arena .mission__head b {
+  color: var(--room-ink);
+}
+:root[data-theme='light'] .shell--arena .mission__bar {
+  background: rgba(11, 37, 69, 0.08);
+}
+
+/* top bar */
+:root[data-theme='light'] .shell--arena .topbar {
+  background: var(--room-glass);
+  border-bottom: 1px solid var(--room-line);
+  color: var(--room-ink);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+}
+:root[data-theme='light'] .shell--arena .topbar :is(.strong) {
+  color: var(--room-ink);
+}
+:root[data-theme='light'] .shell--arena .topbar :is(.muted, .secondary) {
+  color: var(--room-muted);
+}
+:root[data-theme='light'] .shell--arena .topbar .btn--ghost {
+  color: var(--room-ink-2);
+}
+:root[data-theme='light'] .shell--arena .topbar .btn--ghost:hover:not(:disabled) {
+  background: rgba(10, 110, 209, 0.08);
+  color: var(--room-ink);
+}
+:root[data-theme='light'] .shell--arena .topbar .clock {
+  background: rgba(10, 110, 209, 0.08);
+  color: var(--room-ink);
+  box-shadow: 0 0 0 1px rgba(10, 110, 209, 0.15);
+}
+:root[data-theme='light'] .shell--arena .topbar .clock svg {
+  color: var(--room-blue);
+}
+:root[data-theme='light'] .shell--arena .topbar .clock--low {
+  background: rgba(250, 178, 25, 0.16);
+  color: #8a5a00;
+}
+:root[data-theme='light'] .shell--arena .topbar .clock--over {
+  background: rgba(208, 59, 59, 0.12);
+  color: #b42329;
+}
+:root[data-theme='light'] .shell--arena .topbar .badge {
+  background: #f1f6fc;
+  border-color: rgba(11, 37, 69, 0.12);
+  color: var(--room-ink);
+}
+:root[data-theme='light'] .shell--arena .topbar .badge--good {
+  background: #e2f7ef;
+  border-color: rgba(18, 184, 134, 0.3);
+  color: #0a7d5f;
+}
+:root[data-theme='light'] .shell--arena .topbar .badge--warning {
+  background: #fff4dc;
+  color: #8a5a00;
+}
+:root[data-theme='light'] .shell--arena .hud-level {
+  color: var(--room-blue);
+  background: rgba(10, 110, 209, 0.08);
+  border-color: rgba(10, 110, 209, 0.25);
+  box-shadow: none;
+}
+:root[data-theme='light'] .shell--arena .hud-level b {
+  color: var(--room-ink);
+}
+:root[data-theme='light'] .shell--arena .hud-level span {
+  color: var(--room-muted);
+}
+:root[data-theme='light'] .shell--arena .hud-progress {
+  background: rgba(11, 37, 69, 0.07);
+}
+
+/* company hero and stage banner */
+:root[data-theme='light'] .shell--arena :is(.hero, .stage-banner) {
+  background:
+    radial-gradient(700px 220px at 100% 0%, rgba(20, 199, 159, 0.16), transparent 60%),
+    radial-gradient(600px 220px at 0% 100%, rgba(30, 143, 255, 0.14), transparent 60%),
+    linear-gradient(120deg, #ffffff 0%, #f1f7ff 55%, #eaf8f3 100%);
+  border: 1px solid var(--room-line);
+  color: var(--room-ink);
+  box-shadow: var(--room-panel-shadow);
+}
+:root[data-theme='light'] .shell--arena :is(.hero__eyebrow, .stage-banner__chip) {
+  color: var(--room-mint);
+}
+:root[data-theme='light'] .shell--arena :is(.hero__title, .stage-banner__question) {
+  color: var(--room-ink);
+}
+:root[data-theme='light'] .shell--arena .stage-banner strong {
+  color: var(--room-ink);
+}
+:root[data-theme='light'] .shell--arena .hero__tagline,
+:root[data-theme='light']
+  .shell--arena
+  .stage-banner
+  :is(.muted, .secondary, .stage-banner__quote) {
+  color: var(--room-ink-2);
+}
+:root[data-theme='light'] .shell--arena .stage-banner__quote svg {
+  color: var(--room-mint);
+}
+:root[data-theme='light'] .shell--arena .hero .badge {
+  background: rgba(10, 110, 209, 0.08);
+  border-color: rgba(10, 110, 209, 0.2);
+  color: var(--room-ink);
+}
+:root[data-theme='light'] .shell--arena .hero__stars .stars__empty {
+  color: rgba(11, 37, 69, 0.15);
+}
+
+/* crisis packet */
+:root[data-theme='light'] .shell--arena .packet {
+  background:
+    radial-gradient(600px 180px at 100% 0%, rgba(208, 59, 59, 0.1), transparent 65%),
+    linear-gradient(120deg, #ffffff, #fff6f6);
+  color: var(--room-ink);
+  border-color: rgba(208, 59, 59, 0.3);
+}
+:root[data-theme='light'] .shell--arena .packet__label {
+  color: #b42329;
+}
+
+/* AI analyst panel header */
+:root[data-theme='light'] .analyst-drawer__head {
+  background: linear-gradient(120deg, #ffffff, #eef5ff);
+  border-bottom: 1px solid rgba(11, 37, 69, 0.08);
+  color: #0b2545;
+}
+:root[data-theme='light'] .analyst-drawer__head :is(.muted, .secondary) {
+  color: #5b6f88;
+}
+:root[data-theme='light'] .analyst-drawer__head .btn--ghost {
+  color: #3d5675;
+}
+:root[data-theme='light'] .analyst-drawer__head .btn--ghost:hover:not(:disabled) {
+  background: rgba(10, 110, 209, 0.08);
+  color: #0b2545;
+}
+
+/* =====================================================================================
+   Same world as the sign-in page and team lobby: the workspace uses the lobby's palette
+   (--l-* tokens), pulsing badges, terminal card bars, scanlines, HUD corner brackets and a
+   live ticker of the team's own numbers in the sidebar corner.
+   ===================================================================================== */
+.shell--arena {
+  /* light theme */
+  --l-bg: linear-gradient(160deg, #f6f9fe 0%, #edf3fb 55%, #e6eef9 100%);
+  --l-ink: #0b2545;
+  --l-ink-2: #3d5675;
+  --l-muted: #5b6f88;
+  --l-hud: #0a6ed1;
+  --l-accent: #0a6ed1;
+  --l-title-grad: linear-gradient(110deg, #0a4fa8 0%, #0a6ed1 55%, #1e8fff 100%);
+  --l-orb-blue: rgba(30, 143, 255, 0.24);
+  --l-orb-mint: rgba(30, 143, 255, 0.12);
+  --l-grid: rgba(10, 110, 209, 0.1);
+  --l-badge-bg: rgba(10, 110, 209, 0.07);
+  --l-badge-line: rgba(10, 110, 209, 0.25);
+  --l-tile: rgba(255, 255, 255, 0.72);
+  --l-tile-line: rgba(11, 37, 69, 0.1);
+  --l-node: #ffffff;
+  --l-node-line: rgba(10, 110, 209, 0.32);
+  --l-card: #ffffff;
+  --l-card-line: rgba(11, 37, 69, 0.1);
+  --l-card-shadow: 0 24px 60px rgba(11, 37, 69, 0.12), 0 2px 6px rgba(11, 37, 69, 0.06);
+  --l-bar: #f1f6fc;
+  --l-scan: rgba(11, 37, 69, 0.018);
+  --l-field: #f6f9fd;
+  --l-field-line: #d5e1ef;
+  --l-chip: #f1f6fc;
+  --l-ticker: rgba(255, 255, 255, 0.85);
+  --l-good: #0b8a5f;
+  --l-bad: #c9343f;
+  --l-error-ink: #b42329;
+  --l-logo-light: block;
+  --l-logo-dark: none;
+  --l-node-current: linear-gradient(135deg, #0a4fa8, #1e8fff);
+  --l-path: linear-gradient(90deg, #0a6ed1, #1e8fff);
+  --l-button: linear-gradient(110deg, #0a4fa8, #0a6ed1 55%, #1e8fff);
+
+  --login-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
+  --login-gutter: clamp(16px, 2.5vw, 32px);
+}
+:root[data-theme='dark'] .shell--arena {
+  --l-bg: linear-gradient(160deg, #04101f 0%, #061a33 45%, #0a2a50 100%);
+  --l-ink: #ffffff;
+  --l-ink-2: #c9d8ea;
+  --l-muted: #8fb0d4;
+  --l-hud: #6ff0cc;
+  --l-accent: #7cc4ff;
+  --l-title-grad: linear-gradient(110deg, #7cc4ff 0%, #4fd6e0 50%, #6ff0cc 100%);
+  --l-orb-blue: rgba(30, 143, 255, 0.55);
+  --l-orb-mint: rgba(20, 199, 159, 0.4);
+  --l-grid: rgba(111, 240, 204, 0.15);
+  --l-badge-bg: rgba(20, 199, 159, 0.1);
+  --l-badge-line: rgba(20, 199, 159, 0.3);
+  --l-tile: rgba(255, 255, 255, 0.05);
+  --l-tile-line: rgba(255, 255, 255, 0.1);
+  --l-node: #0b2545;
+  --l-node-line: rgba(124, 196, 255, 0.45);
+  --l-card: linear-gradient(180deg, rgba(14, 34, 62, 0.92), rgba(7, 20, 39, 0.94));
+  --l-card-line: rgba(124, 196, 255, 0.18);
+  --l-card-shadow: 0 30px 80px rgba(0, 0, 0, 0.5), 0 0 60px rgba(20, 160, 200, 0.2);
+  --l-bar: rgba(4, 14, 28, 0.45);
+  --l-scan: rgba(255, 255, 255, 0.025);
+  --l-field: rgba(4, 14, 28, 0.6);
+  --l-field-line: rgba(124, 196, 255, 0.2);
+  --l-chip: rgba(255, 255, 255, 0.05);
+  --l-ticker: rgba(3, 11, 22, 0.72);
+  --l-good: #4ee0a8;
+  --l-bad: #ff8a95;
+  --l-error-ink: #ff9a9d;
+  --l-logo-light: none;
+  --l-logo-dark: block;
+  --l-node-current: linear-gradient(135deg, #0a6ed1, #0d9f80);
+  --l-path: linear-gradient(90deg, #1e8fff, #13b4c8, #14c79f);
+  --l-button: linear-gradient(110deg, #0a6ed1, #0b97b8 60%, #0d9f80);
+}
+
+/* ---------- page titles: pulsing badge + big headline, like the lobby ---------- */
+.shell--arena .page-header {
+  animation: login-rise 500ms ease-out both;
+}
+.shell--arena .page-header__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 12px;
+  padding: 5px 13px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  color: var(--l-hud);
+  background: var(--l-badge-bg);
+  border: 1px solid var(--l-badge-line);
+}
+.shell--arena .page-header__eyebrow::before {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--l-hud);
+  box-shadow: 0 0 0 0 var(--l-badge-line);
+  animation: login-pulse 2s ease-out infinite;
+}
+.shell--arena .page-header h1 {
+  font-size: clamp(28px, 2.6vw, 38px);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--l-ink);
+}
+.shell--arena .page-header__desc {
+  color: var(--l-ink-2);
+}
+
+/* ---------- cards: lobby card skin with a terminal title bar ---------- */
+.shell--arena .content .card {
+  position: relative;
+  border-radius: 16px;
+  border-color: var(--l-card-line);
+}
+.shell--arena .content > * > .card,
+.shell--arena .content > * > * > .card,
+.shell--arena .content .grid > .card {
+  animation: login-rise 500ms 80ms ease-out both;
+}
+/* faint scanlines, like the lobby's terminal */
+.shell--arena .content .card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: repeating-linear-gradient(180deg, var(--l-scan) 0 1px, transparent 1px 3px);
+}
+.shell--arena .content .card > .card__header {
+  align-items: center;
+  padding: 11px 20px;
+  margin-bottom: 0;
+  border-bottom: 1px solid var(--l-card-line);
+  border-radius: 16px 16px 0 0;
+  background: var(--l-bar);
+}
+.shell--arena .content .card > .card__header .card__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--login-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--l-hud);
+}
+.shell--arena .content .card > .card__header .card__title::before {
+  content: '';
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--l-hud);
+  box-shadow: 0 0 8px var(--l-hud);
+}
+.shell--arena .content .card > .card__header .card__subtitle {
+  color: var(--l-muted);
+}
+/* HUD corner brackets lock on to the card under the pointer */
+.shell--arena .content .card::before {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  pointer-events: none;
+  --c: var(--l-hud);
+  background:
+    linear-gradient(var(--c), var(--c)) top left / 18px 2px,
+    linear-gradient(var(--c), var(--c)) top left / 2px 18px,
+    linear-gradient(var(--c), var(--c)) top right / 18px 2px,
+    linear-gradient(var(--c), var(--c)) top right / 2px 18px,
+    linear-gradient(var(--c), var(--c)) bottom left / 18px 2px,
+    linear-gradient(var(--c), var(--c)) bottom left / 2px 18px,
+    linear-gradient(var(--c), var(--c)) bottom right / 18px 2px,
+    linear-gradient(var(--c), var(--c)) bottom right / 2px 18px;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transform: scale(1.015);
+  transition:
+    opacity 180ms,
+    transform 180ms;
+}
+.shell--arena .content .card:hover::before,
+.shell--arena .content .card:focus-within::before {
+  opacity: 0.75;
+  transform: none;
+}
+.shell--arena .content .card .card::before {
+  display: none;
+}
+
+/* the company hero and the stage banner keep their brackets on, like the lobby card */
+.shell--arena :is(.hero, .stage-banner) {
+  overflow: visible;
+}
+.shell--arena :is(.hero, .stage-banner)::before {
+  content: '';
+  display: block;
+  position: absolute;
+  inset: -6px;
+  width: auto;
+  height: auto;
+  border-radius: 0;
+  pointer-events: none;
+  --c: var(--l-hud);
+  background:
+    linear-gradient(var(--c), var(--c)) top left / 22px 2px,
+    linear-gradient(var(--c), var(--c)) top left / 2px 22px,
+    linear-gradient(var(--c), var(--c)) top right / 22px 2px,
+    linear-gradient(var(--c), var(--c)) top right / 2px 22px,
+    linear-gradient(var(--c), var(--c)) bottom left / 22px 2px,
+    linear-gradient(var(--c), var(--c)) bottom left / 2px 22px,
+    linear-gradient(var(--c), var(--c)) bottom right / 22px 2px,
+    linear-gradient(var(--c), var(--c)) bottom right / 2px 22px;
+  background-repeat: no-repeat;
+  opacity: 0.7;
+}
+.shell--arena :is(.hero, .stage-banner)::after {
+  border-radius: inherit;
+}
+
+/* ---------- live ticker in the sidebar corner: the team's own numbers ---------- */
+.shell--arena .sidebar__footer {
+  padding: 0;
+}
+.team-ticker {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--login-mono);
+  font-size: 11.5px;
+  white-space: nowrap;
+}
+.team-ticker .login__ticker-tag {
+  padding: 9px 14px 5px;
+  border-right: 0;
+  font-size: 10.5px;
+}
+.team-ticker .login__ticker-window {
+  overflow: hidden;
+  padding-bottom: 10px;
+}
+/* one line only: the feed never wraps, it scrolls */
+.team-ticker .login__ticker-track {
+  flex-wrap: nowrap;
+}
+.team-ticker .login__tick {
+  flex: none;
+  padding: 2px 14px;
+  white-space: nowrap;
+  border-right-color: var(--l-tile-line);
+}
+.team-ticker .login__tick > * {
+  white-space: nowrap;
+}
+.team-ticker .login__tick-label {
+  color: var(--l-muted);
+}
+:root[data-theme='dark'] .team-ticker .login__tick-value {
+  color: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shell--arena .page-header,
+  .shell--arena .content .card,
+  .shell--arena .page-header__eyebrow::before {
+    animation: none !important;
+  }
+}
