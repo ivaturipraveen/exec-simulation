@@ -8,7 +8,7 @@ import { SettingControl } from '../components/SettingControl'
 import { formatSetting } from '../lib/settings'
 import { Button } from '../components/ui/Button'
 import { Input } from '../components/ui/Field'
-import { Badge, Callout, Loading } from '../components/ui/primitives'
+import { Badge, Loading } from '../components/ui/primitives'
 import { Tabs } from '../components/ui/Tabs'
 import { useToast } from '../components/ui/toastContext'
 
@@ -62,34 +62,39 @@ export function SessionSettingsPanel({ session, token }: { session: SessionView;
   }
   return (
     <div className="stack" style={{ '--gap': '20px' } as React.CSSProperties}>
-      <Callout tone="accent" title="Settings for this session only">
-        This session keeps the configuration it was created with. Changes here need an audit note
-        and appear in the activity log. Model and scorecard parameters lock once Year 1 is
-        simulated. Defaults for new sessions live in <Link to="/settings">Settings</Link>.
-      </Callout>
-      <Tabs
-        label="Setting groups"
-        value={current}
-        onChange={setActive}
-        tabs={groups.map(([group, fields]) => {
-          const edits = fields.filter((f) => f.key in draft).length
-          const locked = fields.every((f) => f.locked)
-          return {
-            id: group,
-            label: (
-              <>
-                {group}
-                <span className="ss-tab__count">{fields.length}</span>
-                {edits > 0 ? (
-                  <PencilLine size={13} aria-label={`${edits} edited`} />
-                ) : (
-                  locked && <Lock size={12} aria-label="locked" />
-                )}
-              </>
-            ),
-          }
-        })}
-      />
+      <div className="section-tabs ss-tabsbar">
+        <Tabs
+          label="Setting groups"
+          value={current}
+          onChange={setActive}
+          tabs={groups.map(([group, fields]) => {
+            const edits = fields.filter((f) => f.key in draft).length
+            const locked = fields.every((f) => f.locked)
+            return {
+              id: group,
+              label: (
+                <>
+                  {group}
+                  <span className="ss-tab__count">{fields.length}</span>
+                  {edits > 0 ? (
+                    <PencilLine size={13} aria-label={`${edits} edited`} />
+                  ) : (
+                    locked && <Lock size={12} aria-label="locked" />
+                  )}
+                </>
+              ),
+            }
+          })}
+        />
+        <Link
+          to="/settings"
+          className="ss-settings-link"
+          title="Open Settings: the defaults for new sessions"
+        >
+          <Settings2 aria-hidden /> All settings
+          <span className="ss-tab__count">{data.length}</span>
+        </Link>
+      </div>
       {groupFields && (
         <section className="card ss-panel" aria-label={current}>
           <header className="ss-panel__head">
@@ -97,9 +102,6 @@ export function SessionSettingsPanel({ session, token }: { session: SessionView;
               <h2 className="ss-panel__title">{current}</h2>
               {GROUP_INTRO[current] && <p className="ss-panel__intro">{GROUP_INTRO[current]}</p>}
             </div>
-            <span className="ss-panel__count">
-              {groupFields.length} setting{groupFields.length === 1 ? '' : 's'}
-            </span>
           </header>
           {lockedCount > 0 && (
             <div className="ss-panel__lock">

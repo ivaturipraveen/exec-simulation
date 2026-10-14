@@ -316,36 +316,37 @@ function TeamDetail({
               </Button>
             </div>
             {session.simulated_years >= 2 && edition && (
-              <div className="row wrap" style={{ alignItems: 'flex-end' }}>
+              <div className="row override-row">
                 <div className="grow">
                   <Field label="Apply a curveball or crisis manually">
                     {(id) => (
-                      <Select
-                        id={id}
-                        value={curveball || eligible[0]?.id || ''}
-                        onChange={(e) => setCurveball(e.target.value)}
-                      >
-                        {eligible.map((e) => (
-                          <option key={e.id} value={e.id}>
-                            {e.code} {e.title}
-                          </option>
-                        ))}
-                      </Select>
+                      <div className="override-pair">
+                        <Select
+                          id={id}
+                          value={curveball || eligible[0]?.id || ''}
+                          onChange={(e) => setCurveball(e.target.value)}
+                        >
+                          {eligible.map((e) => (
+                            <option key={e.id} value={e.id}>
+                              {e.code} {e.title}
+                            </option>
+                          ))}
+                        </Select>
+                        <Select
+                          aria-label="Severity"
+                          value={curveSev}
+                          onChange={(e) => setCurveSev(e.target.value)}
+                        >
+                          {['high', 'medium', 'low'].map((v) => (
+                            <option key={v} value={v}>
+                              {v}
+                            </option>
+                          ))}
+                        </Select>
+                      </div>
                     )}
                   </Field>
                 </div>
-                <Select
-                  aria-label="Severity"
-                  value={curveSev}
-                  onChange={(e) => setCurveSev(e.target.value)}
-                  style={{ width: 110 }}
-                >
-                  {['high', 'medium', 'low'].map((v) => (
-                    <option key={v} value={v}>
-                      {v}
-                    </option>
-                  ))}
-                </Select>
                 <Button
                   icon={<Siren />}
                   disabled={!note.trim()}

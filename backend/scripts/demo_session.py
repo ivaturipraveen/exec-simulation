@@ -174,6 +174,11 @@ def main() -> None:
     teams = {t["payer_id"]: t for t in created["session"]["teams"]}
     tokens = {pid: call("POST", "/join", body={"code": t["join_code"]})["token"] for pid, t in teams.items()}
 
+    def simulate(year: int) -> None:
+        # Entering a Simulate stage runs the year itself; only simulate if it has not run yet.
+        if call("GET", f"/sessions/{sid}", ftok)["simulated_years"] < year:
+            call("POST", f"/sessions/{sid}/simulate", ftok, {"year": year})
+
     def goto(kind: str) -> None:
         index = next(i for i, s in enumerate(stages) if s["kind"] == kind)
         call("POST", f"/sessions/{sid}/stage", ftok, {"action": "goto", "index": index})
@@ -199,7 +204,7 @@ def main() -> None:
             call("PUT", "/team/round1", tokens[pid], {"items": play["r1"], "thesis": play["thesis1"]})
             call("POST", "/team/round1/submit", tokens[pid])
         goto("simulate_y1")
-        call("POST", f"/sessions/{sid}/simulate", ftok, {"year": 1})
+        simulate(1)
         call("POST", f"/sessions/{sid}/results/1/release", ftok)  # after facilitator review
         goto("analyze")
         for pid, play in PLAYS.items():
@@ -221,7 +226,7 @@ def main() -> None:
             call("PUT", "/team/round2", tokens[pid], {"actions": play["r2"], "thesis": play["thesis2"]})
             call("POST", "/team/round2/submit", tokens[pid])
         goto("simulate_y2")
-        call("POST", f"/sessions/{sid}/simulate", ftok, {"year": 2})
+        simulate(2)
         call("POST", f"/sessions/{sid}/results/2/release", ftok)
         goto("operating_model")
         steps = call("GET", "/catalog")["workflow_steps"]

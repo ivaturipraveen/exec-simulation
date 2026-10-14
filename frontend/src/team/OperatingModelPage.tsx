@@ -1,4 +1,15 @@
-import { Bot, Lock, Save, Send, ShieldCheck, User, Workflow } from 'lucide-react'
+import {
+  Bot,
+  CheckCircle2,
+  CircleAlert,
+  Lock,
+  Save,
+  Send,
+  ShieldCheck,
+  TriangleAlert,
+  User,
+  Workflow,
+} from 'lucide-react'
 import { useState } from 'react'
 import { errorMessage } from '../api/client'
 import { useCatalog, useSaveOpModel } from '../api/hooks'
@@ -33,6 +44,12 @@ const MODES: { value: WorkflowMode; label: string; short: string; icon: React.El
   },
 ]
 const RISK_TONE = { low: 'good', medium: 'warning', high: 'critical' } as const
+const MODE_TONE: Record<WorkflowMode, string> = {
+  human: 'human',
+  ai_assist: 'assist',
+  agent_approval: 'agent',
+  autonomous: 'auto',
+}
 const isAgent = (m: WorkflowMode) => m === 'agent_approval' || m === 'autonomous'
 
 export function OperatingModelPage({ team }: { team: TeamView }) {
@@ -114,19 +131,16 @@ export function OperatingModelPage({ team }: { team: TeamView }) {
         </Callout>
       )}
       {ws.opmodel_score && (
-        <div className="grid grid-split">
+        <div className="grid grid-split opmodel-split">
           <Card title="Design score" subtitle="Four rows, 0 to 3 each">
             <RubricView rows={catalog.rubrics.opmodel} score={ws.opmodel_score} />
           </Card>
-          {ws.opmodel_findings.length > 0 && (
-            <Callout tone="warning" title="Design findings">
-              <ul className="bullets">
-                {ws.opmodel_findings.map((f) => (
-                  <li key={f}>{f}</li>
-                ))}
-              </ul>
-            </Callout>
-          )}
+          <DesignGlance
+            design={current}
+            stepIds={steps.map((s) => s.id)}
+            dimensionCount={catalog.decision_dimensions.length}
+            findings={ws.opmodel_findings}
+          />
         </div>
       )}
       <div className="workflow">
@@ -256,5 +270,103 @@ export function OperatingModelPage({ team }: { team: TeamView }) {
         </Card>
       </div>
     </div>
+  )
+}
+
+/** The submitted design at a glance: who holds each decision, readiness checks, findings. */
+function DesignGlance({
+  design,
+  stepIds,
+  dimensionCount,
+  findings,
+}: {
+  design: OperatingModelDesign
+  stepIds: string[]
+  dimensionCount: number
+  findings: string[]
+}) {
+  const shown = design.steps.filter((s) => stepIds.includes(s.step_id))
+  const agentSteps = shown.filter((s) => isAgent(s.mode))
+  const answered = (s: StepDesign) =>
+    Object.values(s.dimensions ?? {}).filter((v) => String(v).trim()).length >= dimensionCount
+  const checks = [
+    { label: 'Accountable executive named', ok: !!design.accountable_executive?.trim() },
+    {
+      label: 'Steps with an operational owner',
+      count: shown.filter((s) => s.owner?.trim()).length,
+      of: shown.length,
+    },
+    {
+      label: 'Agent steps with at least one control',
+      count: agentSteps.filter((s) => (s.controls ?? []).length > 0).length,
+      of: agentSteps.length,
+    },
+    {
+      label: 'Agent steps with all decision dimensions answered',
+      count: agentSteps.filter(answered).length,
+      of: agentSteps.length,
+    },
+  ]
+  return (
+    <Card title="Your design at a glance" subtitle="What the board will see in this workflow">
+      <div className="glance">
+        <div>
+          <div className="glance__label">Who holds each decision · {shown.length} steps</div>
+          <div className="glance__mix" aria-hidden>
+            {MODES.map((m) => {
+              const n = shown.filter((s) => s.mode === m.value).length
+              return n ? (
+                <span
+                  key={m.value}
+                  className={`glance__seg glance__seg--${MODE_TONE[m.value]}`}
+                  style={{ flexGrow: n }}
+                />
+              ) : null
+            })}
+          </div>
+          <ul className="list-reset glance__legend">
+            {MODES.map(({ value, short, icon: Icon }) => (
+              <li key={value}>
+                <span className={`glance__dot glance__dot--${MODE_TONE[value]}`} aria-hidden />
+                <Icon aria-hidden /> {short}
+                <b>{shown.filter((s) => s.mode === value).length}</b>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <div className="glance__label">Readiness checks</div>
+          <ul className="list-reset glance__checks">
+            {checks.map((c) => {
+              const ok = 'ok' in c ? c.ok : c.of === 0 || c.count === c.of
+              const na = !('ok' in c) && c.of === 0
+              return (
+                <li key={c.label} className={ok ? 'is-ok' : 'is-gap'}>
+                  {ok ? <CheckCircle2 aria-hidden /> : <CircleAlert aria-hidden />}
+                  <span className="grow">{c.label}</span>
+                  <b>{'ok' in c ? (c.ok ? 'Yes' : 'No') : na ? 'n/a' : `${c.count}/${c.of}`}</b>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+
+        <div>
+          <div className="glance__label">Findings</div>
+          {findings.length ? (
+            <ul className="list-reset glance__findings">
+              {findings.map((f) => (
+                <li key={f}>
+                  <TriangleAlert aria-hidden /> {f}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="small secondary">No findings: the design holds together.</p>
+          )}
+        </div>
+      </div>
+    </Card>
   )
 }
