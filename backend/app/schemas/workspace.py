@@ -109,8 +109,24 @@ class Workspace(BaseModel):
     crisis_response: CrisisResponse | None = None
     crisis_score: RubricScore | None = None
     opportunities: list[Opportunity] = []
-    consent: Consent | None = None
+    consent: Consent | None = None  # legacy team-wide consent (sessions before per-person consent)
+    consents: dict[str, Consent] = Field(
+        default={}, description="Per-participant consent, keyed by participant_key(name)"
+    )
     feedback: list[Feedback] = []
     ai_requests: int = 0
     ai_window_start: datetime | None = None
     ai_window_count: int = 0
+
+
+def participant_key(name: str) -> str:
+    """Consent belongs to a person; names match case- and space-insensitively."""
+    return " ".join(name.split()).lower()
+
+
+def shared_on_map(ws: Workspace, o: Opportunity) -> bool:
+    """An opportunity reaches the organization map once its own author has consented."""
+    personal = ws.consents.get(participant_key(o.participant))
+    if personal is not None:
+        return personal.granted
+    return bool(ws.consent and ws.consent.granted)

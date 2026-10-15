@@ -1,9 +1,18 @@
-import { MessageSquareHeart, Plus, Save, Trash2 } from 'lucide-react'
+import { MessageSquareHeart, PenLine, Plus, Save, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { errorMessage } from '../api/client'
-import { useCatalog, useSaveOpportunities, useSubmitFeedback } from '../api/hooks'
+import {
+  useCatalog,
+  useDeleteOpportunity,
+  useOpportunityConsent,
+  useOrganizationMap,
+  useSaveOpportunity,
+  useSubmitFeedback,
+} from '../api/hooks'
 import type { FeedbackBody, Opportunity, TeamView } from '../api/types'
 import { OpportunityMatrix } from '../components/OpportunityMatrix'
+import { Markdown } from '../components/ui/Markdown'
+import { SynthesisMeta } from '../facilitator/OpportunityPanel'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { Dialog } from '../components/ui/Dialog'
@@ -16,32 +25,45 @@ const scale = [1, 2, 3, 4, 5].map((v) => ({ value: v, label: String(v) }))
 
 export function OpportunitiesPage({ team }: { team: TeamView }) {
   const { data: catalog } = useCatalog()
-  const save = useSaveOpportunities()
+  const save = useSaveOpportunity()
+  const remove = useDeleteOpportunity()
+  const giveConsent = useOpportunityConsent()
   const toast = useToast()
   const ws = team.workspace
   const [participant, setParticipant] = useState(() => storage.get('execsim.participant') ?? '')
-  const [items, setItems] = useState<Opportunity[]>(ws.opportunities)
-  const [consent, setConsent] = useState(ws.consent?.granted ?? false)
   const [draft, setDraft] = useState<Opportunity | null>(null)
   const [feedbackOpen, setFeedbackOpen] = useState(false)
+  // The box shows the new choice at once; the server's answer replaces it when it arrives.
+  const [pendingShare, setPendingShare] = useState<boolean | null>(null)
 
   if (!team.flags.can_capture_opportunities) {
     return (
-      <Empty title="Opens at Final results">
+      <Empty title="Opens when the session starts">
         Each participant captures 2 to 3 opportunities for their real organization.
       </Empty>
     )
   }
 
-  const persist = async (next: Opportunity[], nextConsent = consent) => {
+  // Always the server's list: a teammate's additions appear live (realtime refreshes the team).
+  const items = ws.opportunities
+  const personKey = (name: string) => name.split(/\s+/).filter(Boolean).join(' ').toLowerCase()
+  const consents = (ws.consents ?? {}) as Record<string, { granted: boolean }>
+  const sharedFor = (name: string) =>
+    consents[personKey(name)]?.granted ??
+    (Object.keys(consents).length === 0 && !!ws.consent?.granted)
+  const consent = participant.trim() ? (pendingShare ?? sharedFor(participant)) : false
+  const mine = items.filter((o) => personKey(o.participant) === personKey(participant))
+  const editing = !!draft && items.some((o) => o.id === draft.id)
+
+  const setShare = async (granted: boolean) => {
+    setPendingShare(granted)
     try {
-      await save.mutateAsync({
-        items: next,
-        consent: { granted: nextConsent, participant, at: new Date().toISOString() },
-      })
-      toast('Opportunity map saved')
+      await giveConsent.mutateAsync({ granted, participant, at: new Date().toISOString() })
+      toast(granted ? 'Your opportunities are shared with the facilitator' : 'Sharing turned off')
     } catch (e) {
       toast(errorMessage(e), 'error')
+    } finally {
+      setPendingShare(null)
     }
   }
 
@@ -101,18 +123,25 @@ export function OpportunitiesPage({ team }: { team: TeamView }) {
               />
             )}
           </Field>
-          <label className="checkbox small">
-            <input
-              type="checkbox"
-              checked={consent}
-              onChange={(e) => {
-                setConsent(e.target.checked)
-                persist(items, e.target.checked)
-              }}
-            />
-            {catalog?.opportunity.consent_text ??
-              'I consent to this opportunity being stored and shared with the organization map.'}
-          </label>
+          <div className="stack" style={{ '--gap': '6px' } as React.CSSProperties}>
+            <label className="checkbox small">
+              <input
+                type="checkbox"
+                checked={consent}
+                disabled={!participant.trim() || giveConsent.isPending}
+                onChange={(e) => void setShare(e.target.checked)}
+              />
+              {catalog?.opportunity.consent_text ??
+                'I consent to this opportunity being stored and shared with the organization map.'}
+            </label>
+            <span className="xs muted">
+              {!participant.trim()
+                ? 'Enter your name first: consent is personal.'
+                : consent
+                  ? `Shared: your ${mine.length} opportunit${mine.length === 1 ? 'y appears' : 'ies appear'} on the facilitator's organization map.`
+                  : `Not shared yet: your opportunities stay with your team until you tick this.`}
+            </span>
+          </div>
         </div>
       </Card>
       <div className="grid grid-split">
@@ -151,7 +180,14 @@ export function OpportunitiesPage({ team }: { team: TeamView }) {
                   }}
                 >
                   <div className="grow">
-                    <div className="strong">{o.title}</div>
+                    <div className="row" style={{ '--gap': '8px' } as React.CSSProperties}>
+                      <span className="strong">{o.title}</span>
+                      <span
+                        className={`badge ${sharedFor(o.participant) ? 'badge--good' : 'badge--outline'}`}
+                      >
+                        {sharedFor(o.participant) ? 'Shared' : 'Not shared'}
+                      </span>
+                    </div>
                     <div className="xs muted">
                       {o.participant} · {o.capability_class} · value {o.value}/5 · readiness{' '}
                       {avg(o).toFixed(1)}/5
@@ -166,12 +202,24 @@ export function OpportunitiesPage({ team }: { team: TeamView }) {
                     size="sm"
                     variant="ghost"
                     iconOnly
+                    icon={<PenLine />}
+                    aria-label={`Edit ${o.title}`}
+                    onClick={() => setDraft(o)}
+                  />
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    iconOnly
                     icon={<Trash2 />}
                     aria-label={`Delete ${o.title}`}
-                    onClick={() => {
-                      const next = items.filter((x) => x.id !== o.id)
-                      setItems(next)
-                      persist(next)
+                    loading={remove.isPending && remove.variables === o.id}
+                    onClick={async () => {
+                      try {
+                        await remove.mutateAsync(o.id ?? '')
+                        toast('Opportunity deleted')
+                      } catch (e) {
+                        toast(errorMessage(e), 'error')
+                      }
                     }}
                   />
                 </li>
@@ -180,6 +228,7 @@ export function OpportunitiesPage({ team }: { team: TeamView }) {
           )}
         </Card>
       </div>
+      <OrganizationMapCard />
       <Callout tone="neutral">
         Follow-on support (assessment → roadmap → pilot) is optional diligence, not a predetermined
         conclusion.
@@ -188,7 +237,7 @@ export function OpportunitiesPage({ team }: { team: TeamView }) {
       <Dialog
         open={!!draft}
         onClose={() => setDraft(null)}
-        title="New opportunity"
+        title={editing ? 'Edit opportunity' : 'New opportunity'}
         wide
         footer={
           <>
@@ -202,10 +251,14 @@ export function OpportunitiesPage({ team }: { team: TeamView }) {
               loading={save.isPending}
               onClick={async () => {
                 if (!draft) return
-                const next = [...items, { ...draft, participant }]
-                setItems(next)
-                await persist(next)
-                setDraft(null)
+                try {
+                  // A new item belongs to whoever is typing; an edited item keeps its author.
+                  await save.mutateAsync(editing ? draft : { ...draft, participant })
+                  toast(editing ? 'Opportunity updated' : 'Opportunity saved')
+                  setDraft(null)
+                } catch (e) {
+                  toast(errorMessage(e), 'error')
+                }
               }}
             >
               Save opportunity
@@ -459,5 +512,28 @@ function FeedbackDialog({
         </Field>
       </div>
     </Dialog>
+  )
+}
+
+/** The facilitator's synthesized organizational map, read-only, once it has been written. */
+function OrganizationMapCard() {
+  const { data } = useOrganizationMap(true)
+  return (
+    <Card
+      title="Organization AI Opportunity Map"
+      subtitle="Synthesized by the facilitator from every participant who chose to share"
+    >
+      {data ? (
+        <div className="stack" style={{ '--gap': '12px' } as React.CSSProperties}>
+          <SynthesisMeta s={data} />
+          <Markdown>{data.text}</Markdown>
+        </div>
+      ) : (
+        <p className="small muted">
+          Not written yet. When your facilitator runs the synthesizer, the organization-wide map
+          appears here and on the projector.
+        </p>
+      )}
+    </Card>
   )
 }

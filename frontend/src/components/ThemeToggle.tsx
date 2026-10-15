@@ -1,15 +1,11 @@
 import { Moon, Sun } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { storage } from '../lib/storage'
-import { applyTheme as apply, currentTheme, type Theme } from '../lib/theme'
+import { useSyncExternalStore } from 'react'
+import { currentTheme, setTheme, subscribeTheme } from '../lib/theme'
 
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>(currentTheme)
-  useEffect(() => {
-    apply(theme)
-    storage.set('execsim.theme', theme)
-  }, [theme])
-  const next: Theme = theme === 'light' ? 'dark' : 'light'
+  // Shared with every other toggle and window, so they never disagree about the theme.
+  const theme = useSyncExternalStore(subscribeTheme, currentTheme, () => 'light' as const)
+  const next = theme === 'light' ? 'dark' : 'light'
   const Icon = theme === 'light' ? Moon : Sun
   return (
     <button

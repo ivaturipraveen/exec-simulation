@@ -522,6 +522,7 @@ def step_quarter(state: TeamState, content: ContentBundle) -> QuarterSnapshot:
         savings_musd=round(savings, 4),
         capital_spent_musd=round(spent, 4),
         dual_ratio=round(dual_weighted / member_facing_total, 3) if member_facing_total else 1.0,
+        drift={k: round(v, 4) for k, v in state.drift_accum.items()},
     )
     state.history.append(snapshot)
     state.quarter += 1

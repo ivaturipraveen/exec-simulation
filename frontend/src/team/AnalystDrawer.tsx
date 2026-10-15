@@ -114,10 +114,20 @@ export function AnalystProvider({ team, children }: { team: TeamView; children: 
             <div className="analyst-drawer__sub">
               {team.ai_enabled ? (
                 <>
-                  <Sparkles aria-hidden /> Claude connected · grounded in your data room
+                  <span className="analyst-drawer__status">
+                    <span className="analyst-drawer__dot" aria-hidden /> Claude connected
+                  </span>
+                  <span>
+                    <Sparkles aria-hidden /> Grounded in your data room
+                  </span>
                 </>
               ) : (
-                'Retrieval-only mode · returns the most relevant data-room passages'
+                <>
+                  <span className="analyst-drawer__status analyst-drawer__status--off">
+                    <span className="analyst-drawer__dot" aria-hidden /> Retrieval only
+                  </span>
+                  <span>Shows the most relevant data-room passages</span>
+                </>
               )}
             </div>
           </div>

@@ -297,17 +297,14 @@ def opportunity_map(session_id: FacilitatorSession, game: GameDep) -> v.Opportun
     return game.opportunity_map(session_id)
 
 
-class SynthesisOut(BaseModel):
-    synthesis: str
-    generative: bool
-
-
 @router.post("/{session_id}/opportunity-map/synthesis")
-def opportunity_synthesis(session_id: FacilitatorSession, game: GameDep, request: Request) -> SynthesisOut:
-    """Synthesizer agent: aggregate consented opportunities into an organizational map."""
+def opportunity_synthesis(session_id: FacilitatorSession, game: GameDep, request: Request) -> v.SynthesisView:
+    """Synthesizer agent: aggregate consented opportunities into an organizational map. The result is
+    saved with the session and shown on the console, the projector, every team's page and the export."""
     analyst = request.app.state.analyst
     items = [i.model_dump() for i in game.opportunity_map(session_id).items]
-    return SynthesisOut(synthesis=analyst.synthesize_opportunities(items), generative=analyst.generative)
+    text = analyst.synthesize_opportunities(items)
+    return game.save_synthesis(session_id, text, generative=analyst.generative and bool(items))
 
 
 @router.get("/{session_id}/events")

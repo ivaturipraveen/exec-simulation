@@ -1302,3 +1302,435 @@
     overflow-y: auto;
   }
 }
+
+/* ---------- results: the year at a glance ---------- */
+.year-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.year-summary__col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+.shell--arena .year-summary__col {
+  background: var(--room-panel, var(--surface));
+  border-color: var(--room-panel-line, var(--border));
+  backdrop-filter: blur(12px);
+}
+.year-summary__label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.year-summary__label svg {
+  width: 15px;
+  height: 15px;
+  color: var(--accent);
+}
+.year-summary__label b {
+  margin-left: auto;
+  font-size: 18px;
+  letter-spacing: 0;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.year-summary__list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+}
+.year-summary__list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.year-summary__list .grow {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.year-summary__meter {
+  flex: none;
+  width: 54px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--surface-sunken);
+  overflow: hidden;
+}
+.year-summary__meter > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--grad-line);
+}
+.year-summary__empty {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-2);
+}
+.year-summary__note {
+  margin: auto 0 0;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+@media (max-width: 960px) {
+  .year-summary {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+/* KPI table: unchanged rows step back so the ones that moved stand out */
+.kpi-row--flat td {
+  color: var(--text-muted);
+}
+.kpi-row--flat td.strong {
+  font-weight: 500;
+}
+.kpi-empty {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 28px 20px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  color: var(--text-2);
+  background: var(--surface-sunken);
+}
+.kpi-empty strong {
+  color: var(--text);
+}
+.chip__dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-left: 6px;
+  border-radius: 50%;
+  background: var(--good);
+  vertical-align: middle;
+}
+
+/* Results: the KPI table shows every row (no inner scroll), and the chart beside it grows to
+   the same height, so neither card has an empty band. */
+@media (min-width: 961px) {
+  .kpi-split > .card:first-child {
+    display: flex;
+    flex-direction: column;
+  }
+  .kpi-split > .card:first-child > .card__body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .kpi-split .kpi-trend {
+    flex: 1;
+  }
+  .kpi-split .kpi-trend__plot {
+    flex: 1;
+    height: auto;
+    min-height: 280px;
+  }
+}
+/* stacked layout (phones) and anywhere without a taller neighbour: a fixed chart height */
+.chart__plot {
+  height: 260px;
+}
+
+/* Result drivers: balanced columns (no wide empty gaps between them) */
+.drivers-table {
+  table-layout: fixed;
+  width: 100%;
+  min-width: 860px;
+}
+.drivers-table__card {
+  width: 30%;
+}
+.drivers-table__status {
+  width: 116px;
+}
+.drivers-table__realized {
+  width: 96px;
+}
+.drivers-table__moved {
+  width: 30%;
+}
+.drivers-table td {
+  overflow-wrap: anywhere;
+}
+/* every cell starts on the same line as the card name */
+.drivers-table .driver-list {
+  margin-top: 0;
+}
+.drivers-table .driver {
+  font-size: 12.5px;
+}
+
+/* ---------- KPI trend: game HUD chart ----------
+   Categorical slots validated with the dataviz checker (lightness band, chroma, CVD and
+   normal-vision separation, 3:1 contrast) for each theme's own surface. */
+:root {
+  --kpi-1: #1f6fd6;
+  --kpi-2: #0e9f75;
+  --kpi-3: #7b5cf0;
+  --kpi-4: #d1478c;
+}
+:root[data-theme='dark'] {
+  --kpi-1: #3b8aea;
+  --kpi-2: #18ad7f;
+  --kpi-3: #8f76f0;
+  --kpi-4: #d9598f;
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme='light'])) {
+    --kpi-1: #3b8aea;
+    --kpi-2: #18ad7f;
+    --kpi-3: #8f76f0;
+    --kpi-4: #d9598f;
+  }
+}
+.kpi-trend {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+.kpi-trend__plot {
+  height: 300px;
+  min-width: 0;
+}
+/* scoreboard legend: one tile per line */
+.kpi-trend__legend {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.kpi-trend__legend li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: 8px 12px 8px 16px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--c) 7%, var(--surface-sunken));
+  border: 1px solid color-mix(in srgb, var(--c) 22%, transparent);
+}
+.kpi-trend__bar {
+  position: absolute;
+  left: 7px;
+  top: 9px;
+  bottom: 9px;
+  width: 3px;
+  border-radius: 3px;
+  background: var(--c);
+  box-shadow: 0 0 8px var(--c);
+}
+.kpi-trend__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text);
+}
+.kpi-trend__values {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.kpi-trend__values b {
+  margin-left: auto;
+  font-size: 14px;
+}
+/* plot */
+.kpi-trend__grid line {
+  stroke: var(--grid);
+}
+.kpi-trend__zone-label {
+  fill: var(--text-muted);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+.kpi-trend__divider {
+  stroke: var(--axis);
+}
+.kpi-trend__cursor {
+  stroke: var(--accent);
+  stroke-opacity: 0.5;
+}
+.kpi-trend__line .recharts-area-curve {
+  filter: drop-shadow(0 2px 6px rgba(10, 110, 209, 0.28));
+}
+:root[data-theme='dark'] .kpi-trend__line .recharts-area-curve {
+  filter: drop-shadow(0 0 7px rgba(80, 160, 255, 0.45));
+}
+.kpi-trend__pulse {
+  opacity: 0.25;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: kpi-pulse 2.2s ease-out infinite;
+}
+@keyframes kpi-pulse {
+  0% {
+    opacity: 0.35;
+    transform: scale(0.5);
+  }
+  70% {
+    opacity: 0;
+    transform: scale(1.4);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+/* HUD tooltip */
+.kpi-trend__tip {
+  min-width: 220px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(8px);
+}
+.kpi-trend__tip-head {
+  margin-bottom: 6px;
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--accent-ink);
+}
+.kpi-trend__tip-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 0;
+  font-size: 12.5px;
+}
+.kpi-trend__tip-name {
+  flex: 1;
+  color: var(--text-2);
+}
+.kpi-trend__swatch {
+  width: 10px;
+  height: 10px;
+  flex: none;
+  border-radius: 3px;
+}
+/* picker chips: a shown KPI carries its line colour */
+.chip.chip--on[style] {
+  border-color: color-mix(in srgb, var(--chip-c) 55%, transparent);
+  background: color-mix(in srgb, var(--chip-c) 10%, var(--surface));
+}
+.chip__swatch {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  margin-right: 6px;
+  border-radius: 3px;
+  background: var(--chip-c);
+  vertical-align: middle;
+}
+@media (max-width: 520px) {
+  .kpi-trend__legend {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kpi-trend__pulse {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* five equal tiles (facilitator opportunity map: four quadrants + foundational band) */
+.grid-5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+@media (max-width: 1100px) {
+  .grid-5 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  .grid-5 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ---------- projector: the synthesized organizational map, readable from the back of the room ---------- */
+.projector__synthesis {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(12px, 2vh, 20px);
+  padding: clamp(18px, 3vh, 32px) clamp(20px, 3vw, 40px);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  min-height: 0;
+}
+.projector__synthesis-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px 24px;
+}
+.projector__synthesis-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  font-size: clamp(14px, 1.6vw, 20px);
+  color: var(--text-2);
+}
+.projector__synthesis-counts b {
+  margin-right: 4px;
+  font-size: 1.3em;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.projector__synthesis-body {
+  max-height: 46vh;
+  overflow-y: auto;
+  columns: 2 420px;
+  column-gap: clamp(24px, 4vw, 56px);
+  font-size: clamp(15px, 1.5vw, 21px);
+  line-height: 1.5;
+}
+.projector__synthesis-body .md,
+.projector__synthesis-body .md :is(p, li) {
+  font-size: inherit;
+  line-height: inherit;
+}
+.projector__synthesis-body .md > * {
+  break-inside: avoid;
+}
+
+/* synthesis badge + timestamp line (console and team page) */
+.synthesis-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}

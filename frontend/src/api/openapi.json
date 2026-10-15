@@ -3093,6 +3093,12 @@
       },
       "OpportunityMapView": {
         "properties": {
+          "awaiting_consent": {
+            "default": 0,
+            "description": "Captured but not yet shared (no consent)",
+            "title": "Awaiting Consent",
+            "type": "integer"
+          },
           "counts": {
             "additionalProperties": {
               "type": "integer"
@@ -3117,13 +3123,12 @@
           "synthesis": {
             "anyOf": [
               {
-                "type": "string"
+                "$ref": "#/components/schemas/SynthesisView"
               },
               {
                 "type": "null"
               }
-            ],
-            "title": "Synthesis"
+            ]
           }
         },
         "required": ["items", "counts", "foundational"],
@@ -4983,19 +4988,37 @@
         "title": "StepDesign",
         "type": "object"
       },
-      "SynthesisOut": {
+      "SynthesisView": {
+        "description": "The organizational AI Opportunity Map written by the synthesizer agent, saved with the session.",
         "properties": {
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
           "generative": {
+            "description": "True when written by Claude; False for the retrieval-only listing",
             "title": "Generative",
             "type": "boolean"
           },
-          "synthesis": {
-            "title": "Synthesis",
+          "items": {
+            "description": "Consented opportunities it was built from",
+            "title": "Items",
+            "type": "integer"
+          },
+          "stale": {
+            "default": false,
+            "description": "The shared opportunities changed since it was written",
+            "title": "Stale",
+            "type": "boolean"
+          },
+          "text": {
+            "title": "Text",
             "type": "string"
           }
         },
-        "required": ["synthesis", "generative"],
-        "title": "SynthesisOut",
+        "required": ["text", "generative", "at", "items"],
+        "title": "SynthesisView",
         "type": "object"
       },
       "SystemInfo": {
@@ -5681,6 +5704,15 @@
                 "type": "null"
               }
             ]
+          },
+          "consents": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Consent"
+            },
+            "default": {},
+            "description": "Per-participant consent, keyed by participant_key(name)",
+            "title": "Consents",
+            "type": "object"
           },
           "crisis_assigned_at": {
             "anyOf": [
@@ -7408,7 +7440,7 @@
     },
     "/api/sessions/{session_id}/opportunity-map/synthesis": {
       "post": {
-        "description": "Synthesizer agent: aggregate consented opportunities into an organizational map.",
+        "description": "Synthesizer agent: aggregate consented opportunities into an organizational map. The result is\nsaved with the session and shown on the console, the projector, every team's page and the export.",
         "operationId": "opportunity_synthesis_api_sessions__session_id__opportunity_map_synthesis_post",
         "parameters": [
           {
@@ -7442,7 +7474,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SynthesisOut"
+                  "$ref": "#/components/schemas/SynthesisView"
                 }
               }
             },
@@ -9701,6 +9733,7 @@
     },
     "/api/team/opportunities": {
       "put": {
+        "description": "Legacy: replace the whole list. New clients add and delete one item at a time.",
         "operationId": "opportunities_api_team_opportunities_put",
         "parameters": [
           {
@@ -9753,6 +9786,234 @@
           }
         },
         "summary": "Opportunities",
+        "tags": ["team"]
+      }
+    },
+    "/api/team/opportunities/consent": {
+      "put": {
+        "description": "Record one participant's consent to share their opportunities on the organization map.",
+        "operationId": "opportunity_consent_api_team_opportunities_consent_put",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Consent"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Workspace"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Opportunity Consent",
+        "tags": ["team"]
+      }
+    },
+    "/api/team/opportunities/items": {
+      "post": {
+        "description": "Add one opportunity (or update it by id) without touching teammates' entries.",
+        "operationId": "save_opportunity_api_team_opportunities_items_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Opportunity"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Workspace"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Save Opportunity",
+        "tags": ["team"]
+      }
+    },
+    "/api/team/opportunities/items/{opportunity_id}": {
+      "delete": {
+        "operationId": "delete_opportunity_api_team_opportunities_items__opportunity_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "opportunity_id",
+            "required": true,
+            "schema": {
+              "title": "Opportunity Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Workspace"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Opportunity",
+        "tags": ["team"]
+      }
+    },
+    "/api/team/organization-map": {
+      "get": {
+        "description": "The facilitator's synthesized organizational AI Opportunity Map (read-only), once written.",
+        "operationId": "organization_map_api_team_organization_map_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/SynthesisView"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Response Organization Map Api Team Organization Map Get"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Organization Map",
         "tags": ["team"]
       }
     },

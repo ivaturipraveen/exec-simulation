@@ -393,8 +393,10 @@ class Analyst:
             by_q: dict[str, list[str]] = {}
             for it in items:
                 by_q.setdefault(it["quadrant"], []).append(it["title"])
+            order = ["act_now", "strategic", "quick_win", "defer"]
             return "\n".join(
-                f"**{q.replace('_', ' ').title()}** ({len(t)}): {', '.join(t)}" for q, t in by_q.items()
+                f"- **{q.replace('_', ' ').title()}** ({len(by_q[q])}): {', '.join(by_q[q])}"
+                for q in sorted(by_q, key=lambda q: order.index(q) if q in order else len(order))
             )
         listing = "\n".join(
             f"- [{it['quadrant']}] {it['title']} ({it['capability_class']}; value {it['value']}/5; readiness "

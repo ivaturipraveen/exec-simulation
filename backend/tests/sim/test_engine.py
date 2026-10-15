@@ -198,3 +198,28 @@ def test_pitch_figure_check_requires_matching_units() -> None:
     assert unsupported_figures("This agent delivers a $14M benefit.", corpus) == ["$14M"]
     assert unsupported_figures("The bonus is worth $31 million and abandonment is 14%.", corpus) == []
     assert unsupported_figures("We have $18M of capital and 22% will improve.", corpus) == ["22%"]
+
+
+def test_a_year_review_shows_the_portfolio_as_it_stood_at_that_year_end(content: ContentBundle) -> None:
+    """Reopening the Year 1 review after Year 2 must not show Year 2 go-lives, Round 2 cards or
+    later delivery progress (they leaked in when the report read the current state)."""
+    s = new_team_state(content, "communitycare", 42)
+    for inv in ("i5", "i6", "i2"):
+        fund(s, content, inv, 1, owner=OWNER)
+    run_year(s, content)
+
+    def view(report):
+        rows = {i.investment_id: (i.live_label, i.progress, i.realized_pct) for i in report.initiatives}
+        return rows, report.financials.committed_musd
+
+    at_year_end = view(year_report(s, content, 1))
+    s.capital_round2_musd = 8.0  # Round 2 grant
+    fund(s, content, "i8", 2, owner=OWNER)  # Round 2 card
+    run_year(s, content)
+    after_year_two = view(year_report(s, content, 1))
+
+    assert after_year_two == at_year_end
+    rows, _ = after_year_two
+    assert "i8" not in rows
+    assert all(label is None or label.startswith("Y1") for label, _, _ in rows.values())
+    assert any(progress < 1 for label, progress, _ in rows.values() if label is None)

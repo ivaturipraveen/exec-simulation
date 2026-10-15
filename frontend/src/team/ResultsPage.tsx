@@ -1,10 +1,18 @@
-import { ArrowDownRight, ArrowRight, ArrowUpRight, Bot, Minus } from 'lucide-react'
+import {
+  ArrowDownRight,
+  ArrowRight,
+  ArrowUpRight,
+  Bot,
+  Hammer,
+  Minus,
+  Rocket,
+  TrendingUp,
+} from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useResults } from '../api/hooks'
 import type { KpiSeries, MeasureResult, TeamView, YearReport } from '../api/types'
 import { CapacityPlan } from '../components/CapacityPlan'
 import { StageBanner } from '../components/StageBanner'
-import { TrendChart } from '../components/charts'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import {
@@ -19,9 +27,11 @@ import {
 } from '../components/ui/primitives'
 import { Tabs } from '../components/ui/Tabs'
 import { useAnalyst } from './analystContext'
+import { KpiTrend, type KpiTrendSeries } from './KpiTrend'
 import { kpiValue, measureDelta, measureValue, money, pct } from '../lib/format'
 
-const SERIES_COLORS = ['var(--series-1)', 'var(--series-2)', 'var(--series-3)', 'var(--series-4)']
+/** Validated categorical slots for the KPI chart (light and dark steps in pages.css). */
+const KPI_COLORS = ['var(--kpi-1)', 'var(--kpi-2)', 'var(--kpi-3)', 'var(--kpi-4)']
 
 export function ResultsPage({ team }: { team: TeamView }) {
   const years = team.flags.results_years
@@ -64,6 +74,7 @@ export function ResultsPage({ team }: { team: TeamView }) {
       />
       <StageBanner team={team} compact />
       <StarsTiles report={report} />
+      <YearSummary report={report} />
       {(report.clues.length > 0 || report.unintended.length > 0) && (
         <div
           className={`grid ${report.clues.length > 0 && report.unintended.length > 0 ? 'grid-2' : ''}`}
@@ -151,6 +162,100 @@ const Row = ({ label, value }: { label: string; value: string }) => (
   </div>
 )
 
+/** The year in one glance: what moved, which cards are live, which are still building, and why
+ * Stars move later. Answers "why didn't anything change?" before anyone has to ask. */
+function YearSummary({ report }: { report: YearReport }) {
+  const moved = report.kpis.filter(hasMoved).sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta))
+  const live = report.initiatives.filter((i) => i.live_label)
+  const building = report.initiatives.filter((i) => !i.live_label && i.status !== 'cancelled')
+  const enablers = live.filter((i) => !i.kpi_effects.length && !i.contributions.length)
+  return (
+    <section className="year-summary" aria-label={`Year ${report.year} at a glance`}>
+      <div className="year-summary__col">
+        <div className="year-summary__label">
+          <TrendingUp aria-hidden /> What moved
+          <b>{moved.length}</b>
+        </div>
+        {moved.length ? (
+          <ul className="list-reset year-summary__list">
+            {moved.slice(0, 4).map((k) => {
+              const better = k.higher_is_better ? k.delta > 0 : k.delta < 0
+              return (
+                <li key={k.id}>
+                  <span className="grow">{k.name}</span>
+                  <span className="num muted">
+                    {kpiValue(k.baseline, k.unit)} → {kpiValue(k.current, k.unit)}
+                  </span>
+                  <span className={`num strong ${better ? 'delta-up' : 'delta-down'}`}>
+                    {k.delta > 0 ? '+' : ''}
+                    {k.delta.toFixed(1)}
+                  </span>
+                </li>
+              )
+            })}
+            {moved.length > 4 && (
+              <li className="muted">+{moved.length - 4} more in the KPI table</li>
+            )}
+          </ul>
+        ) : (
+          <p className="year-summary__empty">
+            No leading KPI moved yet. A card moves its KPIs the quarter after it goes live.
+          </p>
+        )}
+      </div>
+      <div className="year-summary__col">
+        <div className="year-summary__label">
+          <Rocket aria-hidden /> Live cards
+          <b>{live.length}</b>
+        </div>
+        {live.length ? (
+          <ul className="list-reset year-summary__list">
+            {live.slice(0, 4).map((i) => (
+              <li key={i.investment_id}>
+                <span className="code-chip">{i.code}</span>
+                <span className="grow">{i.name}</span>
+                <span className="muted xs">
+                  {enablers.includes(i) ? 'enabler' : `live ${i.live_label}`}
+                </span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="year-summary__empty">No card has gone live yet.</p>
+        )}
+      </div>
+      <div className="year-summary__col">
+        <div className="year-summary__label">
+          <Hammer aria-hidden /> Still building
+          <b>{building.length}</b>
+        </div>
+        {building.length ? (
+          <ul className="list-reset year-summary__list">
+            {building.slice(0, 4).map((i) => (
+              <li key={i.investment_id}>
+                <span className="code-chip">{i.code}</span>
+                <span className="grow">{i.name}</span>
+                <span
+                  className="year-summary__meter"
+                  aria-label={`${Math.round(i.progress * 100)}% built`}
+                >
+                  <span style={{ width: `${Math.round(i.progress * 100)}%` }} />
+                </span>
+                <span className="num xs muted">{Math.round(i.progress * 100)}%</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="year-summary__empty">Every funded card is live.</p>
+        )}
+        <p className="year-summary__note">
+          Stars measures follow a rating year later, so the rating can stay flat while KPIs move.
+        </p>
+      </div>
+    </section>
+  )
+}
+
 function StarsTiles({ report }: { report: YearReport }) {
   const s = report.stars
   return (
@@ -198,17 +303,40 @@ function StarsTiles({ report }: { report: YearReport }) {
   )
 }
 
+const hasMoved = (k: KpiSeries) => Math.abs(k.delta) >= 0.05
+
 function KpiSection({ report }: { report: YearReport }) {
-  const [chosen, setChosen] = useState<string[] | null>(null)
+  // Each shown KPI holds a colour slot (0-3) until it is removed, so adding or removing one line
+  // never repaints the others.
+  const [slots, setSlots] = useState<Record<string, number> | null>(null)
   const percentKpis = report.kpis.filter((k) => k.unit === '%')
-  const moved = [...percentKpis].sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta))
-  const ids = chosen ?? moved.slice(0, 4).map((k) => k.id)
-  const series = ids
-    .map((id, i) => {
-      const k = report.kpis.find((x) => x.id === id)
-      return k && { key: k.id, label: k.name, color: SERIES_COLORS[i] }
-    })
-    .filter(Boolean) as { key: string; label: string; color: string }[]
+  const movedPercent = percentKpis
+    .filter(hasMoved)
+    .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta))
+  // Moved KPIs first (largest change on top), then the rest in their usual order.
+  const rows = [
+    ...report.kpis.filter(hasMoved).sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta)),
+    ...report.kpis.filter((k) => !hasMoved(k)),
+  ]
+  const movedCount = report.kpis.filter(hasMoved).length
+  const current: Record<string, number> =
+    slots ?? Object.fromEntries(movedPercent.slice(0, 4).map((k, i) => [k.id, i]))
+  const ids = Object.keys(current).sort((a, b) => current[a] - current[b])
+  const series: KpiTrendSeries[] = ids.flatMap((id) => {
+    const k = report.kpis.find((x) => x.id === id)
+    if (!k) return []
+    return [
+      {
+        key: k.id,
+        label: k.name,
+        color: KPI_COLORS[current[id]],
+        start: kpiValue(k.baseline, k.unit),
+        now: kpiValue(k.current, k.unit),
+        delta: k.delta,
+        better: hasMoved(k) ? (k.higher_is_better ? k.delta > 0 : k.delta < 0) : null,
+      },
+    ]
+  })
   const data = useMemo(
     () =>
       report.quarters.map((q, i) => {
@@ -218,38 +346,85 @@ function KpiSection({ report }: { report: YearReport }) {
       }),
     [report],
   )
+  // Fit the axis to the KPIs shown, so a move from 2% to 8% is visible (not lost on 0-100%).
+  const domain = useMemo((): [number, number] => {
+    const vals = ids.flatMap((id) => {
+      const k = report.kpis.find((x) => x.id === id)
+      return k ? [k.baseline, ...k.values] : []
+    })
+    if (!vals.length) return [0, 100]
+    const lo = Math.min(...vals)
+    const hi = Math.max(...vals)
+    const pad = Math.max(2, (hi - lo) * 0.2)
+    return [
+      Math.max(0, Math.floor((lo - pad) / 5) * 5),
+      Math.min(100, Math.ceil((hi + pad) / 5) * 5),
+    ]
+  }, [ids, report])
   const toggle = (id: string) =>
-    setChosen((c) => {
-      const cur = c ?? ids
-      return cur.includes(id) ? cur.filter((x) => x !== id) : cur.length >= 4 ? cur : [...cur, id]
+    setSlots(() => {
+      const next = { ...current }
+      if (id in next) {
+        delete next[id]
+      } else if (Object.keys(next).length < KPI_COLORS.length) {
+        const used = new Set(Object.values(next))
+        next[id] = KPI_COLORS.findIndex((_, i) => !used.has(i))
+      }
+      return next
     })
   return (
-    <div className="grid grid-split">
+    <div className="grid grid-split kpi-split">
       <Card
         title="Leading indicators by quarter"
-        subtitle="Percent KPIs on one axis — pick up to four"
+        subtitle={
+          movedPercent.length
+            ? 'Showing the KPIs that moved — pick up to four'
+            : 'No percent KPI moved this year — pick any to see its line'
+        }
       >
-        <TrendChart
-          data={data}
-          xKey="q"
-          series={series}
-          format={(v) => `${v.toFixed(0)}%`}
-          domain={[0, 100]}
-        />
+        {series.length ? (
+          <KpiTrend
+            data={data}
+            series={series}
+            format={(v) => `${v.toFixed(0)}%`}
+            domain={domain}
+          />
+        ) : (
+          <div className="kpi-empty">
+            <strong>Nothing has moved yet.</strong>
+            <span>
+              Leading indicators move the quarter after a card goes live. Cards still building, and
+              enablers such as governance or data foundations, show up in later quarters or through
+              other cards. See “Result drivers by card” below.
+            </span>
+          </div>
+        )}
         <div className="chip-list" style={{ marginTop: 10 }}>
           {percentKpis.map((k) => (
             <button
               key={k.id}
               type="button"
               className={`chip ${ids.includes(k.id) ? 'chip--on' : ''}`}
+              style={
+                ids.includes(k.id)
+                  ? ({ '--chip-c': KPI_COLORS[current[k.id]] } as React.CSSProperties)
+                  : undefined
+              }
+              aria-pressed={ids.includes(k.id)}
               onClick={() => toggle(k.id)}
             >
+              {ids.includes(k.id) && <span className="chip__swatch" aria-hidden />}
               {k.name}
+              {hasMoved(k) && <span className="chip__dot" aria-label="moved" />}
             </button>
           ))}
         </div>
       </Card>
-      <Card title="All leading KPIs" subtitle="Start → now" flush>
+      <Card
+        title="All leading KPIs"
+        subtitle={`${movedCount} of ${report.kpis.length} moved · start → end of Year ${report.year}`}
+        flush
+      >
         <table className="table table--compact">
           <thead>
             <tr>
@@ -260,7 +435,7 @@ function KpiSection({ report }: { report: YearReport }) {
             </tr>
           </thead>
           <tbody>
-            {report.kpis.map((k) => (
+            {rows.map((k) => (
               <KpiRow key={k.id} k={k} />
             ))}
           </tbody>
@@ -274,7 +449,7 @@ function KpiRow({ k }: { k: KpiSeries }) {
   const better = k.higher_is_better ? k.delta > 0.05 : k.delta < -0.05
   const worse = k.higher_is_better ? k.delta < -0.05 : k.delta > 0.05
   return (
-    <tr>
+    <tr className={hasMoved(k) ? 'kpi-row--moved' : 'kpi-row--flat'}>
       <td className="small">{k.name}</td>
       <td className="num muted small">{kpiValue(k.baseline, k.unit)}</td>
       <td className="num strong small">{kpiValue(k.current, k.unit)}</td>
@@ -309,7 +484,14 @@ function InitiativesCard({ report }: { report: YearReport }) {
         <Empty title="No cards funded" />
       ) : (
         <div className="table-wrap">
-          <table className="table">
+          <table className="table drivers-table">
+            <colgroup>
+              <col className="drivers-table__card" />
+              <col className="drivers-table__status" />
+              <col className="drivers-table__realized" />
+              <col className="drivers-table__moved" />
+              <col />
+            </colgroup>
             <thead>
               <tr>
                 <th>Card</th>

@@ -122,7 +122,31 @@ class OpportunitiesBody(BaseModel):
 
 @router.put("/opportunities")
 def opportunities(body: OpportunitiesBody, team_id: TeamId, game: GameDep) -> Workspace:
+    """Legacy: replace the whole list. New clients add and delete one item at a time."""
     return game.save_opportunities(team_id, body.items, body.consent)
+
+
+@router.get("/organization-map")
+def organization_map(team_id: TeamId, game: GameDep) -> v.SynthesisView | None:
+    """The facilitator's synthesized organizational AI Opportunity Map (read-only), once written."""
+    return game.synthesis(game.team_session_id(team_id))
+
+
+@router.post("/opportunities/items")
+def save_opportunity(body: Opportunity, team_id: TeamId, game: GameDep) -> Workspace:
+    """Add one opportunity (or update it by id) without touching teammates' entries."""
+    return game.save_opportunity(team_id, body)
+
+
+@router.delete("/opportunities/items/{opportunity_id}")
+def delete_opportunity(opportunity_id: str, team_id: TeamId, game: GameDep) -> Workspace:
+    return game.delete_opportunity(team_id, opportunity_id)
+
+
+@router.put("/opportunities/consent")
+def opportunity_consent(body: Consent, team_id: TeamId, game: GameDep) -> Workspace:
+    """Record one participant's consent to share their opportunities on the organization map."""
+    return game.set_opportunity_consent(team_id, body)
 
 
 @router.post("/feedback")

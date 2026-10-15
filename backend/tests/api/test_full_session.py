@@ -292,7 +292,7 @@ def test_full_session_happy_path(client: TestClient) -> None:
     assert [i["quadrant"] for i in m["items"]] == ["act_now", "strategic", "quick_win", "defer"]
     assert m["foundational"][0]["theme"] == "Governance" and m["foundational"][0]["links"] == 4
     syn = client.post(f"/api/sessions/{sid}/opportunity-map/synthesis", headers=fh).json()
-    assert "Act now" in syn["synthesis"] and syn["generative"] is False
+    assert "Act now" in syn["text"] and syn["generative"] is False and syn["items"] == 4
     bad = [{**items[0], "capability_class": "Magic"}]
     assert client.put("/api/team/opportunities", json={"items": bad}, headers=hz).status_code == 422
 

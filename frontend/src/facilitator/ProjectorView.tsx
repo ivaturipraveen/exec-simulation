@@ -1,12 +1,14 @@
 import { Check, Maximize, Minimize, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { useScoreboard, useSession } from '../api/hooks'
+import { useOpportunityMap, useScoreboard, useSession } from '../api/hooks'
 import { useRealtime } from '../api/realtime'
 import type { SessionView } from '../api/types'
 import { Countdown } from '../components/Countdown'
 import { BrandMark } from '../components/BrandMark'
 import { Loading } from '../components/ui/primitives'
+import { Markdown } from '../components/ui/Markdown'
+import { ThemeToggle } from '../components/ThemeToggle'
 import { auth } from '../lib/storage'
 
 type Team = SessionView['teams'][number]
@@ -62,6 +64,8 @@ export function ProjectorView() {
   useRealtime(token ? sessionId : undefined, token)
   const released = !!session?.options.scorecards_released
   const { data: board } = useScoreboard(sessionId, token, released)
+  const translating = session?.clock.stage_kind === 'translate'
+  const { data: oppMap } = useOpportunityMap(sessionId, token, !!translating)
   const [full, setFull] = useState(false)
 
   useEffect(() => {
@@ -102,6 +106,7 @@ export function ProjectorView() {
         >
           {full ? <Minimize aria-hidden /> : <Maximize aria-hidden />}
         </button>
+        <ThemeToggle />
         <Link to={`/facilitator/${sessionId}`} aria-label="Back to the console">
           <X aria-hidden />
         </Link>
@@ -152,7 +157,30 @@ export function ProjectorView() {
         </section>
       )}
 
-      {showBoard ? (
+      {translating && oppMap?.synthesis ? (
+        <section className="projector__synthesis" aria-label="Organizational AI Opportunity Map">
+          <div className="projector__synthesis-head">
+            <span className="projector__kicker">Organizational AI Opportunity Map</span>
+            <span className="projector__synthesis-counts">
+              {(
+                [
+                  ['act_now', 'Act now'],
+                  ['strategic', 'Strategic'],
+                  ['quick_win', 'Quick wins'],
+                  ['defer', 'Defer'],
+                ] as const
+              ).map(([k, label]) => (
+                <span key={k}>
+                  <b>{oppMap.counts[k] ?? 0}</b> {label}
+                </span>
+              ))}
+            </span>
+          </div>
+          <div className="projector__synthesis-body">
+            <Markdown>{oppMap.synthesis.text}</Markdown>
+          </div>
+        </section>
+      ) : showBoard ? (
         <section className="projector__board" aria-label="Final scorecards">
           {[...board]
             .sort((a, b) => b.scorecard.total - a.scorecard.total)

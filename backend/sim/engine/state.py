@@ -89,6 +89,9 @@ class QuarterSnapshot(BaseModel):
     savings_musd: float
     capital_spent_musd: float
     dual_ratio: float = 1.0
+    drift: dict[str, float] | None = Field(
+        default=None, description="Baseline drift accrued so far per measure (None in older saves)"
+    )
 
 
 class TeamState(BaseModel):

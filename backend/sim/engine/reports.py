@@ -21,7 +21,7 @@ from sim.content import ContentBundle
 from sim.engine.conditions import context, holds, is_ceremonial
 from sim.engine.model import clamp, granted_capital, realization, sign
 from sim.engine.stars import improvement, measure_stars, next_star_gap, overall_stars, summary_score
-from sim.engine.state import QUARTERS_PER_YEAR, InitiativeStatus, TeamState
+from sim.engine.state import QUARTERS_PER_YEAR, YEARS, InitiativeStatus, TeamState
 
 
 class MeasureResult(BaseModel):
@@ -184,8 +184,17 @@ def year_report(state: TeamState, content: ContentBundle, year: int) -> YearRepo
     cfg = content.config
     band = cfg.confidence_band
     quarters = [s for s in state.history if s.year == year]
-    rating, projected = year_values(state, content, year)
+    raw_rating, raw_projected = year_values(state, content, year)
     baseline = {m: payer.measures[m].value for m in content.measures}
+
+    # Stars are scored on the value the review shows, so "85.0" never earns fewer stars than 85.0
+    # because of a 0.001 remainder from quarterly rounding.
+    def shown(m_id: str, value: float) -> float:
+        kind = content.measures[m_id].unit_kind
+        return round(value, 2 if kind != "rate" or baseline[m_id] > 2 else 3)
+
+    rating = {m: shown(m, v) for m, v in raw_rating.items()}
+    projected = {m: shown(m, v) for m, v in raw_projected.items()}
     last = quarters[-1]
     adj = payer.rating_adjustment
 
@@ -205,8 +214,8 @@ def year_report(state: TeamState, content: ContentBundle, year: int) -> YearRepo
                 unit_kind=measure.unit_kind,
                 higher_is_better=measure.higher_is_better,
                 baseline=base.value,
-                year_value=round(rating[m_id], 2 if measure.unit_kind != "rate" or base.value > 2 else 3),
-                projected=round(projected[m_id], 2 if measure.unit_kind != "rate" or base.value > 2 else 3),
+                year_value=rating[m_id],
+                projected=projected[m_id],
                 band=round(abs(last.effects[m_id]) * band, 3),
                 headroom=base.headroom,
                 lift=round(lift, 3),
@@ -231,8 +240,13 @@ def year_report(state: TeamState, content: ContentBundle, year: int) -> YearRepo
         year_score=round(summary_score(content.measures, rating, adj), 3),
         projected=overall_stars(content.measures, projected, adj),
         projected_score=round(summary_score(content.measures, projected, adj), 3),
-        projected_low=banded(1 - band),
-        projected_high=banded(1 + band),
+        # When measures drift down the change is negative, so a smaller effect is the better end.
+        projected_low=min(
+            banded(1 - band), banded(1 + band), overall_stars(content.measures, projected, adj)
+        ),
+        projected_high=max(
+            banded(1 - band), banded(1 + band), overall_stars(content.measures, projected, adj)
+        ),
         target=cfg.target_stars,
     )
 
@@ -288,7 +302,16 @@ def year_report(state: TeamState, content: ContentBundle, year: int) -> YearRepo
     ]
 
     end_q = year * QUARTERS_PER_YEAR
-    initiatives = [_initiative_result(state, content, ini, end_q, last) for ini in state.initiatives]
+    # A year's review shows the portfolio as it stood at the end of that year: cards funded for a
+    # later year are left out, and go-live and delivery progress are read as of that year end.
+    in_year = [ini for ini in state.initiatives if ini.start_quarter < end_q]
+    as_of = state
+    if year < YEARS:
+        # Pauses, resumes and cancellations are Round 2 decisions, made after Year 1: during Year 1
+        # every card was active, so the Year 1 review reads the portfolio as it stood then.
+        in_year = [ini.model_copy(update={"status": InitiativeStatus.ACTIVE}) for ini in in_year]
+        as_of = state.model_copy(update={"initiatives": in_year})
+    initiatives = [_initiative_result(as_of, content, ini, end_q, last) for ini in in_year]
 
     capital = sum(s.capital_spent_musd for s in upto)
     opex = sum(s.opex_musd for s in upto)
@@ -302,11 +325,16 @@ def year_report(state: TeamState, content: ContentBundle, year: int) -> YearRepo
         progress = clamp(
             (stars.projected_score - stars.baseline_score) / max(target - stars.baseline_score, 0.25), 0, 1
         )
+    # As at this year's end: Round 2 capital is granted, and cancellations made, only after Year 1.
+    final_year = year >= YEARS
+    granted = granted_capital(state) - (0.0 if final_year else state.capital_round2_musd)
+    # A Round 2 cancellation moves the recovered part out of "committed"; add it back for Year 1.
+    committed = sum(i.capital_committed + (0.0 if final_year else i.capital_recovered) for i in in_year)
     financials = Financials(
-        granted_musd=round(granted_capital(state), 2),
-        committed_musd=round(sum(i.capital_committed for i in state.initiatives), 2),
+        granted_musd=round(granted, 2),
+        committed_musd=round(committed, 2),
         capital_spent_musd=round(capital, 2),
-        written_off_musd=round(sum(i.capital_written_off for i in state.initiatives), 2),
+        written_off_musd=round(sum(i.capital_written_off for i in in_year) if final_year else 0.0, 2),
         opex_musd=round(opex, 2),
         savings_run_rate_musd=round(last.savings_musd * QUARTERS_PER_YEAR, 2),
         bonus_value_musd=round(bonus, 1),
@@ -326,7 +354,7 @@ def year_report(state: TeamState, content: ContentBundle, year: int) -> YearRepo
         quarters=quarter_rows,
         initiatives=initiatives,
         financials=financials,
-        unintended=_unintended(state, content, year),
+        unintended=_unintended(as_of, content, year),
         clues=_clues(state, content),
         capacity_peak=peak,
         overrun_quarters=sum(1 for s in upto if s.capacity_utilization > cfg.capacity_overrun_cap),
@@ -341,11 +369,10 @@ def _initiative_result(state: TeamState, content: ContentBundle, ini, end_q: int
     drivers: list[Driver] = []
     realized_pct = None
     contributions: list[CardContribution] = []
-    if (
-        ini.live_quarter is not None
-        and ini.live_quarter < end_q
-        and ini.status is not InitiativeStatus.CANCELLED
-    ):
+    live_by_year_end = ini.live_quarter is not None and ini.live_quarter < end_q
+    # Delivery progress as of the year end (the state itself already holds later quarters).
+    progress = last.progress.get(ini.investment_id, ini.progress)
+    if live_by_year_end and ini.status is not InitiativeStatus.CANCELLED:
         r = realization(content, state, ini, ctx, quarter=end_q - 1, capacity_mult=last.capacity_multiplier)
         realized_pct = round(r.total * 100, 1)
         for f in r.factors:
@@ -376,7 +403,7 @@ def _initiative_result(state: TeamState, content: ContentBundle, ini, end_q: int
         drivers.append(
             Driver(
                 kind="delivery",
-                label=f"Still being delivered: {ini.progress:.0%} complete",
+                label=f"Still being delivered: {progress:.0%} complete",
                 impact_pct=-100.0,
             )
         )
@@ -411,8 +438,8 @@ def _initiative_result(state: TeamState, content: ContentBundle, ini, end_q: int
         funded_round=ini.funded_round,
         scope=ini.scope,
         owner=ini.owner,
-        progress=round(ini.progress, 3),
-        live_label=quarter_label(ini.live_quarter) if ini.live_quarter is not None else None,
+        progress=round(progress, 3),
+        live_label=quarter_label(ini.live_quarter) if live_by_year_end else None,
         realized_pct=realized_pct,
         contributions=contributions,
         drivers=drivers,
@@ -430,8 +457,10 @@ def _unintended(state: TeamState, content: ContentBundle, year: int) -> list[str
             notes.append(f"{when}: {inc.description} ({code}, {content.measures[inc.measure].code})")
     payer = content.payers[state.payer_id]
     ctx = context(state, content, last_q)
+    year_end = next((s for s in state.history if s.quarter == last_q), None)
+    accrued_by_then = year_end.drift if year_end and year_end.drift is not None else state.drift_accum
     for drift in payer.drifts:
-        accrued = state.drift_accum.get(drift.measure)
+        accrued = accrued_by_then.get(drift.measure)
         if accrued:
             code = content.measures[drift.measure].code
             if holds(drift.unless, ctx):
