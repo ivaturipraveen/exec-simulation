@@ -78,13 +78,17 @@ test('facilitator runs a session; a team plays Round 1, Year 1 results and the b
   await team.getByRole('dialog').getByRole('button', { name: 'Submit' }).click()
   await expect(team.getByText('Round 1 submitted').first()).toBeVisible()
 
-  // Facilitator force-simulates Year 1 (other teams have not submitted).
+  // Facilitator moves Diagnose → Round 1 → Simulate Year 1; entering the Simulate stage runs the
+  // year and force-submits teams that have not submitted.
   await fac.bringToFront()
-  await fac.getByRole('button', { name: /Force-submit drafts and simulate/ }).click()
+  await fac.getByRole('button', { name: /Next stage/ }).click() // → Investment Round 1
+  await fac.getByRole('button', { name: /Next stage/ }).click() // → Simulate Year 1
+  // Two teams are still drafting, so the console asks before running the year.
+  await fac.getByRole('alertdialog').getByRole('button', { name: 'Run Year 1' }).click()
   // Review before release (pack 9.2): teams see results only once the facilitator releases them.
   await fac.getByRole('button', { name: /Release Year 1 performance review/ }).click()
   await expect(fac.getByText('Year 1 review released')).toBeVisible()
-  await expect(fac.getByRole('button', { name: /Grant Round 2 capital/ })).toBeVisible()
+  await fac.getByRole('button', { name: /Next stage/ }).click() // → Analyze: the board pitch opens
 
   // Team sees its Year 1 performance review via realtime refresh.
   await team.bringToFront()
@@ -110,7 +114,10 @@ test('facilitator runs a session; a team plays Round 1, Year 1 results and the b
   await team.getByRole('button', { name: /Submit pitch for scoring/ }).click()
   await expect(team.getByText('Pitch submitted').first()).toBeVisible()
 
+  // Round 2 is where pitches are scored and capital is granted.
   await fac.bringToFront()
+  await fac.getByRole('button', { name: /Next stage/ }).click() // → Investment Round 2
+  await expect(fac.getByRole('button', { name: /Grant Round 2 capital/ })).toBeVisible()
   await fac
     .getByRole('button', { name: /^Score$/ })
     .first()
