@@ -88,8 +88,8 @@ export function PlaytestCard({
             <thead>
               <tr>
                 <th>Stage</th>
-                <th className="num">Planned</th>
-                <th className="num">Actual</th>
+                <th className="num">Planned (min)</th>
+                <th className="num">Actual (min)</th>
                 <th className="num">Difference (min)</th>
                 <th style={{ width: '32%' }}>Planned vs actual</th>
               </tr>

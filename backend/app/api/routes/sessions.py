@@ -1,16 +1,18 @@
 """Facilitator endpoints. Creating a session needs the facilitator sign-in (when sign-in is on);
 everything else needs the session's facilitator token."""
 
+import re
 from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Path, Request
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import PlainTextResponse, Response
 from pydantic import BaseModel, Field
 
 from app.api.deps import FacilitatorAccount, FacilitatorSession, GameDep
 from app.schemas import views as v
 from app.services.exports import session_summary_markdown
 from app.services.game import StageAction
+from app.services.opportunity_onepager import team_onepager
 from app.services.playtest import PlaytestReport, report_markdown
 from sim.content.models import Round2Mechanic, Severity
 from sim.engine import Scorecard, YearReport
@@ -295,6 +297,28 @@ def scoreboard(session_id: FacilitatorSession, game: GameDep) -> list[v.Scoreboa
 @router.get("/{session_id}/opportunity-map")
 def opportunity_map(session_id: FacilitatorSession, game: GameDep) -> v.OpportunityMapView:
     return game.opportunity_map(session_id)
+
+
+class OnePagerBody(BaseModel):
+    item_ids: list[str] | None = Field(
+        default=None,
+        max_length=60,
+        description="Opportunities to include; omit for all the company's shared ones",
+    )
+
+
+@router.post("/{session_id}/teams/{team_id}/opportunity-onepager.pdf", response_class=Response)
+def opportunity_onepager(
+    body: OnePagerBody, session_id: FacilitatorSession, team_id: str, game: GameDep
+) -> Response:
+    """One-page AI Opportunity Map PDF for one company (OPPORTUNITY_ONEPAGER must be on)."""
+    company, pdf = team_onepager(game, session_id, team_id, body.item_ids)
+    slug = re.sub(r"[^A-Za-z0-9]+", "-", company).strip("-") or "company"
+    return Response(
+        pdf,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="AI-Opportunity-Map_{slug}.pdf"'},
+    )
 
 
 @router.post("/{session_id}/opportunity-map/synthesis")

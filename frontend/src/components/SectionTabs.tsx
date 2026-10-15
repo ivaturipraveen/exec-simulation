@@ -8,6 +8,8 @@ export interface Section {
   count?: number
   /** Optional extra marker after the count (an icon or a short badge). */
   marker?: ReactNode
+  /** Controls for this section (an export button, say), shown at the right end of the tab row while it is open. */
+  actions?: ReactNode
   content: ReactNode
 }
 
@@ -18,7 +20,7 @@ export function SectionTabs({ label, sections }: { label: string; sections: Sect
   const current = visible.find((s) => s.id === active) ?? visible[0]
   if (!current) return null
   return (
-    <div className="section-tabs">
+    <div className={current.actions ? 'section-tabs has-actions' : 'section-tabs'}>
       <Tabs
         label={label}
         value={current.id}
@@ -34,6 +36,8 @@ export function SectionTabs({ label, sections }: { label: string; sections: Sect
           ),
         }))}
       />
+      {/* Beside the tabs, not around them: the tab strip's styles target `.section-tabs > .tabs`. */}
+      {current.actions && <div className="section-tabs__actions">{current.actions}</div>}
       <div className="section-tabs__body" role="tabpanel" aria-label={current.id}>
         {current.content}
       </div>

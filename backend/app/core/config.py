@@ -53,6 +53,7 @@ class Settings(BaseSettings):
     include_translation: bool = True
     pitch_ai_suggest: bool = True
     opportunity_retention_days: int = Field(default=365, ge=1, le=3650)
+    opportunity_onepager: bool = False  # facilitator export of a one-page map per company
 
     anthropic_api_key: SecretStr | None = None
     anthropic_model: str = "claude-opus-5-5"

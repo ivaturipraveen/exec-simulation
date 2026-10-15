@@ -298,6 +298,16 @@ FIELDS: tuple[FieldSpec, ...] = (
         step=1,
         env="OPPORTUNITY_RETENTION_DAYS",
     ),
+    FieldSpec(
+        "opportunity_onepager",
+        G_FACIL,
+        "One-page Opportunity Map export",
+        "bool",
+        "runtime",
+        "Adds an 'Export one-pager' button per company on the Opportunity map tab: a single-page PDF of that "
+        "company's own consented opportunities, for the facilitator to send to the client.",
+        env="OPPORTUNITY_ONEPAGER",
+    ),
     # ---------------------------------------------------------------- AI
     FieldSpec(
         "anthropic_model",

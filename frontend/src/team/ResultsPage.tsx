@@ -505,8 +505,8 @@ function InitiativesCard({ report }: { report: YearReport }) {
               {report.initiatives.map((i) => (
                 <tr key={i.investment_id}>
                   <td>
-                    <div>
-                      <span className="code-chip">{i.code}</span>{' '}
+                    <div className="chip-title">
+                      <span className="code-chip">{i.code}</span>
                       <span className="strong">{i.name}</span>
                     </div>
                     <div className="xs muted">
@@ -607,8 +607,10 @@ function MeasuresTable({
             {measures.map((m) => (
               <tr key={m.id}>
                 <td>
-                  <span className="code-chip">{m.code}</span>{' '}
-                  <span className="strong">{m.name}</span>
+                  <div className="chip-title">
+                    <span className="code-chip">{m.code}</span>
+                    <span className="strong">{m.name}</span>
+                  </div>
                   <div className="xs muted">
                     Lift {measureDelta(m.lift, m.unit_kind)} · {pct(Math.max(0, m.lift_share))} of
                     headroom

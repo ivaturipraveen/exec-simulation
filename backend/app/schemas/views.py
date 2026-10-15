@@ -681,6 +681,9 @@ class OpportunityMapView(BaseModel):
     foundational: list[FoundationBand]
     synthesis: SynthesisView | None = None
     awaiting_consent: int = Field(default=0, description="Captured but not yet shared (no consent)")
+    onepager_enabled: bool = Field(
+        default=False, description="One-page PDF export per company is switched on"
+    )
 
 
 class AnswerKeyEntry(BaseModel):

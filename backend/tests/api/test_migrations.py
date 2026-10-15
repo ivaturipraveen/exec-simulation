@@ -69,3 +69,30 @@ def test_downgrade_and_upgrade_round_trip(tmp_path: Path) -> None:
         command.upgrade(cfg, "head")
     assert _revision(engine) == _head()
     assert _head() >= BASELINE_REVISION
+
+
+def test_saved_synthesis_moves_into_its_own_column_and_back(tmp_path: Path) -> None:
+    engine = make_engine(f"sqlite:///{tmp_path / 'synthesis.db'}")
+    cfg = alembic_config()
+    saved = '{"text": "Org map", "generative": true, "at": "2026-10-15T10:00:00", "items": 3, "fingerprint": "ab"}'
+    with engine.begin() as conn:
+        cfg.attributes["connection"] = conn
+        command.downgrade(cfg, "0002")  # before the column: the synthesis lives in options
+        assert "synthesis" not in {c["name"] for c in inspect(conn).get_columns("game_sessions")}
+        conn.execute(
+            text(
+                "INSERT INTO game_sessions (id, name, seed, round2_mechanic, content_version, stage_index,"
+                " stage_status, elapsed_before_pause, released, simulated_years, round2_granted, options,"
+                " created_at, updated_at) VALUES ('s1', 'Old', 1, 'hybrid', '1', 0, 'not_started', 0, '[]', 0, 0,"
+                " :options, '2026-10-01 00:00:00', '2026-10-01 00:00:00')"
+            ),
+            {"options": f'{{"keep": 1, "synthesis": {saved}}}'},
+        )
+        command.upgrade(cfg, "head")
+        row = conn.execute(text("SELECT options, synthesis FROM game_sessions WHERE id = 's1'")).one()
+        assert '"synthesis"' not in row.options and '"keep": 1' in row.options
+        assert '"text": "Org map"' in row.synthesis
+
+        command.downgrade(cfg, "0002")  # and back, so a rollback keeps the text
+        back = conn.execute(text("SELECT options FROM game_sessions WHERE id = 's1'")).one()
+        assert '"text": "Org map"' in back.options and '"keep": 1' in back.options

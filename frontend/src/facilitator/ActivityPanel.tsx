@@ -1,11 +1,13 @@
 import { Download, FileDown } from 'lucide-react'
+import { useMemo, useState } from 'react'
 import { useEvents, useSessionPart } from '../api/hooks'
 import { errorMessage } from '../api/client'
-import type { FeedbackSummary, SessionView } from '../api/types'
+import type { EventView, FeedbackSummary, SessionView } from '../api/types'
 import { Button } from '../components/ui/Button'
 import { SectionTabs } from '../components/SectionTabs'
 import { Card } from '../components/ui/Card'
 import { Badge, Loading, Stat } from '../components/ui/primitives'
+import { SortableTh, type SortDir } from '../components/ui/SortableTh'
 import { useToast } from '../components/ui/toastContext'
 import { downloadText } from '../lib/download'
 import { PlaytestCard } from './PlaytestCard'
@@ -22,10 +24,40 @@ function detailText(payload: unknown): string {
   return parts.length ? parts.join(' · ') : '—'
 }
 
+type SortKey = 'time' | 'team' | 'actor' | 'event' | 'detail'
+
+const SHOWN = 400 // the newest events; sorting reorders these, it never reaches further back
+
 export function ActivityPanel({ session, token }: { session: SessionView; token: string }) {
   const { data } = useEvents(session.id, token)
   const toast = useToast()
   const names = new Map(session.teams.map((t) => [t.team_id, t.team_name]))
+  // Newest first until the facilitator picks a column; clicking it again flips the direction.
+  const [sort, setSort] = useState<{ key: SortKey; dir: SortDir }>({ key: 'time', dir: 'desc' })
+  const onSort = (key: SortKey) =>
+    setSort((s) =>
+      s.key === key
+        ? { key, dir: s.dir === 'asc' ? 'desc' : 'asc' }
+        : // Time starts newest-first; text columns start A to Z.
+          { key, dir: key === 'time' ? 'desc' : 'asc' },
+    )
+  const rows = useMemo(() => {
+    const byId = new Map(session.teams.map((t) => [t.team_id, t.team_name]))
+    const teamName = (id: string | null | undefined) => (id ? (byId.get(id) ?? id) : '—')
+    const text: Record<Exclude<SortKey, 'time'>, (e: EventView) => string> = {
+      team: (e) => teamName(e.team_id),
+      actor: (e) => e.actor,
+      event: (e) => e.kind.replace(/_/g, ' '),
+      detail: (e) => detailText(e.payload),
+    }
+    const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' })
+    const compare = (a: EventView, b: EventView) =>
+      sort.key === 'time'
+        ? Date.parse(a.created_at) - Date.parse(b.created_at) || a.id - b.id
+        : collator.compare(text[sort.key](a), text[sort.key](b)) || a.id - b.id
+    const newest = [...(data ?? [])].reverse().slice(0, SHOWN)
+    return newest.sort((a, b) => (sort.dir === 'asc' ? compare(a, b) : compare(b, a)))
+  }, [data, sort, session.teams])
   const dl = (path: string, file: string, type: string) =>
     downloadText(`/sessions/${session.id}${path}`, token, file, type).catch((e) =>
       toast(errorMessage(e), 'error'),
@@ -64,30 +96,39 @@ export function ActivityPanel({ session, token }: { session: SessionView; token:
                   <table className="table table--compact activity-table">
                     <thead>
                       <tr>
-                        <th>Time</th>
-                        <th>Team</th>
-                        <th>Actor</th>
-                        <th>Event</th>
-                        <th>Detail</th>
+                        {(
+                          [
+                            ['time', 'Time'],
+                            ['team', 'Team'],
+                            ['actor', 'Actor'],
+                            ['event', 'Event'],
+                            ['detail', 'Detail'],
+                          ] as const
+                        ).map(([key, label]) => (
+                          <SortableTh
+                            key={key}
+                            label={label}
+                            active={sort.key === key}
+                            dir={sort.dir}
+                            onSort={() => onSort(key)}
+                          />
+                        ))}
                       </tr>
                     </thead>
                     <tbody>
-                      {[...data]
-                        .reverse()
-                        .slice(0, 400)
-                        .map((e) => (
-                          <tr key={e.id}>
-                            <td className="activity__time">
-                              {new Date(e.created_at).toLocaleTimeString()}
-                            </td>
-                            <td className="small">
-                              {e.team_id ? (names.get(e.team_id) ?? e.team_id) : '—'}
-                            </td>
-                            <td className="small muted">{e.actor}</td>
-                            <td className="small strong">{e.kind.replace(/_/g, ' ')}</td>
-                            <td className="activity__detail">{detailText(e.payload)}</td>
-                          </tr>
-                        ))}
+                      {rows.map((e) => (
+                        <tr key={e.id}>
+                          <td className="activity__time">
+                            {new Date(e.created_at).toLocaleTimeString()}
+                          </td>
+                          <td className="small">
+                            {e.team_id ? (names.get(e.team_id) ?? e.team_id) : '—'}
+                          </td>
+                          <td className="small muted">{e.actor}</td>
+                          <td className="small strong">{e.kind.replace(/_/g, ' ')}</td>
+                          <td className="activity__detail">{detailText(e.payload)}</td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
                 </div>

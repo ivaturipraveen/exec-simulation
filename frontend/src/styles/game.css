@@ -413,6 +413,31 @@
 .grid-split > .stack > .card:last-child,
 .grid-2 > .stack > .card:last-child {
   flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+.grid-split > .stack > .card:last-child > .card__body,
+.grid-2 > .stack > .card:last-child > .card__body {
+  flex: 1 1 auto;
+}
+/* A console page that is nothing but an empty state (e.g. Results before Year 1) centers it in the
+   space under the header and tabs, instead of leaving it at the top of a blank page. */
+.fac:has(> .content > .empty:only-child) {
+  display: flex;
+  flex-direction: column;
+}
+.fac > .content:has(> .empty:only-child) {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+/* A stretched card holding only an empty state centers it, instead of leaving it at the top. */
+.grid-split > .stack > .card:last-child > .card__body:has(> .empty:only-child),
+.grid-2 > .stack > .card:last-child > .card__body:has(> .empty:only-child) {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 /* Long action lists scroll inside their card instead of stretching the page. */
@@ -705,6 +730,84 @@ dl.grid > div:last-child:nth-child(odd) {
   font-size: 12.5px;
   color: var(--text-2);
   overflow-wrap: anywhere;
+}
+
+/* Tab row with section actions: the tabs keep their place and styling, the open section's controls sit at
+   the right end of the same row, and on a narrow screen they drop to their own line. */
+.section-tabs.has-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: var(--space-box, 12px);
+}
+.section-tabs.has-actions > .tabs {
+  justify-self: start; /* keep the pill track as wide as its tabs, as it is without actions */
+}
+.section-tabs.has-actions > .section-tabs__body {
+  grid-column: 1 / -1;
+}
+.section-tabs__actions {
+  min-width: 0;
+  justify-self: end;
+}
+.section-tabs__actions:empty {
+  display: none;
+}
+@media (max-width: 760px) {
+  .section-tabs.has-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .section-tabs__actions {
+    justify-self: start;
+  }
+}
+
+/* A code chip (I14, M3) beside a name that may wrap: the chip stays put and the name wraps beside it,
+   instead of its second line running back underneath the chip. */
+.chip-title {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.chip-title > .code-chip {
+  flex: none;
+}
+.chip-title > :not(.code-chip) {
+  min-width: 0;
+}
+
+/* Sortable column header (SortableTh): looks like the plain header, with chevrons for the direction. */
+.th-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.th-sort svg {
+  width: 13px;
+  height: 13px;
+  flex: none;
+  opacity: 0.4;
+  transition: opacity 120ms;
+}
+.th-sort:hover svg,
+.th-sort:focus-visible svg {
+  opacity: 0.85;
+}
+.th-sort.is-active svg {
+  opacity: 1;
+}
+.th-sort:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
 /* ---------- Answer key root causes: sections line up across the three cards ----------

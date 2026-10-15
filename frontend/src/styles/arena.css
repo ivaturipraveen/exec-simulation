@@ -783,11 +783,18 @@
   line-height: 1.2;
   color: var(--l-ink, #fff);
 }
+.shell--arena .sidebar__brand .stack {
+  min-width: 0; /* lets the company type truncate instead of widening the column */
+}
 .sidebar__archetype {
   margin-top: 2px;
   font-size: 12px;
   line-height: 1.35;
   color: var(--l-muted, #8fb0d4);
+  /* One line for every company, so the header is always two lines tall; the full text is the tooltip. */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* ---------- AI analyst header: readable status in both themes ---------- */

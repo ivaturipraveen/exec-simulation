@@ -809,6 +809,26 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/api/sessions/{session_id}/teams/{team_id}/opportunity-onepager.pdf': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Opportunity Onepager
+     * @description One-page AI Opportunity Map PDF for one company (OPPORTUNITY_ONEPAGER must be on).
+     */
+    post: operations['opportunity_onepager_api_sessions__session_id__teams__team_id__opportunity_onepager_pdf_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/api/sessions/{session_id}/teams/{team_id}/pitch': {
     parameters: {
       query?: never
@@ -2373,6 +2393,14 @@ export interface components {
       /** Text */
       text: string
     }
+    /** OnePagerBody */
+    OnePagerBody: {
+      /**
+       * Item Ids
+       * @description Opportunities to include; omit for all the company's shared ones
+       */
+      item_ids?: string[] | null
+    }
     /** OpModelBody */
     OpModelBody: {
       design: components['schemas']['OperatingModelDesign']
@@ -2531,6 +2559,12 @@ export interface components {
       foundational: components['schemas']['FoundationBand'][]
       /** Items */
       items: components['schemas']['OpportunityItem'][]
+      /**
+       * Onepager Enabled
+       * @description One-page PDF export per company is switched on
+       * @default false
+       */
+      onepager_enabled: boolean
       synthesis?: components['schemas']['SynthesisView'] | null
     }
     /** OptionsBody */
@@ -5343,6 +5377,42 @@ export interface operations {
         content: {
           'application/json': components['schemas']['SessionView']
         }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  opportunity_onepager_api_sessions__session_id__teams__team_id__opportunity_onepager_pdf_post: {
+    parameters: {
+      query?: never
+      header?: {
+        authorization?: string | null
+      }
+      path: {
+        team_id: string
+        session_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['OnePagerBody']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
       }
       /** @description Validation Error */
       422: {
