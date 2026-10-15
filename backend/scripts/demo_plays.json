@@ -1,0 +1,985 @@
+{
+  "plays": {
+    "heritage": {
+      "payer": "heritage",
+      "payerName": "Heritage Medicare",
+      "strategy": "Sequenced foundation",
+      "capitalR1": 15,
+      "capacity": 8,
+      "dataRoom": [
+        "L-01",
+        "L-20",
+        "L-24",
+        "L-25",
+        "L-26"
+      ],
+      "analyst": "How many members can't be matched across our systems, and where?",
+      "challenger": "What would make it wrong to blame adherence on member motivation rather than pharmacist capacity?",
+      "priorities": [
+        {
+          "title": "Identity mismatch in the acquired Lakeshore and Pinecrest books corrupts every outreach list",
+          "rationale": "Evidence: match rates by source pair and the reconciliation study show acquired members split across records; complaints and campaign results show outreach to wrong or duplicate members. Assumption: the core book is clean enough to leave alone for now. (Priya Raman, CIO)",
+          "evidence": [
+            "L-07",
+            "L-21",
+            "L-04",
+            "L-14",
+            "L-19"
+          ]
+        },
+        {
+          "title": "Adherence is capped by pharmacist capacity, not by insight",
+          "rationale": "Evidence: the program reaches only the top slice of the at-risk list each quarter and call capacity is fully booked; cost data shows pharmacy is a small line. Assumption: more reach converts to fills at today’s rate. (Kevin Ma, VP Pharmacy)",
+          "evidence": [
+            "L-09",
+            "L-10",
+            "L-25"
+          ]
+        },
+        {
+          "title": "Care managers learn about discharges far too late to prevent readmissions",
+          "rationale": "Evidence: ADT coverage by health system and the transitions-of-care audit show late or missing notifications; three data-sharing agreements are pending. Assumption: faster notice changes follow-up behaviour. (Dr. Alan Brooks, CMO)",
+          "evidence": [
+            "L-17",
+            "L-18",
+            "L-29"
+          ]
+        }
+      ],
+      "round1": {
+        "lines": [
+          {
+            "code": "I1",
+            "scope": "scoped",
+            "start": 0,
+            "owner": "Priya Raman, Chief Information Officer"
+          },
+          {
+            "code": "I13",
+            "start": 0,
+            "owner": "Dr. Alan Brooks, Chief Medical Officer"
+          },
+          {
+            "code": "I14",
+            "start": 0,
+            "owner": "Kevin Ma, VP Pharmacy"
+          },
+          {
+            "code": "I10",
+            "start": 0,
+            "owner": "Samuel Adeyemi, Chief Compliance Officer"
+          },
+          {
+            "code": "I17",
+            "start": 0,
+            "owner": "Joanne Pierce, VP Member Services"
+          },
+          {
+            "code": "I18",
+            "start": 0,
+            "owner": "Margaret Chen, Chief Executive Officer"
+          },
+          {
+            "code": "I9",
+            "start": 1,
+            "owner": "Daniel Okafor, Chief Operating Officer"
+          },
+          {
+            "code": "I12",
+            "start": 2,
+            "owner": "Renee Alvarez, Chief Quality Officer"
+          }
+        ],
+        "thesis": "We will not repeat OneView. We fund identity resolution for Lakeshore only, discharge feeds, pharmacist reach and a modern IVR, each with a named executive owner, so leading indicators move inside twelve months. Governance and model monitoring are in place before any predictive model goes live. We expect match rates, discharge latency, pharmacist reach and abandonment to improve this year; Stars follow next rating year."
+      },
+      "pitch": {
+        "evidence": [
+          "L-02",
+          "L-07",
+          "L-10",
+          "L-17",
+          "L-21"
+        ],
+        "results": "Year 1 moved the leading indicators we committed to: Lakeshore identity matching, discharge notification speed, pharmacist reach and call abandonment all improved. Stars measures lag a rating year, as we told the board.",
+        "causal": "Adherence and readmissions were never an insight problem. Lakeshore outreach lists were wrong because member identity did not match across the acquired systems, so pharmacists called the wrong people. Readmissions stayed high because care managers learned about discharges days late. Pharmacist capacity, not the model, capped adherence. That is why we sequenced identity, discharge data and pharmacy reach before any prediction, and why Stars move next year rather than this year.",
+        "decision": "Scale what worked: fund I3 predictive adherence now because identity is clean on Lakeshore and I14 gives it reach, and fund I4 contact-center copilot because I17 rebuilt the knowledge base. Keep I1 scoped to Lakeshore.",
+        "risk": "Predictive outreach could under-serve dual-eligible members; I12 monitors subgroup accuracy monthly and the Chief Compliance Officer owns a pause switch under I10.",
+        "ask": "Approve $1.75M for predictive adherence on the clean Lakeshore book and $2.0M for the contact-center copilot."
+      },
+      "round2": {
+        "fund": [
+          {
+            "code": "I3",
+            "start": 0,
+            "owner": "Kevin Ma, VP Pharmacy"
+          },
+          {
+            "code": "I4",
+            "start": 0,
+            "owner": "Joanne Pierce, VP Member Services"
+          }
+        ],
+        "thesis": "Identity is clean on Lakeshore and pharmacists have capacity, so prediction now has someone to act on it. The rebuilt knowledge base makes a copilot safe for agents. We are scaling into proven foundations, not starting new ones."
+      },
+      "opmodel": {
+        "accountable": "Renee Alvarez, Chief Quality Officer",
+        "notes": "Agents run the data and evidence steps under approval; people own every member-facing decision. Dual-eligible members are monitored as a subgroup.",
+        "steps": [
+          {
+            "name": "Ingest data",
+            "mode": "Agent + approval",
+            "controls": [
+              "Validation",
+              "Human review",
+              "Audit log",
+              "Exception handling",
+              "Pause / kill switch"
+            ],
+            "owner": "Director, Data Engineering"
+          },
+          {
+            "name": "Identify gap",
+            "mode": "Agent + approval",
+            "controls": [
+              "Validation",
+              "Human review",
+              "Audit log",
+              "Exception handling",
+              "Pause / kill switch"
+            ],
+            "owner": "Stars Analytics Lead"
+          },
+          {
+            "name": "Prioritize member",
+            "mode": "AI-assisted",
+            "controls": [
+              "Audit log",
+              "Confidence threshold",
+              "Subgroup monitoring"
+            ],
+            "owner": "Director, Stars Analytics"
+          },
+          {
+            "name": "Select intervention",
+            "mode": "AI-assisted",
+            "controls": [
+              "Human review",
+              "Audit log",
+              "Subgroup monitoring"
+            ],
+            "owner": "Joanne Pierce, VP Member Services"
+          },
+          {
+            "name": "Initiate outreach",
+            "mode": "AI-assisted",
+            "controls": [
+              "Human review",
+              "Audit log",
+              "Exception handling"
+            ],
+            "owner": "Kevin Ma, VP Pharmacy"
+          },
+          {
+            "name": "Notify provider",
+            "mode": "AI-assisted",
+            "controls": [
+              "Audit log",
+              "Validation"
+            ],
+            "owner": "Grace Holloway, VP Care Management"
+          },
+          {
+            "name": "Follow up",
+            "mode": "Agent + approval",
+            "controls": [
+              "Validation",
+              "Human review",
+              "Audit log",
+              "Pause / kill switch",
+              "Subgroup monitoring",
+              "Exception handling"
+            ],
+            "owner": "Care Management Director"
+          },
+          {
+            "name": "Capture evidence",
+            "mode": "Agent + approval",
+            "controls": [
+              "Validation",
+              "Human review",
+              "Audit log",
+              "Pause / kill switch",
+              "Exception handling"
+            ],
+            "owner": "Quality Operations Lead"
+          },
+          {
+            "name": "Close gap",
+            "mode": "Agent + approval",
+            "controls": [
+              "Validation",
+              "Human review",
+              "Audit log",
+              "Pause / kill switch",
+              "Exception handling"
+            ],
+            "owner": "Quality Operations Lead"
+          }
+        ]
+      },
+      "cast": {
+        "cqo": "Renee Alvarez, Chief Quality Officer",
+        "coo": "Daniel Okafor, Chief Operating Officer",
+        "opsLead": "Grace Holloway, VP Care Management",
+        "cco": "Samuel Adeyemi, Chief Compliance Officer"
+      },
+      "fallbackCrisis": "e2",
+      "opportunities": [
+        {
+          "participant": "Priya Raman",
+          "title": "Member identity resolution across acquired books",
+          "cls": "Foundation",
+          "value": 5,
+          "readiness": {
+            "data": 2,
+            "workflow": 3,
+            "owner": 4,
+            "controls": 3
+          },
+          "hypothesis": "Every outreach program reaches the right member; adherence and screening lists stop double-counting acquired members",
+          "dependencies": "Executive data owner; source-system access; data-sharing terms",
+          "risks": "Over-merging distinct members; program fatigue after OneView",
+          "owner": "Chief Information Officer",
+          "next90": "Baseline match rate by source pair and name the executive data owner for the first acquired book",
+          "foundations": [
+            "Data integration",
+            "Governance"
+          ]
+        },
+        {
+          "participant": "Kevin Ma",
+          "title": "Pharmacist outreach capacity with 90-day fill conversion",
+          "cls": "Automation",
+          "value": 4,
+          "readiness": {
+            "data": 4,
+            "workflow": 4,
+            "owner": 5,
+            "controls": 4
+          },
+          "hypothesis": "More at-risk members reached each quarter; adherence measures rise in the next rating year",
+          "dependencies": "Pharmacist hiring or vendor capacity; refill data",
+          "risks": "Outreach to already-adherent members",
+          "owner": "VP Pharmacy",
+          "next90": "Fund two additional pharmacist pods and track reach weekly",
+          "foundations": [
+            "Adoption capability"
+          ]
+        },
+        {
+          "participant": "Daniel Okafor",
+          "title": "Contact-center knowledge base and agent copilot",
+          "cls": "Copilot",
+          "value": 3,
+          "readiness": {
+            "data": 4,
+            "workflow": 4,
+            "owner": 4,
+            "controls": 4
+          },
+          "hypothesis": "Faster first-contact resolution and fewer complaints",
+          "dependencies": "Rebuilt knowledge base",
+          "risks": "Stale answers if the knowledge base is not maintained",
+          "owner": "VP Member Services",
+          "next90": "Rebuild the top 50 call reasons in the knowledge base",
+          "foundations": [
+            "Knowledge architecture",
+            "Governance"
+          ]
+        },
+        {
+          "participant": "Dr. Alan Brooks",
+          "title": "Discharge follow-up agent with nurse approval",
+          "cls": "Agent",
+          "value": 4,
+          "readiness": {
+            "data": 3,
+            "workflow": 3,
+            "owner": 4,
+            "controls": 3
+          },
+          "hypothesis": "More members followed up within 48 hours of discharge; fewer readmissions",
+          "dependencies": "ADT feeds from every major health system",
+          "risks": "Wrong-member contact if identity is unresolved",
+          "owner": "VP Care Management",
+          "next90": "Sign the pending data-sharing agreements and pilot with one hospital",
+          "foundations": [
+            "Data integration",
+            "Adoption capability",
+            "Governance"
+          ]
+        }
+      ],
+      "feedbackComment": "Sequencing beat ambition; the identity lesson maps directly to our acquisitions."
+    },
+    "horizon": {
+      "payer": "horizon",
+      "payerName": "Horizon Health",
+      "strategy": "Stitch history first, then predict",
+      "capitalR1": 18,
+      "capacity": 10,
+      "dataRoom": [
+        "H-01",
+        "H-20",
+        "H-24",
+        "H-25",
+        "H-26"
+      ],
+      "analyst": "Who is actually on our adherence outreach lists, and who is missing?",
+      "challenger": "What evidence contradicts our view that strong app engagement means members are being reached?",
+      "priorities": [
+        {
+          "title": "Members with under twelve months of history are invisible to our models",
+          "rationale": "Evidence: the history-length analysis and the model validation notes show thin-history members scored as low risk or not at all. Assumption: prior-plan history can be obtained for most of them. (Dana Ruiz, CDO)",
+          "evidence": [
+            "H-05",
+            "H-09",
+            "H-10",
+            "H-19",
+            "H-22"
+          ]
+        },
+        {
+          "title": "Digital-first outreach reaches the wrong households and misses older new-county members",
+          "rationale": "Evidence: outreach and engagement data show app-active members reached repeatedly while older new-county members rarely respond. Assumption: a channel mix change would lift reach without raising cost. (Hannah Cole, VP Member Experience)",
+          "evidence": [
+            "H-06",
+            "H-07",
+            "H-14",
+            "H-21",
+            "H-29"
+          ]
+        },
+        {
+          "title": "New-county providers have no reason to act on our gap alerts",
+          "rationale": "Evidence: provider contract terms and alert response data show no quality incentive and low action on portal alerts. Assumption: a modest incentive would change behaviour. (Luis Ortega, Provider Network Lead)",
+          "evidence": [
+            "H-04",
+            "H-16",
+            "H-17",
+            "H-18"
+          ]
+        }
+      ],
+      "round1": {
+        "lines": [
+          {
+            "code": "I1",
+            "scope": "full",
+            "start": 0,
+            "owner": "Dana Ruiz, Chief Data Officer"
+          },
+          {
+            "code": "I10",
+            "start": 0,
+            "owner": "Marcus Lee, Chief Compliance Officer"
+          },
+          {
+            "code": "I14",
+            "start": 0,
+            "owner": "Omar Haddad, VP Pharmacy"
+          },
+          {
+            "code": "I17",
+            "start": 0,
+            "owner": "Hannah Cole, VP Member Experience"
+          },
+          {
+            "code": "I15",
+            "start": 0,
+            "owner": "Dr. Maya Thompson, Chief Medical Officer (with Luis Ortega, Provider Network Lead)"
+          },
+          {
+            "code": "I4",
+            "start": 1,
+            "owner": "Hannah Cole, VP Member Experience"
+          },
+          {
+            "code": "I12",
+            "start": 2,
+            "owner": "Tessa Grant, Chief Quality Officer"
+          }
+        ],
+        "thesis": "The board wants automation; the evidence says our models cannot see new members and our providers have no reason to act. We stitch prior-plan history before predicting anything, give new-county practices a quality incentive, fix the IVR that drops calls and put governance in place before any member-facing AI. Expect identity, abandonment and provider action to move this year."
+      },
+      "pitch": {
+        "evidence": [
+          "H-04",
+          "H-09",
+          "H-12",
+          "H-16",
+          "H-22"
+        ],
+        "results": "Year 1: prior-plan history now flows into member records, the IVR fix is live, pharmacist outreach capacity is in place and new-county contracts carry a quality incentive. Leading indicators moved; measures lag a rating year.",
+        "causal": "Adherence was flat because our models could not see members with less than a year of history, so outreach went to legacy members who were already adherent. Blood pressure stayed low because new-county practices had no reason to act on portal alerts and readings never reached us. Complaints rose because the IVR dropped calls, not because demand was low. We fixed the causes before automating anything.",
+        "decision": "Fund I3 predictive adherence now because history is stitched and I14 pharmacists can act on the list, and add I18 so managers own the new decision rights. Pause nothing.",
+        "risk": "Thin-history members could be mis-scored and contacted in error; I12 monitors subgroup accuracy and the Chief Compliance Officer reviews every new message template under I10.",
+        "ask": "Approve $1.75M to target adherence outreach at the new-county members who drive the shortfall."
+      },
+      "round2": {
+        "fund": [
+          {
+            "code": "I3",
+            "start": 0,
+            "owner": "Omar Haddad, VP Pharmacy"
+          },
+          {
+            "code": "I18",
+            "start": 0,
+            "owner": "Jordan Blake, Chief Executive Officer"
+          }
+        ],
+        "thesis": "Foundations are live: history is stitched, providers are incentivised and governance reviews every message. Now prediction can target the members who were invisible, and our managers learn to own AI decisions."
+      },
+      "opmodel": {
+        "accountable": "Tessa Grant, Chief Quality Officer",
+        "notes": "Agents run the data and evidence steps under approval; people own every member-facing decision. Thin-history members are monitored as a subgroup.",
+        "steps": [
+          {
+            "name": "Ingest data",
+            "mode": "Agent + approval",
+            "controls": [
+              "Validation",
+              "Human review",
+              "Audit log",
+              "Exception handling",
+              "Pause / kill switch"
+            ],
+            "owner": "Director, Data Engineering"
+          },
+          {
+            "name": "Identify gap",
+            "mode": "Agent + approval",
+            "controls": [
+              "Validation",
+              "Human review",
+              "Audit log",
+              "Exception handling",
+              "Pause / kill switch"
+            ],
+            "owner": "Stars Analytics Lead"
+          },
+          {
+            "name": "Prioritize member",
+            "mode": "AI-assisted",
+            "controls": [
+              "Audit log",
+              "Confidence threshold",
+              "Subgroup monitoring"
+            ],
+            "owner": "Director, Stars Analytics"
+          },
+          {
+            "name": "Select intervention",
+            "mode": "AI-assisted",
+            "controls": [
+              "Human review",
+              "Audit log",
+              "Subgroup monitoring"
+            ],
+            "owner": "Hannah Cole, VP Member Experience"
+          },
+          {
+            "name": "Initiate outreach",
+            "mode": "AI-assisted",
+            "controls": [
+              "Human review",
+              "Audit log",
+              "Exception handling"
+            ],
+            "owner": "Omar Haddad, VP Pharmacy"
+          },
+          {
+            "name": "Notify provider",
+            "mode": "AI-assisted",
+            "controls": [
+              "Audit log",
+              "Validation"
+            ],
+            "owner": "Luis Ortega, Provider Network Lead"
+          },
+          {
+            "name": "Follow up",
+            "mode": "Agent + approval",
+            "controls": [
+              "Validation",
+              "Human review",
+              "Audit log",
+              "Pause / kill switch",
+              "Subgroup monitoring",
+              "Exception handling"
+            ],
+            "owner": "Care Management Director"
+          },
+          {
+            "name": "Capture evidence",
+            "mode": "Agent + approval",
+            "controls": [
+              "Validation",
+              "Human review",
+              "Audit log",
+              "Pause / kill switch",
+              "Exception handling"
+            ],
+            "owner": "Quality Operations Lead"
+          },
+          {
+            "name": "Close gap",
+            "mode": "Agent + approval",
+            "controls": [
+              "Validation",
+              "Human review",
+              "Audit log",
+              "Pause / kill switch",
+              "Exception handling"
+            ],
+            "owner": "Quality Operations Lead"
+          }
+        ]
+      },
+      "cast": {
+        "cqo": "Tessa Grant, Chief Quality Officer",
+        "coo": "Elena Novak, Chief Operating Officer",
+        "opsLead": "Hannah Cole, VP Member Experience",
+        "cco": "Marcus Lee, Chief Compliance Officer"
+      },
+      "fallbackCrisis": "e1",
+      "opportunities": [
+        {
+          "participant": "Dana Ruiz",
+          "title": "Prior-plan history stitching before predictive targeting",
+          "cls": "Foundation",
+          "value": 5,
+          "readiness": {
+            "data": 3,
+            "workflow": 3,
+            "owner": 4,
+            "controls": 3
+          },
+          "hypothesis": "Thin-history members become visible to risk models; outreach reaches the members who actually drive the adherence shortfall",
+          "dependencies": "Prior-plan data exchange agreements; named data owner",
+          "risks": "Mismatched records across plans; privacy review delays",
+          "owner": "Chief Data Officer",
+          "next90": "Stitch history for one new county and measure how many members become visible",
+          "foundations": [
+            "Data integration",
+            "Governance"
+          ]
+        },
+        {
+          "participant": "Marcus Lee",
+          "title": "Enterprise AI governance: model inventory, named owners, message review",
+          "cls": "Foundation",
+          "value": 4,
+          "readiness": {
+            "data": 4,
+            "workflow": 4,
+            "owner": 5,
+            "controls": 4
+          },
+          "hypothesis": "No member-facing AI goes live without an owner, a review and a pause switch; fewer incidents and faster approvals",
+          "dependencies": "Executive sponsor; inventory of current models and campaigns",
+          "risks": "Governance becomes a bottleneck if reviews are slow",
+          "owner": "Chief Compliance Officer",
+          "next90": "Publish the model inventory and start reviewing every new message template",
+          "foundations": [
+            "Governance",
+            "Adoption capability"
+          ]
+        },
+        {
+          "participant": "Hannah Cole",
+          "title": "IVR and knowledge base fix for member services",
+          "cls": "Automation",
+          "value": 3,
+          "readiness": {
+            "data": 5,
+            "workflow": 4,
+            "owner": 4,
+            "controls": 4
+          },
+          "hypothesis": "Fewer dropped calls and fewer complaints within one quarter",
+          "dependencies": "Vendor change window; top call reasons documented",
+          "risks": "Scripts drift from policy if the knowledge base is not owned",
+          "owner": "VP Member Experience",
+          "next90": "Fix the top call-drop paths and rewrite the top 30 call reasons",
+          "foundations": [
+            "Knowledge architecture"
+          ]
+        },
+        {
+          "participant": "Jordan Blake",
+          "title": "Autonomous member-messaging agent",
+          "cls": "Agent",
+          "value": 3,
+          "readiness": {
+            "data": 2,
+            "workflow": 2,
+            "owner": 3,
+            "controls": 2
+          },
+          "hypothesis": "Cheaper outreach at scale, but only if history, ownership and review exist first",
+          "dependencies": "Stitched history; message review; subgroup monitoring",
+          "risks": "Wrong or unapproved messages reach members; regulator attention",
+          "owner": "Chief Executive Officer",
+          "next90": "Park it; revisit once history stitching and governance are live",
+          "foundations": [
+            "Data integration",
+            "Governance",
+            "Adoption capability"
+          ]
+        }
+      ],
+      "feedbackComment": "Seeing automation trigger a crisis was more convincing than any slide."
+    },
+    "communitycare": {
+      "payer": "communitycare",
+      "payerName": "CommunityCare Alliance",
+      "strategy": "Adoption-first",
+      "capitalR1": 12,
+      "capacity": 6,
+      "dataRoom": [
+        "C-01",
+        "C-05",
+        "C-20",
+        "C-24",
+        "C-26"
+      ],
+      "analyst": "Is screening limited by awareness or by appointment access?",
+      "challenger": "If our predictive models validate so well, why are gap measures flat?",
+      "priorities": [
+        {
+          "title": "Our recommendations land in a portal clinicians never open",
+          "rationale": "Evidence: portal usage logs and clinician interviews show recommendations are accurate but rarely opened. Assumption: placing them inside the EHR inbox would change what clinicians do. (Dr. Ian Mercer, System CMIO)",
+          "evidence": [
+            "C-03",
+            "C-04",
+            "C-18",
+            "C-19",
+            "C-22"
+          ]
+        },
+        {
+          "title": "Access, not awareness, caps screening and appointments",
+          "rationale": "Evidence: appointment availability and member survey data show long waits and few evening or weekend slots. Assumption: added capacity would be filled by the members already flagged. (Michelle Tan, Clinic Operations Director)",
+          "evidence": [
+            "C-06",
+            "C-07",
+            "C-17",
+            "C-27",
+            "C-15"
+          ]
+        },
+        {
+          "title": "Affiliation is not alignment: clinicians have nothing tied to Stars",
+          "rationale": "Evidence: affiliate contracts and the care-manager reporting lines show no Stars-linked incentive. Assumption: a modest incentive plus workflow redesign would move behaviour. (Dr. Sofia Ramirez, CMO)",
+          "evidence": [
+            "C-02",
+            "C-16",
+            "C-25",
+            "C-29"
+          ]
+        }
+      ],
+      "round1": {
+        "lines": [
+          {
+            "code": "I16",
+            "start": 0,
+            "owner": "Michelle Tan, Clinic Operations Director"
+          },
+          {
+            "code": "I15",
+            "start": 0,
+            "owner": "Dr. Sofia Ramirez, Chief Medical Officer"
+          },
+          {
+            "code": "I11",
+            "start": 0,
+            "owner": "Nadia Rahman, Chief Operating Officer"
+          },
+          {
+            "code": "I6",
+            "start": 0,
+            "owner": "Dr. Ian Mercer, System CMIO"
+          }
+        ],
+        "thesis": "Our data is excellent; action is the gap. We fund appointment capacity, a Stars-linked clinician incentive and workflow redesign first, and put the copilot inside the EHR inbox where clinicians actually work. Expect access and provider action to move before any measure does."
+      },
+      "pitch": {
+        "evidence": [
+          "C-02",
+          "C-04",
+          "C-06",
+          "C-17",
+          "C-18"
+        ],
+        "results": "Year 1: extended hours and telehealth slots opened, a Stars-linked incentive reached employed and affiliated clinicians, and the redesigned care workflow is live in clinics. The EHR-embedded copilot is still in the system IT queue.",
+        "causal": "Screening and appointment measures were capped by access, not awareness, because members could not get a timely slot. Our recommendations were accurate but landed in a portal nobody opens, so clinicians never acted on them. Affiliation did not mean alignment: clinicians had nothing tied to Stars and care managers reported to clinic directors. That is why we funded capacity, incentives and workflow before more insight.",
+        "decision": "Scale the access program and keep I6 provider copilot on track because it lands in the EHR inbox; add I10 governance and I12 model monitoring so the copilot goes live with controls.",
+        "risk": "Copilot recommendations could create alert fatigue or bias for some patient groups; I12 monitors subgroup accuracy and alert burden, and the CMIO owns a pause switch.",
+        "ask": "Approve $1.25M for AI governance and $1.0M for model monitoring before the copilot reaches clinicians."
+      },
+      "round2": {
+        "fund": [
+          {
+            "code": "I10",
+            "start": 0,
+            "owner": "Victor Lin, Chief Compliance & Privacy Officer"
+          },
+          {
+            "code": "I18",
+            "start": 0,
+            "owner": "Robert Ellis, Plan CEO"
+          },
+          {
+            "code": "I12",
+            "start": 1,
+            "owner": "Angela Brooks, Chief Quality Officer"
+          },
+          {
+            "code": "I14",
+            "start": 1,
+            "owner": "Carla Diaz, VP Pharmacy"
+          }
+        ],
+        "thesis": "Capacity and incentives worked; the copilot is about to reach clinicians. We add governance and monitoring before it goes live, and pharmacist reach for rural members whose barrier is transport."
+      },
+      "opmodel": {
+        "accountable": "Angela Brooks, Chief Quality Officer",
+        "notes": "Agents run the data and evidence steps under approval; clinicians and care managers own every member-facing decision. Rural members are monitored as a subgroup.",
+        "steps": [
+          {
+            "name": "Ingest data",
+            "mode": "Agent + approval",
+            "controls": [
+              "Validation",
+              "Human review",
+              "Audit log",
+              "Exception handling",
+              "Pause / kill switch"
+            ],
+            "owner": "Director, Data Engineering"
+          },
+          {
+            "name": "Identify gap",
+            "mode": "Agent + approval",
+            "controls": [
+              "Validation",
+              "Human review",
+              "Audit log",
+              "Exception handling",
+              "Pause / kill switch"
+            ],
+            "owner": "Stars Analytics Lead"
+          },
+          {
+            "name": "Prioritize member",
+            "mode": "AI-assisted",
+            "controls": [
+              "Audit log",
+              "Confidence threshold",
+              "Subgroup monitoring"
+            ],
+            "owner": "Director, Stars Analytics"
+          },
+          {
+            "name": "Select intervention",
+            "mode": "AI-assisted",
+            "controls": [
+              "Human review",
+              "Audit log",
+              "Subgroup monitoring"
+            ],
+            "owner": "Michelle Tan, Clinic Operations Director"
+          },
+          {
+            "name": "Initiate outreach",
+            "mode": "AI-assisted",
+            "controls": [
+              "Human review",
+              "Audit log",
+              "Exception handling"
+            ],
+            "owner": "Carla Diaz, VP Pharmacy"
+          },
+          {
+            "name": "Notify provider",
+            "mode": "AI-assisted",
+            "controls": [
+              "Audit log",
+              "Validation"
+            ],
+            "owner": "Dr. Ian Mercer, System CMIO"
+          },
+          {
+            "name": "Follow up",
+            "mode": "Agent + approval",
+            "controls": [
+              "Validation",
+              "Human review",
+              "Audit log",
+              "Pause / kill switch",
+              "Subgroup monitoring",
+              "Exception handling"
+            ],
+            "owner": "Care Management Director"
+          },
+          {
+            "name": "Capture evidence",
+            "mode": "Agent + approval",
+            "controls": [
+              "Validation",
+              "Human review",
+              "Audit log",
+              "Pause / kill switch",
+              "Exception handling"
+            ],
+            "owner": "Quality Operations Lead"
+          },
+          {
+            "name": "Close gap",
+            "mode": "Agent + approval",
+            "controls": [
+              "Validation",
+              "Human review",
+              "Audit log",
+              "Pause / kill switch",
+              "Exception handling"
+            ],
+            "owner": "Quality Operations Lead"
+          }
+        ]
+      },
+      "cast": {
+        "cqo": "Angela Brooks, Chief Quality Officer",
+        "coo": "Nadia Rahman, Chief Operating Officer",
+        "opsLead": "Michelle Tan, Clinic Operations Director",
+        "cco": "Victor Lin, Chief Compliance & Privacy Officer"
+      },
+      "fallbackCrisis": "e3",
+      "opportunities": [
+        {
+          "participant": "Dr. Ian Mercer",
+          "title": "Gap recommendations inside the EHR inbox via provider copilot",
+          "cls": "Copilot",
+          "value": 5,
+          "readiness": {
+            "data": 4,
+            "workflow": 3,
+            "owner": 4,
+            "controls": 3
+          },
+          "hypothesis": "Clinicians act on gap recommendations during the visit; screening and appointment measures move in the next rating year",
+          "dependencies": "System IT queue slot; clinician champions; alert thresholds agreed",
+          "risks": "Alert fatigue; recommendations that are wrong for some patient groups",
+          "owner": "System CMIO",
+          "next90": "Pilot the inbox copilot in two clinics with a capped alert volume",
+          "foundations": [
+            "Adoption capability",
+            "Governance"
+          ]
+        },
+        {
+          "participant": "Nadia Rahman",
+          "title": "Access expansion with AI-assisted scheduling",
+          "cls": "Automation",
+          "value": 4,
+          "readiness": {
+            "data": 4,
+            "workflow": 4,
+            "owner": 5,
+            "controls": 4
+          },
+          "hypothesis": "More timely appointments and higher screening completion in the target clinics",
+          "dependencies": "Clinician hours; scheduling system access",
+          "risks": "Slots filled by members who would have come anyway",
+          "owner": "Chief Operating Officer",
+          "next90": "Open evening and weekend slots at three clinics and track fill by flagged members",
+          "foundations": [
+            "Adoption capability"
+          ]
+        },
+        {
+          "participant": "Carla Diaz",
+          "title": "Refill reminders paired with transport support for rural members",
+          "cls": "Automation",
+          "value": 3,
+          "readiness": {
+            "data": 4,
+            "workflow": 4,
+            "owner": 4,
+            "controls": 4
+          },
+          "hypothesis": "Better refill adherence for rural members whose barrier is transport, not awareness",
+          "dependencies": "Transport partner; refill data by member",
+          "risks": "Reminders reach members who already refill on time",
+          "owner": "VP Pharmacy",
+          "next90": "Pilot reminders plus ride vouchers in one rural county",
+          "foundations": [
+            "Data integration"
+          ]
+        }
+      ],
+      "feedbackComment": "Placement and incentives, not models, were our real constraint."
+    }
+  },
+  "crisis": {
+    "CRISIS": {
+      "E1": {
+        "investigation": "Verify the eligibility rule, the list build date and every contacted member against the stitched history before anything else goes out.",
+        "hypotheses": "Stale eligibility assumption, household phone collisions, missing message review.",
+        "protection": "Call back every affected member, correct their records and suppress the segment until it is rebuilt.",
+        "corrective": "Add eligibility validation and human approval for every new segment before send.",
+        "press": true
+      },
+      "E2": {
+        "investigation": "Reconcile the identity crosswalk for the affected book against the source systems and list every record scored before the match finished.",
+        "hypotheses": "Unmatched duplicates, stale crosswalk, scoring run before the match finished.",
+        "protection": "Hold outreach to unmatched members and route their cases to manual pharmacist review this week.",
+        "corrective": "Add a match-rate gate of validation before any model scores a book."
+      },
+      "E3": {
+        "investigation": "Review alert volume, open rate and override reasons by clinic to see where clinicians stopped acting on recommendations.",
+        "hypotheses": "Alert fatigue, recommendations outside the EHR inbox, no incentive alignment.",
+        "protection": "Route every high-risk care gap to care managers by phone until clinicians trust the alerts again.",
+        "corrective": "Tune thresholds with clinicians, cap alerts per visit and add review of every recommendation type."
+      },
+      "E4": {
+        "investigation": "Compare model performance by age, dual status, language and county to find which groups the model under-serves.",
+        "hypotheses": "Thin history for some groups, skewed training data, threshold tuned on the majority.",
+        "protection": "Add manual review for the affected groups and widen outreach to members the model missed.",
+        "corrective": "Set a subgroup performance threshold with human review before scores are used."
+      },
+      "E5": {
+        "investigation": "Identify the records, the systems and the access logs involved, and confirm exactly who could see the data.",
+        "hypotheses": "Misconfigured feed, vendor over-collection, missing minimum-necessary control.",
+        "protection": "Contain the data flow, notify affected members and offer protection services without delay.",
+        "corrective": "Add a data-loss-prevention control, an access review and vendor validation."
+      },
+      "E6": {
+        "investigation": "Trace every figure in the board pack back to its source document and mark any that cannot be supported.",
+        "hypotheses": "Unsourced estimate, copied vendor claim, stale baseline.",
+        "protection": "Withdraw the unsupported figures, correct the pack and tell the board before they rely on it.",
+        "corrective": "Add a figure check and source citation review before any board material."
+      },
+      "E7": {
+        "investigation": "Pull the message template, the recipient list and the approval trail to see who approved what and when.",
+        "hypotheses": "Unapproved template change, missing human review, campaign scheduled automatically.",
+        "protection": "Stop the campaign, contact affected members with a correction and log every complaint received.",
+        "corrective": "Require human review of every new template and a kill switch on campaigns.",
+        "press": true
+      }
+    }
+  }
+}
