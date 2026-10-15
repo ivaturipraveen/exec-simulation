@@ -101,6 +101,18 @@ def session_summary_markdown(game: GameService, session_id: str) -> str:
         lines += ["### Foundational band (enables 3 or more opportunities)", ""]
         lines += [f"- **{b.theme}** — {b.links} opportunities" for b in opp.foundational]
         lines.append("")
+    if opp.synthesis:
+        s = opp.synthesis
+        source = "Claude synthesizer" if s.generative else "listing (AI not configured)"
+        note = " — opportunities changed since; regenerate for the latest" if s.stale else ""
+        lines += [
+            "### Organizational synthesis",
+            "",
+            f"_{source}, {s.at:%Y-%m-%d %H:%M} UTC, from {s.items} opportunities{note}_",
+            "",
+            s.text,
+            "",
+        ]
     fb = game.feedback_summary(session_id)
     if fb.responses:
 

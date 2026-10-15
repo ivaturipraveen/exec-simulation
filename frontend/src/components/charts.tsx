@@ -89,6 +89,7 @@ export function TrendChart({
   format,
   domain,
   height = 260,
+  fill = false,
 }: {
   data: Record<string, number | string>[]
   xKey: string
@@ -96,45 +97,56 @@ export function TrendChart({
   format: (v: number) => string
   domain?: [number, number]
   height?: number
+  /** Grow to the height the parent gives it (at least `height`), e.g. beside a long table. */
+  fill?: boolean
 }) {
+  const plot = (
+    <ResponsiveContainer width="100%" height={fill ? '100%' : height}>
+      <LineChart data={data} margin={{ top: 8, right: 16, bottom: 0, left: 0 }}>
+        <CartesianGrid vertical={false} stroke="var(--grid)" />
+        <XAxis
+          dataKey={xKey}
+          tick={axisTick}
+          tickLine={false}
+          axisLine={{ stroke: 'var(--axis)' }}
+        />
+        <YAxis
+          tick={axisTick}
+          tickLine={false}
+          axisLine={false}
+          width={44}
+          tickFormatter={format}
+          domain={domain ?? ['auto', 'auto']}
+        />
+        <Tooltip
+          content={<TooltipBox format={format} series={series} />}
+          cursor={{ stroke: 'var(--axis)' }}
+        />
+        {series.map((s) => (
+          <Line
+            key={s.key}
+            type="monotone"
+            dataKey={s.key}
+            stroke={s.color}
+            strokeWidth={2}
+            dot={{ r: 4, fill: s.color, stroke: 'var(--surface)', strokeWidth: 2 }}
+            activeDot={{ r: 5, stroke: 'var(--surface)', strokeWidth: 2 }}
+            isAnimationActive={false}
+          />
+        ))}
+      </LineChart>
+    </ResponsiveContainer>
+  )
   return (
-    <figure className="chart" style={{ margin: 0 }}>
+    <figure className={fill ? 'chart chart--fill' : 'chart'} style={{ margin: 0 }}>
       {series.length > 1 && <Legend series={series} />}
-      <ResponsiveContainer width="100%" height={height}>
-        <LineChart data={data} margin={{ top: 8, right: 16, bottom: 0, left: 0 }}>
-          <CartesianGrid vertical={false} stroke="var(--grid)" />
-          <XAxis
-            dataKey={xKey}
-            tick={axisTick}
-            tickLine={false}
-            axisLine={{ stroke: 'var(--axis)' }}
-          />
-          <YAxis
-            tick={axisTick}
-            tickLine={false}
-            axisLine={false}
-            width={44}
-            tickFormatter={format}
-            domain={domain ?? ['auto', 'auto']}
-          />
-          <Tooltip
-            content={<TooltipBox format={format} series={series} />}
-            cursor={{ stroke: 'var(--axis)' }}
-          />
-          {series.map((s) => (
-            <Line
-              key={s.key}
-              type="monotone"
-              dataKey={s.key}
-              stroke={s.color}
-              strokeWidth={2}
-              dot={{ r: 4, fill: s.color, stroke: 'var(--surface)', strokeWidth: 2 }}
-              activeDot={{ r: 5, stroke: 'var(--surface)', strokeWidth: 2 }}
-              isAnimationActive={false}
-            />
-          ))}
-        </LineChart>
-      </ResponsiveContainer>
+      {fill ? (
+        <div className="chart__plot" style={{ minHeight: height }}>
+          {plot}
+        </div>
+      ) : (
+        plot
+      )}
     </figure>
   )
 }

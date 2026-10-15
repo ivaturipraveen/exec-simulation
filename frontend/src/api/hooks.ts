@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient, type QueryKey } from '@tanstack/
 import { auth } from '../lib/storage'
 import { request } from './client'
 import type {
+  OrganizationMap,
   AnalystAnswer,
   AnalystMode,
   AnswerKeyEntry,
@@ -152,9 +153,23 @@ export const useRespondCrisis = () =>
     [keys.team, keys.crisis],
   )
 
-export const useSaveOpportunities = () =>
-  useTeamMutation((body: { items: Opportunity[]; consent?: Workspace['consent'] }) =>
-    request<Workspace>('PUT', '/team/opportunities', { token: teamToken(), body }),
+/** Add one opportunity, or update it by id. Teammates' entries are never touched. */
+export const useSaveOpportunity = () =>
+  useTeamMutation((item: Opportunity) =>
+    request<Workspace>('POST', '/team/opportunities/items', { token: teamToken(), body: item }),
+  )
+
+export const useDeleteOpportunity = () =>
+  useTeamMutation((id: string) =>
+    request<Workspace>('DELETE', `/team/opportunities/items/${encodeURIComponent(id)}`, {
+      token: teamToken(),
+    }),
+  )
+
+/** One participant's consent to share their opportunities on the organization map. */
+export const useOpportunityConsent = () =>
+  useTeamMutation((body: { granted: boolean; participant: string; at: string }) =>
+    request<Workspace>('PUT', '/team/opportunities/consent', { token: teamToken(), body }),
   )
 
 export const useSubmitFeedback = () =>
@@ -223,5 +238,15 @@ export function useFacilitatorAction<TBody>(sessionId: string, token: string | n
       if (data) qc.setQueryData(keys.session(sessionId), data)
       qc.invalidateQueries({ queryKey: ['session', sessionId] })
     },
+  })
+}
+
+/** The facilitator's synthesized organizational AI Opportunity Map (null until it is written). */
+export function useOrganizationMap(enabled: boolean) {
+  return useQuery({
+    queryKey: [...keys.team, 'organization-map'],
+    queryFn: () =>
+      request<OrganizationMap | null>('GET', '/team/organization-map', { token: teamToken() }),
+    enabled,
   })
 }

@@ -18,7 +18,7 @@ from sim.content.models import Severity
 from sim.engine.conditions import context
 from sim.engine.model import clamp, granted_capital, sign
 from sim.engine.opmodel import OperatingModelDesign
-from sim.engine.reports import YearReport, bonus_value_musd, year_report, year_values
+from sim.engine.reports import YearReport, bonus_value_musd, year_report
 from sim.engine.rubric import RubricScore
 from sim.engine.stars import improvement, overall_stars, summary_score
 from sim.engine.state import QUARTERS_PER_YEAR, TeamState
@@ -87,7 +87,9 @@ def build_scorecard(
     year = state.quarter // QUARTERS_PER_YEAR
     payer = content.payers[state.payer_id]
     report: YearReport = year_report(state, content, year)
-    rating, projected = year_values(state, content, year)
+    # The same values the performance review shows, so the scorecard and the review never disagree.
+    rating = {m.id: m.year_value for m in report.measures}
+    projected = {m.id: m.projected for m in report.measures}
     ctx = context(state, content)
     flags: list[str] = []
 

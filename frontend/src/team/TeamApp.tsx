@@ -1,4 +1,5 @@
 import {
+  CircleCheck,
   BookOpen,
   ClipboardList,
   FolderSearch,
@@ -200,7 +201,7 @@ function TeamTicker({ team }: { team: TeamView }) {
   ]
   return (
     <div className="team-ticker" aria-hidden>
-      <span className="login__ticker-tag">Live · {p.name}</span>
+      <span className="login__ticker-tag">Live · {team.team_name}</span>
       <div className="login__ticker-window">
         {/* two copies back to back, so the loop has no seam */}
         <div className="login__ticker-track">
@@ -311,11 +312,9 @@ function Sidebar({ team }: { team: TeamView }) {
       <div className="sidebar__brand">
         <div className="brand-mark">{team.team_name.slice(0, 1).toUpperCase()}</div>
         <div className="stack grow" style={{ '--gap': '0px' } as React.CSSProperties}>
-          <span className="sidebar__kicker">Boardroom</span>
-          <span className="strong" style={{ fontSize: 13.5 }}>
-            {team.team_name}
-          </span>
-          <span className="xs muted">
+          {/* The team name is shown once, in the live ticker at the foot of the sidebar. */}
+          <span className="sidebar__room">Boardroom</span>
+          <span className="sidebar__archetype">
             {[payerSuffix(team.team_name, team.payer.name), team.payer.archetype]
               .filter(Boolean)
               .join(' · ')}
@@ -342,11 +341,7 @@ function Sidebar({ team }: { team: TeamView }) {
                   <span className="nav-item__end">
                     {current === to && <Badge tone="accent">Now</Badge>}
                     {current !== to && done && (
-                      <span
-                        className="pill-dot"
-                        style={{ background: 'var(--good)' }}
-                        aria-label="done"
-                      />
+                      <CircleCheck className="nav-item__done" aria-label="submitted" />
                     )}
                   </span>
                 </NavLink>

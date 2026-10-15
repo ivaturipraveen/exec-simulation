@@ -7,6 +7,7 @@ state atomically, appends to the event log (DAT-003) and publishes a realtime hi
 from __future__ import annotations
 
 import csv
+import hashlib
 import io
 import json
 import threading
@@ -31,6 +32,8 @@ from app.schemas.workspace import (
     Priority,
     Round2Action,
     Workspace,
+    participant_key,
+    shared_on_map,
 )
 from app.services.playtest import PlaytestReport, TeamInfo, build_report
 from app.services.realtime import RealtimeHub
@@ -538,7 +541,11 @@ class GameService:
             ],
             schedule_offset_minutes=behind,
             contingency=self._contingency(gs, behind),
-            options={k: val for k, val in (gs.options or {}).items() if k not in ("started_at", "config")},
+            options={
+                k: val
+                for k, val in (gs.options or {}).items()
+                if k not in ("started_at", "config", "synthesis")
+            },
             simulated_years=gs.simulated_years,
             round2_granted=gs.round2_granted,
             released=gs.released,
@@ -551,6 +558,13 @@ class GameService:
             row = db.get(Team, team_id)
             if row is None or row.session_id != session_id:
                 raise NotFound("Team not found in this session")
+
+    def team_session_id(self, team_id: str) -> str:
+        with self._db() as db:
+            row = db.get(Team, team_id)
+            if row is None:
+                raise NotFound("Team not found")
+            return row.session_id
 
     def edition(self) -> v.EditionInfo:
         c = self.content
@@ -1338,28 +1352,74 @@ class GameService:
 
     # ------------------------------------------------------------------ translation
 
-    def save_opportunities(
-        self, team_id: str, items: list[Opportunity], consent: Consent | None
-    ) -> Workspace:
-        classes = set(self.content.opportunity.capability_classes)
-        themes = set(self.content.opportunity.foundational_themes)
+    MAX_OPPORTUNITIES = 60
 
+    def _check_opportunity(self, o: Opportunity) -> None:
+        if o.capability_class not in self.content.opportunity.capability_classes:
+            raise InvalidAction(f"Unknown capability class '{o.capability_class}'")
+        unknown = set(o.foundations) - set(self.content.opportunity.foundational_themes)
+        if unknown:
+            raise InvalidAction(f"Unknown foundational theme(s): {sorted(unknown)}")
+        if not o.participant.strip():
+            raise InvalidAction("Add your name before saving an opportunity")
+
+    def _opportunity_edit(self, team_id: str, kind: str, change, **payload) -> Workspace:
         def apply(_db: Session, gs: GameSession, ctx: TeamContext) -> Workspace:
             if not self._flags(gs, ctx).can_capture_opportunities:
                 raise Forbidden("Opportunity capture opens when the session starts")
-            for o in items:
-                if o.capability_class not in classes:
-                    raise InvalidAction(f"Unknown capability class '{o.capability_class}'")
-                if set(o.foundations) - themes:
-                    raise InvalidAction(
-                        f"Unknown foundational theme(s): {sorted(set(o.foundations) - themes)}"
-                    )
-            ctx.workspace.opportunities = items
-            if consent is not None:
-                ctx.workspace.consent = consent
+            change(ctx.workspace)
             return ctx.workspace
 
-        return self._mutate_team(team_id, apply, "opportunities_saved", count=len(items))
+        return self._mutate_team(team_id, apply, kind, **payload)
+
+    def save_opportunity(self, team_id: str, item: Opportunity) -> Workspace:
+        """Add one opportunity, or update it in place by id. Teammates never overwrite each other."""
+        self._check_opportunity(item)
+
+        def change(ws: Workspace) -> None:
+            others = [o for o in ws.opportunities if o.id != item.id]
+            if len(others) >= self.MAX_OPPORTUNITIES:
+                raise InvalidAction(f"A team can capture up to {self.MAX_OPPORTUNITIES} opportunities")
+            replaced = len(others) != len(ws.opportunities)
+            ws.opportunities = (
+                [item if o.id == item.id else o for o in ws.opportunities] if replaced else [*others, item]
+            )
+
+        return self._opportunity_edit(team_id, "opportunity_saved", change, title=item.title)
+
+    def delete_opportunity(self, team_id: str, opportunity_id: str) -> Workspace:
+        def change(ws: Workspace) -> None:
+            if not any(o.id == opportunity_id for o in ws.opportunities):
+                raise NotFound("That opportunity was already removed")
+            ws.opportunities = [o for o in ws.opportunities if o.id != opportunity_id]
+
+        return self._opportunity_edit(team_id, "opportunity_deleted", change, id=opportunity_id)
+
+    def set_opportunity_consent(self, team_id: str, consent: Consent) -> Workspace:
+        """Each participant consents for their own opportunities."""
+        if not consent.participant.strip():
+            raise InvalidAction("Add your name before giving consent")
+
+        def change(ws: Workspace) -> None:
+            ws.consents = {**ws.consents, participant_key(consent.participant): consent}
+
+        return self._opportunity_edit(
+            team_id, "opportunity_consent", change, participant=consent.participant, granted=consent.granted
+        )
+
+    def save_opportunities(
+        self, team_id: str, items: list[Opportunity], consent: Consent | None
+    ) -> Workspace:
+        """Legacy whole-list save (older clients). Consent is recorded for its own participant."""
+        for o in items:
+            self._check_opportunity(o)
+
+        def change(ws: Workspace) -> None:
+            ws.opportunities = items
+            if consent is not None and consent.participant.strip():
+                ws.consents = {**ws.consents, participant_key(consent.participant): consent}
+
+        return self._opportunity_edit(team_id, "opportunities_saved", change, count=len(items))
 
     def add_feedback(self, team_id: str, feedback: Feedback) -> Workspace:
         def apply(_db: Session, _gs: GameSession, ctx: TeamContext) -> Workspace:
@@ -1383,11 +1443,13 @@ class GameService:
             self._session(db, session_id)
             rows = self._teams(db, session_id)
         items: list[v.OpportunityItem] = []
+        awaiting = 0
         for row in rows:
             ws = Workspace.model_validate(row.workspace)
-            if not (ws.consent and ws.consent.granted):
-                continue
             for o in ws.opportunities:
+                if not shared_on_map(ws, o):
+                    awaiting += 1
+                    continue
                 avg = o.readiness.average
                 items.append(
                     v.OpportunityItem(
@@ -1406,7 +1468,60 @@ class GameService:
             linked = [it.title for it in items if theme in it.foundations]
             if len(linked) >= self.content.opportunity.foundational_min_links:
                 band.append(v.FoundationBand(theme=theme, links=len(linked), opportunities=linked))
-        return v.OpportunityMapView(items=items, counts=counts, foundational=band)
+        return v.OpportunityMapView(
+            items=items,
+            counts=counts,
+            foundational=band,
+            awaiting_consent=awaiting,
+            synthesis=self.synthesis(session_id, items),
+        )
+
+    @staticmethod
+    def _items_fingerprint(items: list[v.OpportunityItem]) -> str:
+        raw = "|".join(sorted(f"{i.id}:{i.title}:{i.value}:{i.readiness_avg}:{i.quadrant}" for i in items))
+        return hashlib.sha256(raw.encode()).hexdigest()[:16]
+
+    def synthesis(
+        self, session_id: str, items: list[v.OpportunityItem] | None = None
+    ) -> v.SynthesisView | None:
+        """The saved organizational map, flagged stale when shared opportunities changed since."""
+        with self._db() as db:
+            saved = (self._session(db, session_id).options or {}).get("synthesis")
+        if not saved:
+            return None
+        if items is None:
+            items = self.opportunity_map(session_id).items
+        return v.SynthesisView(
+            text=saved["text"],
+            generative=saved["generative"],
+            at=saved["at"],
+            items=saved["items"],
+            stale=saved.get("fingerprint") != self._items_fingerprint(items),
+        )
+
+    def save_synthesis(self, session_id: str, text: str, generative: bool) -> v.SynthesisView:
+        items = self.opportunity_map(session_id).items
+        with self._lock, self._db() as db:
+            gs = self._session(db, session_id)
+            gs.options = {
+                **(gs.options or {}),
+                "synthesis": {
+                    "text": text,
+                    "generative": generative,
+                    "at": utcnow().isoformat(),
+                    "items": len(items),
+                    "fingerprint": self._items_fingerprint(items),
+                },
+            }
+            db.add(gs)
+            self._log(
+                db, gs.id, "opportunity_synthesis", "facilitator", items=len(items), generative=generative
+            )
+            db.commit()
+        self._publish(session_id, "session", "team:*")
+        saved = self.synthesis(session_id, items)
+        assert saved is not None
+        return saved
 
     def purge_expired(self) -> int:
         """OD-09: delete captured opportunities after the retention period."""
@@ -1419,9 +1534,9 @@ class GameService:
                     continue
                 for row in self._teams(db, gs.id):
                     ws = Workspace.model_validate(row.workspace)
-                    if ws.opportunities or ws.consent:
+                    if ws.opportunities or ws.consent or ws.consents:
                         purged += len(ws.opportunities)
-                        ws.opportunities, ws.consent = [], None
+                        ws.opportunities, ws.consent, ws.consents = [], None, {}
                         row.workspace = ws.model_dump(mode="json")
                         db.add(row)
                         self._log(db, gs.id, "opportunities_purged", "system", row.id)
@@ -1527,9 +1642,11 @@ class GameService:
             for row in self._teams(db, gs.id):
                 ws = Workspace.model_validate(row.workspace)
                 count += len(ws.opportunities)
-                ws.opportunities, ws.consent = [], None
+                ws.opportunities, ws.consent, ws.consents = [], None, {}
                 row.workspace = ws.model_dump(mode="json")
                 db.add(row)
+            gs.options = {k: val for k, val in (gs.options or {}).items() if k != "synthesis"}
+            db.add(gs)
             self._log(db, gs.id, "opportunities_deleted", "facilitator", note=note, count=count)
             db.commit()
         self._publish(session_id, "session", "team:*")

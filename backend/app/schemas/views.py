@@ -665,11 +665,22 @@ class FoundationBand(BaseModel):
     opportunities: list[str]
 
 
+class SynthesisView(BaseModel):
+    """The organizational AI Opportunity Map written by the synthesizer agent, saved with the session."""
+
+    text: str
+    generative: bool = Field(description="True when written by Claude; False for the retrieval-only listing")
+    at: datetime
+    items: int = Field(description="Consented opportunities it was built from")
+    stale: bool = Field(default=False, description="The shared opportunities changed since it was written")
+
+
 class OpportunityMapView(BaseModel):
     items: list[OpportunityItem]
     counts: dict[str, int]
     foundational: list[FoundationBand]
-    synthesis: str | None = None
+    synthesis: SynthesisView | None = None
+    awaiting_consent: int = Field(default=0, description="Captured but not yet shared (no consent)")
 
 
 class AnswerKeyEntry(BaseModel):

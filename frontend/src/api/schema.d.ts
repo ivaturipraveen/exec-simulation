@@ -446,7 +446,8 @@ export interface paths {
     put?: never
     /**
      * Opportunity Synthesis
-     * @description Synthesizer agent: aggregate consented opportunities into an organizational map.
+     * @description Synthesizer agent: aggregate consented opportunities into an organizational map. The result is
+     *     saved with the session and shown on the console, the projector, every team's page and the export.
      */
     post: operations['opportunity_synthesis_api_sessions__session_id__opportunity_map_synthesis_post']
     delete?: never
@@ -1060,8 +1061,88 @@ export interface paths {
       cookie?: never
     }
     get?: never
-    /** Opportunities */
+    /**
+     * Opportunities
+     * @description Legacy: replace the whole list. New clients add and delete one item at a time.
+     */
     put: operations['opportunities_api_team_opportunities_put']
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/team/opportunities/consent': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    /**
+     * Opportunity Consent
+     * @description Record one participant's consent to share their opportunities on the organization map.
+     */
+    put: operations['opportunity_consent_api_team_opportunities_consent_put']
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/team/opportunities/items': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Save Opportunity
+     * @description Add one opportunity (or update it by id) without touching teammates' entries.
+     */
+    post: operations['save_opportunity_api_team_opportunities_items_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/team/opportunities/items/{opportunity_id}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    /** Delete Opportunity */
+    delete: operations['delete_opportunity_api_team_opportunities_items__opportunity_id__delete']
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/team/organization-map': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Organization Map
+     * @description The facilitator's synthesized organizational AI Opportunity Map (read-only), once written.
+     */
+    get: operations['organization_map_api_team_organization_map_get']
+    put?: never
     post?: never
     delete?: never
     options?: never
@@ -2436,6 +2517,12 @@ export interface components {
     }
     /** OpportunityMapView */
     OpportunityMapView: {
+      /**
+       * Awaiting Consent
+       * @description Captured but not yet shared (no consent)
+       * @default 0
+       */
+      awaiting_consent: number
       /** Counts */
       counts: {
         [key: string]: number
@@ -2444,8 +2531,7 @@ export interface components {
       foundational: components['schemas']['FoundationBand'][]
       /** Items */
       items: components['schemas']['OpportunityItem'][]
-      /** Synthesis */
-      synthesis?: string | null
+      synthesis?: components['schemas']['SynthesisView'] | null
     }
     /** OptionsBody */
     OptionsBody: {
@@ -3268,12 +3354,34 @@ export interface components {
       /** Step Id */
       step_id: string
     }
-    /** SynthesisOut */
-    SynthesisOut: {
-      /** Generative */
+    /**
+     * SynthesisView
+     * @description The organizational AI Opportunity Map written by the synthesizer agent, saved with the session.
+     */
+    SynthesisView: {
+      /**
+       * At
+       * Format: date-time
+       */
+      at: string
+      /**
+       * Generative
+       * @description True when written by Claude; False for the retrieval-only listing
+       */
       generative: boolean
-      /** Synthesis */
-      synthesis: string
+      /**
+       * Items
+       * @description Consented opportunities it was built from
+       */
+      items: number
+      /**
+       * Stale
+       * @description The shared opportunities changed since it was written
+       * @default false
+       */
+      stale: boolean
+      /** Text */
+      text: string
     }
     /** SystemInfo */
     SystemInfo: {
@@ -3519,6 +3627,14 @@ export interface components {
       /** Ai Window Start */
       ai_window_start?: string | null
       consent?: components['schemas']['Consent'] | null
+      /**
+       * Consents
+       * @description Per-participant consent, keyed by participant_key(name)
+       * @default {}
+       */
+      consents: {
+        [key: string]: components['schemas']['Consent']
+      }
       /** Crisis Assigned At */
       crisis_assigned_at?: string | null
       /** Crisis Event Id */
@@ -4484,7 +4600,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['SynthesisOut']
+          'application/json': components['schemas']['SynthesisView']
         }
       }
       /** @description Validation Error */
@@ -5744,6 +5860,140 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['Workspace']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  opportunity_consent_api_team_opportunities_consent_put: {
+    parameters: {
+      query?: never
+      header?: {
+        authorization?: string | null
+      }
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['Consent']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['Workspace']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  save_opportunity_api_team_opportunities_items_post: {
+    parameters: {
+      query?: never
+      header?: {
+        authorization?: string | null
+      }
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['Opportunity']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['Workspace']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  delete_opportunity_api_team_opportunities_items__opportunity_id__delete: {
+    parameters: {
+      query?: never
+      header?: {
+        authorization?: string | null
+      }
+      path: {
+        opportunity_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['Workspace']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  organization_map_api_team_organization_map_get: {
+    parameters: {
+      query?: never
+      header?: {
+        authorization?: string | null
+      }
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['SynthesisView'] | null
         }
       }
       /** @description Validation Error */
