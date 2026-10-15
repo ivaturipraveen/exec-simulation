@@ -304,6 +304,9 @@ function Sidebar({ team }: { team: TeamView }) {
   const groups = [...new Set(items.map((i) => i.group))]
   const missions = items.filter((i) => i.done !== undefined)
   const missionsDone = missions.filter((i) => i.done).length
+  const archetype = [payerSuffix(team.team_name, team.payer.name), team.payer.archetype]
+    .filter(Boolean)
+    .join(' · ')
   return (
     <aside className="sidebar">
       <div className="sidebar__logo">
@@ -314,10 +317,8 @@ function Sidebar({ team }: { team: TeamView }) {
         <div className="stack grow" style={{ '--gap': '0px' } as React.CSSProperties}>
           {/* The team name is shown once, in the live ticker at the foot of the sidebar. */}
           <span className="sidebar__room">Boardroom</span>
-          <span className="sidebar__archetype">
-            {[payerSuffix(team.team_name, team.payer.name), team.payer.archetype]
-              .filter(Boolean)
-              .join(' · ')}
+          <span className="sidebar__archetype" title={archetype}>
+            {archetype}
           </span>
         </div>
       </div>

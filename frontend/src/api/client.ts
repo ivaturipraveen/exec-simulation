@@ -30,7 +30,7 @@ type Method = 'GET' | 'POST' | 'PUT' | 'DELETE'
 export async function request<T>(
   method: Method,
   path: string,
-  options: { token?: string | null; body?: unknown; raw?: boolean } = {},
+  options: { token?: string | null; body?: unknown; raw?: boolean; blob?: boolean } = {},
 ): Promise<T> {
   const headers: Record<string, string> = { Accept: 'application/json' }
   if (options.body !== undefined) headers['Content-Type'] = 'application/json'
@@ -53,7 +53,8 @@ export async function request<T>(
   }
   // A static host answering /api with its own index.html means the UI was built without
   // VITE_API_URL (or the API is down): say so instead of failing on the HTML.
-  if (!options.raw && (response.headers.get('content-type') ?? '').includes('text/html')) {
+  const textual = !options.raw && !options.blob
+  if (textual && (response.headers.get('content-type') ?? '').includes('text/html')) {
     throw new ApiError(
       response.status || 0,
       'api_unreachable',
@@ -77,6 +78,7 @@ export async function request<T>(
     throw new ApiError(response.status, code, message, details)
   }
   if (response.status === 204) return undefined as T
+  if (options.blob) return (await response.blob()) as T
   if (options.raw) return (await response.text()) as T
   return (await response.json()) as T
 }

@@ -60,6 +60,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             include_translation=settings.include_translation,
             pitch_ai_suggest=settings.pitch_ai_suggest,
             opportunity_retention_days=settings.opportunity_retention_days,
+            opportunity_onepager=settings.opportunity_onepager,
         ),
         advisor=analyst if analyst.generative else None,
     )
@@ -71,6 +72,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         game.options.include_translation = settings.include_translation
         game.options.pitch_ai_suggest = settings.pitch_ai_suggest
         game.options.opportunity_retention_days = settings.opportunity_retention_days
+        game.options.opportunity_onepager = settings.opportunity_onepager
 
     accounts = AccountStore(engine)
     store = SettingsStore(engine, settings, content, __version__, count_accounts=accounts.count)

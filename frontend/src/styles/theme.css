@@ -351,6 +351,11 @@ tr.is-highlight td {
   flex-direction: column;
   gap: 8px;
 }
+/* The badge/name/price row spans the card, so a short name (I4) lines up like the long ones instead of
+   shrinking to the middle. The Start and Owner controls below keep their existing layout. */
+.cart-line > .row {
+  align-self: stretch;
+}
 .cart-line__controls {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));

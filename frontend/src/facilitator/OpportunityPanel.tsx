@@ -4,6 +4,7 @@ import { errorMessage, request } from '../api/client'
 import { useCatalog, useOpportunityMap } from '../api/hooks'
 import type { OrganizationMap, SessionView } from '../api/types'
 import { OpportunityMatrix } from '../components/OpportunityMatrix'
+import { OnePagerExport } from './OnePagerExport'
 import { Button } from '../components/ui/Button'
 import { SectionTabs } from '../components/SectionTabs'
 import { Card } from '../components/ui/Card'
@@ -96,6 +97,9 @@ export function OpportunityPanel({ session, token }: { session: SessionView; tok
             id: 'map',
             label: 'Opportunity map',
             count: data.items.length,
+            actions: data.onepager_enabled ? (
+              <OnePagerExport session={session} token={token} items={data.items} />
+            ) : undefined,
             content: (
               <Card
                 title="Organizational AI Opportunity Map"

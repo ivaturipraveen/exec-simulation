@@ -102,6 +102,7 @@ class GameOptions:
     include_translation: bool = True
     pitch_ai_suggest: bool = True
     opportunity_retention_days: int = 365
+    opportunity_onepager: bool = False
     extra: dict[str, Any] = field(default_factory=dict)
 
 
@@ -541,11 +542,7 @@ class GameService:
             ],
             schedule_offset_minutes=behind,
             contingency=self._contingency(gs, behind),
-            options={
-                k: val
-                for k, val in (gs.options or {}).items()
-                if k not in ("started_at", "config", "synthesis")
-            },
+            options={k: val for k, val in (gs.options or {}).items() if k not in ("started_at", "config")},
             simulated_years=gs.simulated_years,
             round2_granted=gs.round2_granted,
             released=gs.released,
@@ -1474,6 +1471,7 @@ class GameService:
             foundational=band,
             awaiting_consent=awaiting,
             synthesis=self.synthesis(session_id, items),
+            onepager_enabled=self.options.opportunity_onepager,
         )
 
     @staticmethod
@@ -1486,7 +1484,7 @@ class GameService:
     ) -> v.SynthesisView | None:
         """The saved organizational map, flagged stale when shared opportunities changed since."""
         with self._db() as db:
-            saved = (self._session(db, session_id).options or {}).get("synthesis")
+            saved = self._session(db, session_id).synthesis
         if not saved:
             return None
         if items is None:
@@ -1503,15 +1501,12 @@ class GameService:
         items = self.opportunity_map(session_id).items
         with self._lock, self._db() as db:
             gs = self._session(db, session_id)
-            gs.options = {
-                **(gs.options or {}),
-                "synthesis": {
-                    "text": text,
-                    "generative": generative,
-                    "at": utcnow().isoformat(),
-                    "items": len(items),
-                    "fingerprint": self._items_fingerprint(items),
-                },
+            gs.synthesis = {
+                "text": text,
+                "generative": generative,
+                "at": utcnow().isoformat(),
+                "items": len(items),
+                "fingerprint": self._items_fingerprint(items),
             }
             db.add(gs)
             self._log(
@@ -1532,6 +1527,9 @@ class GameService:
                 created = gs.created_at if gs.created_at.tzinfo else gs.created_at.replace(tzinfo=UTC)
                 if created >= cutoff:
                     continue
+                if gs.synthesis is not None:  # it summarizes the opportunities being purged
+                    gs.synthesis = None
+                    db.add(gs)
                 for row in self._teams(db, gs.id):
                     ws = Workspace.model_validate(row.workspace)
                     if ws.opportunities or ws.consent or ws.consents:
@@ -1645,7 +1643,7 @@ class GameService:
                 ws.opportunities, ws.consent, ws.consents = [], None, {}
                 row.workspace = ws.model_dump(mode="json")
                 db.add(row)
-            gs.options = {k: val for k, val in (gs.options or {}).items() if k != "synthesis"}
+            gs.synthesis = None
             db.add(gs)
             self._log(db, gs.id, "opportunities_deleted", "facilitator", note=note, count=count)
             db.commit()

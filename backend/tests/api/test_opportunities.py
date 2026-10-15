@@ -117,3 +117,30 @@ def test_synthesis_is_saved_shared_with_teams_flagged_stale_and_exported(client:
     client.post(f"/api/sessions/{sid}/opportunities/delete", json={"note": "Org request"}, headers=fh)
     assert _map(client, sid, fh)["synthesis"] is None
     assert client.get("/api/team/organization-map", headers=ta).json() is None
+
+
+def test_synthesis_is_stored_in_its_own_column_and_cleared_on_delete(client: TestClient, settings) -> None:
+    from sqlalchemy import create_engine, text
+
+    sid, fh, ta, _ = _setup(client)
+    client.post("/api/team/opportunities/items", json=_item("Asha", "A1"), headers=ta)
+    client.put("/api/team/opportunities/consent", json=_consent("Asha", True), headers=ta)
+    engine = create_engine(settings.database_url)
+
+    def stored() -> tuple[str | None, str]:
+        with engine.connect() as conn:
+            row = conn.execute(
+                text("SELECT synthesis, options FROM game_sessions WHERE id = :id"), {"id": sid}
+            ).one()
+        return row.synthesis, row.options
+
+    assert stored()[0] is None  # a real SQL NULL until the facilitator synthesizes
+    made = client.post(f"/api/sessions/{sid}/opportunity-map/synthesis", headers=fh).json()
+
+    column, options = stored()
+    assert column is not None and made["text"] in column  # the column holds it...
+    assert "synthesis" not in options  # ...and no longer the options blob
+
+    client.post(f"/api/sessions/{sid}/opportunities/delete", json={"note": "Org request"}, headers=fh)
+    assert stored()[0] is None
+    engine.dispose()

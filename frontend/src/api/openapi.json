@@ -2796,6 +2796,28 @@
         "title": "ObservationBody",
         "type": "object"
       },
+      "OnePagerBody": {
+        "properties": {
+          "item_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 60,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Opportunities to include; omit for all the company's shared ones",
+            "title": "Item Ids"
+          }
+        },
+        "title": "OnePagerBody",
+        "type": "object"
+      },
       "OpModelBody": {
         "properties": {
           "design": {
@@ -3119,6 +3141,12 @@
             },
             "title": "Items",
             "type": "array"
+          },
+          "onepager_enabled": {
+            "default": false,
+            "description": "One-page PDF export per company is switched on",
+            "title": "Onepager Enabled",
+            "type": "boolean"
           },
           "synthesis": {
             "anyOf": [
@@ -8868,6 +8896,75 @@
           }
         },
         "summary": "Opmodel Score",
+        "tags": ["facilitator"]
+      }
+    },
+    "/api/sessions/{session_id}/teams/{team_id}/opportunity-onepager.pdf": {
+      "post": {
+        "description": "One-page AI Opportunity Map PDF for one company (OPPORTUNITY_ONEPAGER must be on).",
+        "operationId": "opportunity_onepager_api_sessions__session_id__teams__team_id__opportunity_onepager_pdf_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "team_id",
+            "required": true,
+            "schema": {
+              "title": "Team Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "session_id",
+            "required": true,
+            "schema": {
+              "title": "Session Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OnePagerBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Opportunity Onepager",
         "tags": ["facilitator"]
       }
     },

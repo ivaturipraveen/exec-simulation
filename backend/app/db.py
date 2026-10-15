@@ -42,6 +42,12 @@ class GameSession(SQLModel, table=True):
     options: dict[str, Any] = Field(
         default_factory=dict, sa_column=Column(JSON, nullable=False, server_default="{}")
     )
+    # The saved Opportunity Map synthesis: {text, generative, at, items, fingerprint}. NULL until the
+    # facilitator runs Synthesize; cleared with the opportunities it was built from (OD-09).
+    synthesis: dict[str, Any] | None = Field(
+        default=None,
+        sa_column=Column(JSON(none_as_null=True), nullable=True),  # None is SQL NULL, not 'null'
+    )
     created_at: datetime = Field(default_factory=utcnow)
     updated_at: datetime = Field(default_factory=utcnow)
 
