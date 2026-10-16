@@ -1,9 +1,53 @@
-import { Flag, Trophy } from 'lucide-react'
+import {
+  ChevronDown,
+  ShieldAlert,
+  Star,
+  Target,
+  TrendingUp,
+  Trophy,
+  TriangleAlert,
+} from 'lucide-react'
+import { useState } from 'react'
 import { useScorecard } from '../api/hooks'
 import type { TeamView } from '../api/types'
 import { BarList } from '../components/charts'
 import { Card } from '../components/ui/Card'
-import { Callout, Empty, Loading, PageHeader, StarRating, Stat } from '../components/ui/primitives'
+import { Empty, Loading, PageHeader, StarRating, Stat } from '../components/ui/primitives'
+
+/** "E3 Clinically sound… (high severity): Adoption 7%…" as one compact line; the detail opens on demand. */
+function FlagNote({ flag }: { flag: string }) {
+  const [open, setOpen] = useState(false)
+  const crisis = flag.startsWith('E')
+  const m = flag.match(/^(\S+)\s+(.*?)(?:\s+\((\w+) severity\))?:\s*([\s\S]*)$/)
+  const [code, headline, severity, detail] = m ? [m[1], m[2], m[3], m[4]] : ['', flag, '', '']
+  return (
+    <aside className={`flag-note ${crisis ? 'flag-note--crisis' : 'flag-note--guard'}`} role="note">
+      <div className="flag-note__row">
+        <span className="flag-note__icon" aria-hidden>
+          {crisis ? <TriangleAlert size={14} /> : <ShieldAlert size={14} />}
+        </span>
+        <span className="flag-note__kind">
+          {crisis ? 'Crisis' : 'Guardrail'}
+          {code && ` ${code}`}
+        </span>
+        <span className="flag-note__headline">{headline}</span>
+        {severity && <span className="flag-note__sev">{severity}</span>}
+        {detail && (
+          <button
+            type="button"
+            className="flag-note__more"
+            aria-expanded={open}
+            onClick={() => setOpen((o) => !o)}
+          >
+            {open ? 'Less' : 'Details'}
+            <ChevronDown size={14} aria-hidden />
+          </button>
+        )}
+      </div>
+      {open && detail && <p className="flag-note__detail">{detail}</p>}
+    </aside>
+  )
+}
 
 export function ScorecardPage({ team }: { team: TeamView }) {
   const available = team.flags.scorecard_available
@@ -18,34 +62,40 @@ export function ScorecardPage({ team }: { team: TeamView }) {
   return (
     <div className="stack" style={{ '--gap': '20px' } as React.CSSProperties}>
       <PageHeader
-        eyebrow="Executive scorecard"
         title="Who created sustainable value?"
         description="Five dimensions, normalized by payer: lift divided by headroom, benefit divided by the 4-Star bonus value. Read the profile and the causal story, never only the total."
       />
       <div className="grid grid-4">
-        <div className="card stat">
-          <div className="stat__label">Total score</div>
-          <div className="score-hero">
-            <span className="score-hero__value">{card.total.toFixed(0)}</span>
-            <span className="muted">/ 100</span>
-          </div>
-          {card.total < card.uncapped_total && (
-            <div className="stat__meta delta-down">
-              Capped from {card.uncapped_total.toFixed(0)}
-            </div>
-          )}
-        </div>
         <Stat
+          icon={<Trophy />}
+          label="Total score"
+          value={
+            <>
+              {card.total.toFixed(0)} <span className="muted small">/ 100</span>
+            </>
+          }
+          meta={
+            card.total < card.uncapped_total ? (
+              <span className="delta-down">Capped from {card.uncapped_total.toFixed(0)}</span>
+            ) : (
+              <span>Weighted across five dimensions</span>
+            )
+          }
+        />
+        <Stat
+          icon={<Star />}
           label="Starting Stars"
           value={card.stars_start.toFixed(1)}
           meta={<StarRating value={card.stars_start} />}
         />
         <Stat
+          icon={<TrendingUp />}
           label={`Year ${card.year} rating → projected`}
           value={`${card.stars_year.toFixed(1)} → ${card.stars_projected.toFixed(1)}`}
           meta={<StarRating value={card.stars_projected} />}
         />
         <Stat
+          icon={<Target />}
           label="Target"
           value={card.stars_target.toFixed(1)}
           meta={
@@ -58,15 +108,7 @@ export function ScorecardPage({ team }: { team: TeamView }) {
         />
       </div>
       {card.flags.map((f) => (
-        <Callout
-          key={f}
-          tone={f.startsWith('E') ? 'warning' : 'critical'}
-          title={f.startsWith('E') ? 'Crisis effect' : 'Guardrail applied'}
-        >
-          <span className="row">
-            <Flag size={14} aria-hidden /> {f}
-          </span>
-        </Callout>
+        <FlagNote key={f} flag={f} />
       ))}
       <Card title="Dimension profile" subtitle="Each scored 0–100; weights 30 / 20 / 20 / 15 / 15">
         <BarList

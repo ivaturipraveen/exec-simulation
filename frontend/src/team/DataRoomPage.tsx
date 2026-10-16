@@ -31,7 +31,6 @@ export function DataRoomPage() {
   return (
     <div className="stack" style={{ '--gap': '20px' } as React.CSSProperties}>
       <PageHeader
-        eyebrow="Evidence"
         title="Data room"
         description="Thirty artifacts across eight domains. Nothing here is labelled as the answer: three problems are hidden across several files, and some headline numbers mislead. Cite artifact IDs as evidence."
       />

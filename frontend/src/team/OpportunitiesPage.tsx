@@ -89,24 +89,8 @@ export function OpportunitiesPage({ team }: { team: TeamView }) {
   return (
     <div className="stack" style={{ '--gap': '20px' } as React.CSSProperties}>
       <PageHeader
-        eyebrow="Real-company translation"
         title="AI Opportunity Map"
         description="Where could these capabilities create value in your organization, what prevents action today, and what can move in the next 90 days?"
-        actions={
-          <>
-            <Button icon={<MessageSquareHeart />} onClick={() => setFeedbackOpen(true)}>
-              Session feedback
-            </Button>
-            <Button
-              variant="primary"
-              icon={<Plus />}
-              disabled={!participant.trim()}
-              onClick={() => setDraft(newDraft())}
-            >
-              Add opportunity
-            </Button>
-          </>
-        }
       />
       <Card>
         <div className="grid grid-2" style={{ alignItems: 'end' }}>
@@ -233,6 +217,19 @@ export function OpportunitiesPage({ team }: { team: TeamView }) {
         Follow-on support (assessment → roadmap → pilot) is optional diligence, not a predetermined
         conclusion.
       </Callout>
+      <div className="page-actions">
+        <Button icon={<MessageSquareHeart />} onClick={() => setFeedbackOpen(true)}>
+          Session feedback
+        </Button>
+        <Button
+          variant="primary"
+          icon={<Plus />}
+          disabled={!participant.trim()}
+          onClick={() => setDraft(newDraft())}
+        >
+          Add opportunity
+        </Button>
+      </div>
 
       <Dialog
         open={!!draft}
@@ -308,21 +305,13 @@ export function OpportunitiesPage({ team }: { team: TeamView }) {
                 />
               )}
             </Field>
-            <div className="field">
-              <span className="field__label">Value (1–5)</span>
-              <Segmented
-                label="Value"
-                value={draft.value}
-                options={scale}
-                onChange={(v) => setDraft({ ...draft, value: v })}
-              />
-            </div>
             <div className="grid grid-2">
               {(['data', 'workflow', 'owner', 'controls'] as const).map((k) => (
                 <div key={k} className="field">
                   <span className="field__label">Readiness: {k} (1–5)</span>
                   <Segmented
                     label={`Readiness ${k}`}
+                    block
                     value={draft.readiness?.[k] ?? 3}
                     options={scale}
                     onChange={(v) =>
@@ -334,6 +323,16 @@ export function OpportunitiesPage({ team }: { team: TeamView }) {
                   />
                 </div>
               ))}
+              <div className="field">
+                <span className="field__label">Value (1–5)</span>
+                <Segmented
+                  label="Value"
+                  block
+                  value={draft.value}
+                  options={scale}
+                  onChange={(v) => setDraft({ ...draft, value: v })}
+                />
+              </div>
             </div>
             <div className="grid grid-2">
               <Field label="Dependencies">

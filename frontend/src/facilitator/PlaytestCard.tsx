@@ -83,120 +83,132 @@ export function PlaytestCard({
           <Callout tone="good">Nothing flagged so far.</Callout>
         )}
 
-        <div className="table-wrap">
-          <table className="table table--compact">
-            <thead>
-              <tr>
-                <th>Stage</th>
-                <th className="num">Planned (min)</th>
-                <th className="num">Actual (min)</th>
-                <th className="num">Difference (min)</th>
-                <th style={{ width: '32%' }}>Planned vs actual</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.stages.map((s) => (
-                <tr key={s.id} className={s.status === 'not_reached' ? 'muted' : undefined}>
-                  <td className="small">
-                    {s.title} {s.status === 'current' && <Badge tone="accent">now</Badge>}
-                    {s.visits > 1 && <Badge outline>{s.visits}×</Badge>}
-                  </td>
-                  <td className="num small">{s.planned_minutes}</td>
-                  <td className="num small">{s.visits ? fmt(s.actual_minutes) : '—'}</td>
-                  <td className="num small">
-                    {s.visits ? (
-                      <Badge tone={s.overrun ? 'warning' : 'neutral'}>
-                        {s.delta_minutes > 0 ? '+' : ''}
-                        {fmt(s.delta_minutes)}
-                      </Badge>
-                    ) : (
-                      '—'
-                    )}
-                  </td>
-                  <td>
-                    {(() => {
-                      // Full-width track = the planned time; the fill is the share actually used.
-                      // Smaller fills animate in faster, so a barely-used stage snaps in quickly.
-                      const share = s.planned_minutes
-                        ? Math.min(1, s.actual_minutes / s.planned_minutes)
-                        : 0
-                      const over = s.actual_minutes - s.planned_minutes
-                      return (
-                        <div
-                          className="timing-track"
-                          title={`${s.actual_minutes} of ${s.planned_minutes} planned minutes`}
-                        >
-                          <div className="timing-track__bar">
-                            <span
-                              className={`timing-track__fill ${over > 0.05 ? 'is-over' : ''}`}
-                              style={
-                                {
-                                  '--fill': `${share * 100}%`,
-                                  '--dur': `${250 + share * 900}ms`,
-                                } as React.CSSProperties
-                              }
-                            />
+        <section className="playtest-block" aria-labelledby="pt-stages">
+          <header className="playtest-block__head">
+            <h3 id="pt-stages">Stage timing</h3>
+            <span>Planned against actual minutes, per stage</span>
+          </header>
+          <div className="table-wrap">
+            <table className="table table--compact">
+              <thead>
+                <tr>
+                  <th>Stage</th>
+                  <th className="num">Planned (min)</th>
+                  <th className="num">Actual (min)</th>
+                  <th className="num">Difference (min)</th>
+                  <th style={{ width: '32%' }}>Planned vs actual</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.stages.map((s) => (
+                  <tr key={s.id} className={s.status === 'not_reached' ? 'muted' : undefined}>
+                    <td className="small">
+                      {s.title} {s.status === 'current' && <Badge tone="accent">now</Badge>}
+                      {s.visits > 1 && <Badge outline>{s.visits}×</Badge>}
+                    </td>
+                    <td className="num small">{s.planned_minutes}</td>
+                    <td className="num small">{s.visits ? fmt(s.actual_minutes) : '—'}</td>
+                    <td className="num small">
+                      {s.visits ? (
+                        <Badge tone={s.overrun ? 'warning' : 'neutral'}>
+                          {s.delta_minutes > 0 ? '+' : ''}
+                          {fmt(s.delta_minutes)}
+                        </Badge>
+                      ) : (
+                        '—'
+                      )}
+                    </td>
+                    <td>
+                      {(() => {
+                        // Full-width track = the planned time; the fill is the share actually used.
+                        // Smaller fills animate in faster, so a barely-used stage snaps in quickly.
+                        const share = s.planned_minutes
+                          ? Math.min(1, s.actual_minutes / s.planned_minutes)
+                          : 0
+                        const over = s.actual_minutes - s.planned_minutes
+                        return (
+                          <div
+                            className="timing-track"
+                            title={`${s.actual_minutes} of ${s.planned_minutes} planned minutes`}
+                          >
+                            <div className="timing-track__bar">
+                              <span
+                                className={`timing-track__fill ${over > 0.05 ? 'is-over' : ''}`}
+                                style={
+                                  {
+                                    '--fill': `${share * 100}%`,
+                                    '--dur': `${250 + share * 900}ms`,
+                                  } as React.CSSProperties
+                                }
+                              />
+                            </div>
+                            <span className="timing-track__label">
+                              {s.visits === 0
+                                ? '—'
+                                : over > 0.05
+                                  ? `+${over.toFixed(1)} min over`
+                                  : `${Math.round(share * 100)}%`}
+                            </span>
                           </div>
-                          <span className="timing-track__label">
-                            {s.visits === 0
-                              ? '—'
-                              : over > 0.05
-                                ? `+${over.toFixed(1)} min over`
-                                : `${Math.round(share * 100)}%`}
-                          </span>
-                        </div>
-                      )
-                    })()}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                        )
+                      })()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
 
-        <div className="table-wrap">
-          <table className="table table--compact">
-            <thead>
-              <tr>
-                <th>Team</th>
-                <th className="num">Actions</th>
-                <th className="num">AI questions</th>
-                <th className="num">Artifacts</th>
-                <th className="num">R1 submit</th>
-                <th className="num">R2 submit</th>
-                <th className="num">Longest quiet</th>
-                <th>Forced</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.teams.map((t) => (
-                <tr key={t.team_id}>
-                  <td className="small">
-                    <span className="strong">{t.team}</span>
-                    {t.payer !== t.team && <div className="xs muted">{t.payer}</div>}
-                  </td>
-                  <td className="num small">{t.actions}</td>
-                  <td className="num small">{t.ai_questions}</td>
-                  <td className="num small">{t.artifacts_viewed}</td>
-                  <td className="num small">
-                    {t.round1_submit_minute == null ? '—' : `${fmt(t.round1_submit_minute)} min`}
-                  </td>
-                  <td className="num small">
-                    {t.round2_submit_minute == null ? '—' : `${fmt(t.round2_submit_minute)} min`}
-                  </td>
-                  <td className="num small">
-                    {t.stalls.length > 0 ? (
-                      <Badge tone="warning">{fmt(t.longest_quiet_minutes)} min</Badge>
-                    ) : (
-                      `${fmt(t.longest_quiet_minutes)} min`
-                    )}
-                  </td>
-                  <td className="small">{t.forced.join(', ') || '—'}</td>
+        <section className="playtest-block" aria-labelledby="pt-teams">
+          <header className="playtest-block__head">
+            <h3 id="pt-teams">Team activity</h3>
+            <span>Engagement, submit times and quiet stretches, per team</span>
+          </header>
+          <div className="table-wrap">
+            <table className="table table--compact">
+              <thead>
+                <tr>
+                  <th>Team</th>
+                  <th className="num">Actions</th>
+                  <th className="num">AI questions</th>
+                  <th className="num">Artifacts</th>
+                  <th className="num">R1 submit</th>
+                  <th className="num">R2 submit</th>
+                  <th className="num">Longest quiet</th>
+                  <th>Forced</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {data.teams.map((t) => (
+                  <tr key={t.team_id}>
+                    <td className="small">
+                      <span className="strong">{t.team}</span>
+                      {t.payer !== t.team && <div className="xs muted">{t.payer}</div>}
+                    </td>
+                    <td className="num small">{t.actions}</td>
+                    <td className="num small">{t.ai_questions}</td>
+                    <td className="num small">{t.artifacts_viewed}</td>
+                    <td className="num small">
+                      {t.round1_submit_minute == null ? '—' : `${fmt(t.round1_submit_minute)} min`}
+                    </td>
+                    <td className="num small">
+                      {t.round2_submit_minute == null ? '—' : `${fmt(t.round2_submit_minute)} min`}
+                    </td>
+                    <td className="num small">
+                      {t.stalls.length > 0 ? (
+                        <Badge tone="warning">{fmt(t.longest_quiet_minutes)} min</Badge>
+                      ) : (
+                        `${fmt(t.longest_quiet_minutes)} min`
+                      )}
+                    </td>
+                    <td className="small">{t.forced.join(', ') || '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
         <p className="xs muted" style={{ margin: 0 }}>
           Submit times are minutes after the round opened. Add notes during the session with the
           observation log; they appear in the downloaded report next to the stage they happened in.

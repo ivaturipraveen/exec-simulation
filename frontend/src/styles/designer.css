@@ -1,0 +1,914 @@
+/*
+ * Designer feedback, round 1. Loaded last so it refines the earlier sheets without editing them.
+ * Colours come from the arena tokens (--l-*), which switch with the light and dark theme.
+ */
+
+/* ---------- card headers: an icon instead of the blue dot ---------- */
+.card__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card__icon {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  color: var(--accent-ink, var(--accent));
+  background: var(--accent-soft);
+}
+.card__icon svg {
+  width: 14px;
+  height: 14px;
+}
+.shell--arena .content .card > .card__header .card__title::before {
+  content: none;
+}
+.shell--arena .content .card > .card__header .card__icon {
+  color: var(--l-hud);
+  background: var(--l-badge-bg);
+  border: 1px solid var(--l-badge-line);
+}
+/* Title and subtitle on one line (Board score · Facilitator decision). */
+.card--inline-head .card__header .grow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 14px;
+  row-gap: 2px;
+}
+.card--inline-head .card__subtitle {
+  margin: 0;
+}
+
+/* ---------- company hero: the original card, with the starting rating on its right ---------- */
+.hero__stars {
+  flex: none;
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  text-align: right;
+}
+.hero__stars-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--l-hud, #8fd9e3);
+}
+.hero__score {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  line-height: 1;
+}
+.hero__score-number {
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: var(--l-ink, #fff);
+}
+.hero__score-of {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--l-muted, #c3d6ee);
+}
+
+/* ---------- hero stars: rounded gold stars on a soft outline; 3.5 is exactly three and a half ---------- */
+.stars--hero {
+  display: inline-flex;
+  gap: 4px;
+}
+.stars--hero .stars__star svg {
+  width: 22px;
+  height: 22px;
+  overflow: visible;
+}
+.stars--hero .stars__outline {
+  fill: color-mix(in srgb, var(--l-ink, #fff) 8%, transparent);
+  stroke: color-mix(in srgb, var(--l-ink, #fff) 28%, transparent);
+  stroke-width: 1.2;
+  stroke-linejoin: round;
+}
+.stars--hero .stars__fill {
+  stroke: #d98e04;
+  stroke-width: 0.6;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 1px 4px rgba(242, 163, 15, 0.55));
+}
+.stars--hero .stars__star {
+  animation: star-pop 480ms var(--ease-out, ease-out) both;
+  animation-delay: calc(var(--i) * 70ms);
+}
+@keyframes star-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.6) rotate(-12deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stars--hero .stars__star {
+    animation: none;
+  }
+}
+
+/* ---------- stat tiles with an icon: a large badge beside the figures ---------- */
+.card.stat--icon {
+  /* beats `.grid > .card`, which stacks the children of every card in a grid */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+}
+.stat__icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  color: var(--accent-ink, var(--accent));
+  background: var(--accent-soft);
+}
+.stat__icon svg {
+  width: 20px;
+  height: 20px;
+}
+.shell--arena .stat__icon {
+  color: var(--l-hud);
+  background: var(--l-badge-bg);
+  border: 1px solid var(--l-badge-line);
+}
+.stat__body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.stat--icon .stat__label {
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.stat--icon .stat__value {
+  font-size: 24px;
+  line-height: 1.15;
+}
+.stat--icon .stat__meta {
+  font-size: 12px;
+  line-height: 1.35;
+  /* One line so all four tiles are the same height; the full text is the tooltip. */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.shell--arena .stat--icon .stat__label,
+.shell--arena .stat--icon .stat__meta {
+  color: var(--l-muted);
+}
+
+/* ---------- profile: a form that is already filled in (label above, input-style field) ---------- */
+.profile-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-flow: row dense;
+  gap: 12px 14px;
+  margin: 0;
+}
+.profile-form__row {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+.profile-form__row--wide {
+  grid-column: 1 / -1;
+}
+.profile-form dt {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--text-2);
+}
+.profile-form dd {
+  display: flex;
+  align-items: center;
+  min-height: 38px;
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-strong, var(--border));
+  background: var(--surface);
+  box-shadow: inset 0 1px 2px rgba(11, 37, 69, 0.07);
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+.shell--arena .profile-form dt {
+  color: var(--l-muted);
+}
+.shell--arena .profile-form dd {
+  color: var(--l-ink);
+  background: var(--l-field);
+  border-color: var(--l-field-line);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+@media (max-width: 700px) {
+  .profile-form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---------- rubric score: "15 /15" stays together; the note beside it wraps instead ---------- */
+.rubric__score {
+  flex: none;
+  white-space: nowrap;
+}
+.rubric__total > :not(.rubric__score) {
+  min-width: 0;
+}
+
+/* ---------- AI analyst: compact, wrapping quick questions ---------- */
+.analyst-drawer__prompts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.analyst-drawer__prompt {
+  max-width: 100%;
+  padding: 7px 13px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  line-height: 1.3;
+  white-space: normal;
+}
+
+/* ---------- diagnose: add / save sit together below the priorities ---------- */
+.diagnose-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.diagnose-actions > .btn {
+  width: auto;
+  flex: none;
+}
+
+/* ---------- invest cart: tighter spacing ---------- */
+.invest__cart .card__body {
+  padding: 14px 16px 0;
+}
+.invest__pinned {
+  gap: 10px;
+  padding-bottom: 10px;
+}
+.invest__cart .ledger {
+  gap: 8px;
+}
+.invest__cart .ledger__grid {
+  gap: 4px 16px;
+}
+.invest__cart .capacity {
+  gap: 4px;
+}
+.invest__cart .capacity__bars {
+  height: 84px;
+  padding-top: 14px;
+  gap: 8px;
+}
+.invest__scroll {
+  gap: 10px;
+  padding-top: 8px;
+}
+.invest__cart .cart-line {
+  gap: 6px;
+  padding: 6px 0;
+}
+.invest__cart .cart-line__controls {
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.invest__cart .cart-line__controls > :last-child {
+  grid-column: 1 / -1;
+}
+.invest__cart .cart-line__controls .input,
+.invest__cart .cart-line__controls .select {
+  width: 100%;
+  max-width: none;
+  height: 32px;
+  min-height: 0;
+  padding-block: 0;
+}
+.invest__foot {
+  padding: 10px 0 14px;
+}
+
+/* ---------- facilitator "Do now": a dark action button on the right ---------- */
+.hq-quest--urgent .hq-quest__body > .btn--primary {
+  align-self: flex-end;
+  background: #0b1f3a;
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(11, 31, 58, 0.28);
+}
+.hq-quest--urgent .hq-quest__body > .btn--primary:hover:not(:disabled) {
+  background: #14315a;
+  box-shadow: 0 4px 12px rgba(11, 31, 58, 0.36);
+}
+:root[data-theme='dark'] .hq-quest--urgent .hq-quest__body > .btn--primary {
+  background: #eaf1f9;
+  color: #0b1f3a;
+}
+:root[data-theme='dark'] .hq-quest--urgent .hq-quest__body > .btn--primary:hover:not(:disabled) {
+  background: #fff;
+}
+
+/* ---------- results: KPI drop-down instead of a wall of chips ---------- */
+.kpi-picker {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.kpi-picker__label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.kpi-picker__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 30px;
+  padding: 0 10px;
+  background: var(--surface);
+  border: 1px solid var(--border-strong, var(--border));
+  border-radius: 8px;
+  color: var(--text);
+  font: inherit;
+  font-size: 12.5px;
+  cursor: pointer;
+  transition:
+    border-color 120ms,
+    box-shadow 120ms;
+}
+.kpi-picker__trigger:hover,
+.kpi-picker__trigger[aria-expanded='true'] {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+.kpi-picker__count {
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font-weight: 700;
+  font-size: 11.5px;
+}
+.kpi-picker__summary {
+  color: var(--text-muted);
+}
+.kpi-picker__menu {
+  position: absolute;
+  z-index: 20;
+  bottom: 36px; /* just above the 30px trigger */
+  left: 0;
+  width: 340px;
+  max-height: 340px;
+  overflow-y: auto;
+  padding: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border-strong, var(--border));
+  border-radius: 12px;
+  box-shadow: 0 16px 40px rgba(11, 37, 69, 0.18);
+}
+.kpi-picker__hint {
+  padding: 6px 8px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.kpi-picker__opt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+.kpi-picker__opt:hover:not(:disabled) {
+  background: var(--surface-sunken);
+}
+.kpi-picker__opt:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.kpi-picker__opt.is-on {
+  font-weight: 600;
+}
+.kpi-picker__swatch {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid var(--border-strong, var(--border));
+  border-radius: 4px;
+  color: #fff;
+}
+.kpi-picker__name {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Results: the chart fills whatever height the KPI table beside it sets, and never makes its card
+   taller than that table (the chart is drawn inside its box instead of sizing it). */
+@media (min-width: 961px) {
+  .kpi-split .kpi-trend__plot {
+    position: relative;
+  }
+  .kpi-split .kpi-trend__plot > .recharts-responsive-container {
+    position: absolute !important;
+    inset: 0;
+  }
+}
+
+/* Result drivers: card name sits under its code badge, so the "why" column gets the width */
+.drivers-table__card {
+  width: 22%;
+}
+.drivers-table__moved {
+  width: 22%;
+}
+.drivers-table__name {
+  margin-top: 4px;
+}
+
+/* ---------- board pitch ---------- */
+/* shorter answer boxes, so the pitch card is no taller than the rubric column beside it */
+.pitch-form .textarea {
+  min-height: 0;
+  height: auto;
+  padding: 6px 10px;
+  line-height: 1.45;
+}
+.pitch-form .field {
+  gap: 4px;
+}
+/* rubric: numbered rows with aligned text */
+.rubric-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.rubric-list__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+.rubric-list__row:first-child {
+  padding-top: 0;
+}
+.rubric-list__row:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+.rubric-list__num {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  margin-top: 0;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent-ink, var(--accent));
+  font-size: 11px;
+  font-weight: 700;
+}
+.rubric-list__title {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--text);
+}
+.rubric-list__desc {
+  margin-top: 1px;
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--text-muted);
+}
+.pitch-form__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+.pitch-form__actions > .btn {
+  width: auto;
+  flex: none;
+}
+.pitch-form > .card__body > .stack {
+  --gap: 10px !important;
+}
+.grid-split > .stack:has(.rubric-list) {
+  --gap: 12px !important;
+}
+.grid-split > .stack:has(.rubric-list) .card__body {
+  padding: 12px 16px;
+}
+
+/* Pitch: the form card matches the height of the cards beside it. The answer boxes share any extra
+   height, so Submit sits at the bottom with no empty band under it. */
+.pitch-grid {
+  align-items: stretch;
+}
+.pitch-grid > .stack {
+  align-self: start;
+}
+.pitch-grid > .stack > .card:last-child {
+  flex: none;
+}
+.pitch-grid > .pitch-form {
+  height: auto;
+  display: flex;
+  flex-direction: column;
+}
+.pitch-form > .card__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.pitch-form > .card__body > .stack {
+  flex: 1;
+}
+.pitch-form .field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.pitch-form .field > .textarea {
+  flex: 1;
+}
+
+/* a bare count in a round badge, at the right of a card heading */
+.count-badge {
+  display: inline-grid;
+  place-items: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-ink, var(--accent));
+  font-size: 12.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Financials: air between the "Progress to the bonus" line and its bar */
+.bonus-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+/* operating model: Save / Submit sit at the bottom of the form, on the right */
+.opmodel-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.opmodel-actions > .btn {
+  width: auto;
+  flex: none;
+}
+
+/* operating model: "high consequence" is a filled badge like its neighbours, not bare red text */
+.workflow__head .badge--critical {
+  background: var(--critical-soft);
+  border-color: color-mix(in srgb, var(--critical) 32%, transparent);
+  color: var(--critical-ink);
+}
+
+/* scorecard: crisis effects and guardrails as one compact line; the detail opens on demand */
+.flag-note {
+  --flag: var(--warning);
+  --flag-ink: var(--warning-ink);
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+}
+.flag-note--guard {
+  --flag: var(--critical);
+  --flag-ink: var(--critical-ink);
+}
+.flag-note__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.flag-note__icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--flag) 16%, transparent);
+  color: var(--flag-ink);
+}
+.flag-note__kind {
+  flex: none;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--flag-ink);
+}
+.flag-note__headline {
+  flex: 1;
+  min-width: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.flag-note__sev {
+  flex: none;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--flag) 14%, transparent);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: capitalize;
+  color: var(--flag-ink);
+}
+.flag-note__more {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 4px;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.flag-note__more:hover {
+  color: var(--text);
+}
+.flag-note__more[aria-expanded='true'] svg {
+  transform: rotate(180deg);
+}
+.flag-note__detail {
+  margin: 8px 0 0 36px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+/* buttons that used to sit in the page header now close the page, on the right */
+.page-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.page-actions > .btn {
+  width: auto;
+  flex: none;
+}
+
+/* opportunity map: all four quadrants share one neutral look */
+.opp-q,
+.opp-q--strategic,
+.opp-q--act_now,
+.opp-q--defer,
+.opp-q--quick_win {
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+}
+
+/* the axis labels are gone, so the matrix is just its grid */
+.opp-matrix {
+  display: block;
+}
+
+/* ---------- custom dropdown (replaces the browser's native select list) ---------- */
+.select--custom {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding-right: 36px;
+  text-align: left;
+  font: inherit;
+  font-size: 13.5px;
+  color: var(--text);
+  background-color: var(--surface);
+}
+.select--custom.is-open {
+  border-color: var(--focus);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.select__value {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.select__value.is-placeholder {
+  color: var(--text-muted);
+}
+.select-list {
+  position: fixed;
+  z-index: 200;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--border-strong, var(--border));
+  border-radius: 12px;
+  box-shadow: 0 16px 40px rgba(11, 37, 69, 0.18);
+  overscroll-behavior: contain;
+}
+.select-list__opt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  line-height: 1.35;
+  color: var(--text);
+  cursor: pointer;
+}
+.select-list__label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.select-list__opt.is-active {
+  background: var(--surface-sunken);
+}
+.select-list__opt.is-selected {
+  font-weight: 600;
+  color: var(--accent-ink, var(--accent));
+}
+.select-list__opt[aria-disabled='true'] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ---------- segmented, full-width rectangular options (1-5 scales): same grey track, equal segments ---------- */
+.segmented--block {
+  display: flex;
+}
+.segmented--block button {
+  flex: 1;
+  padding: 6px 8px;
+  font-size: 13px;
+}
+
+/* playtest report: each table is its own framed block with a heading, so the two never run together */
+.playtest-block {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--surface);
+}
+.playtest-block + .playtest-block {
+  margin-top: 8px;
+}
+.playtest-block__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2, var(--surface-sunken));
+}
+.playtest-block__head h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 650;
+  color: var(--text);
+}
+.playtest-block__head span {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.playtest-block .table-wrap {
+  border: 0;
+  border-radius: 0;
+}
+
+/* ---------- pagination ---------- */
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  padding: 12px 20px;
+  border-top: 1px solid var(--border);
+}
+.pagination__info {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.pagination__pages {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.pagination__btn {
+  display: inline-grid;
+  place-items: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-2, var(--text));
+  cursor: pointer;
+}
+.pagination__btn:hover:not(:disabled):not([aria-current='page']) {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+}
+.pagination__btn[aria-current='page'] {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent-ink, var(--accent));
+}
+.pagination__btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.pagination__gap {
+  padding: 0 4px;
+  color: var(--text-muted);
+}
+
+/* content review: the Review button is as wide as its label, and the text gets the rest */
+.review-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+.review-row > .btn {
+  width: auto;
+  min-width: 88px;
+}
+.count-badge--edited {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* Big page titles and the company name on the briefing share one weight, size and spacing */
+.shell--arena .page-header h1,
+.hero__title {
+  font-size: clamp(28px, 2.4vw, 34px);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+}

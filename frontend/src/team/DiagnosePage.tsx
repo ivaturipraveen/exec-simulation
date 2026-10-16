@@ -44,18 +44,9 @@ export function DiagnosePage({ team }: { team: TeamView }) {
   return (
     <div className="stack" style={{ '--gap': '20px' } as React.CSSProperties}>
       <PageHeader
-        eyebrow="Diagnose"
         title="What is actually preventing 4+ Stars?"
-        description="Separate symptoms from root causes. Name your top three priorities and the evidence behind each."
-        actions={
-          editable ? (
-            <Button variant="primary" icon={<Save />} onClick={onSave} loading={save.isPending}>
-              Save priorities
-            </Button>
-          ) : (
-            <Badge icon={<Lock aria-hidden />}>Locked</Badge>
-          )
-        }
+        description="Separate symptoms from root causes. Name your top three priorities and the evidence behind each. Distinguish evidence from assumption."
+        actions={!editable && <Badge icon={<Lock aria-hidden />}>Locked</Badge>}
       />
       {!editable && (
         <Callout tone="neutral">
@@ -134,14 +125,23 @@ export function DiagnosePage({ team }: { team: TeamView }) {
           </Card>
         ))}
       </div>
-      {editable && items.length < 3 && (
-        <Button
-          variant="secondary"
-          icon={<Plus />}
-          onClick={() => setItems((xs) => [...xs, blank()])}
-        >
-          Add priority
-        </Button>
+      {editable && (
+        <div className="diagnose-actions">
+          {items.length < 3 ? (
+            <Button
+              variant="secondary"
+              icon={<Plus />}
+              onClick={() => setItems((xs) => [...xs, blank()])}
+            >
+              Add priority
+            </Button>
+          ) : (
+            <span />
+          )}
+          <Button variant="primary" icon={<Save />} onClick={onSave} loading={save.isPending}>
+            Save priorities
+          </Button>
+        </div>
       )}
       <Dialog
         open={picking !== null}

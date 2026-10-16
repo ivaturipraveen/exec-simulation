@@ -3,12 +3,17 @@ import {
   ArrowRight,
   ArrowUpRight,
   Bot,
+  CalendarCheck,
+  Check,
+  ChevronDown,
   Hammer,
   Minus,
   Rocket,
+  Star,
+  Target,
   TrendingUp,
 } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useResults } from '../api/hooks'
 import type { KpiSeries, MeasureResult, TeamView, YearReport } from '../api/types'
 import { CapacityPlan } from '../components/CapacityPlan'
@@ -58,7 +63,6 @@ export function ResultsPage({ team }: { team: TeamView }) {
   return (
     <div className="stack" style={{ '--gap': '20px' } as React.CSSProperties}>
       <PageHeader
-        eyebrow="Executive performance review · simulated / projected"
         title={`Year ${year} performance review`}
         description={`Leading indicators move the quarter after a card goes live; measures move in the next rating year. Projected values carry a ±${Math.round(report.confidence_band * 100)}% band on the effect.`}
         actions={
@@ -138,7 +142,7 @@ export function ResultsPage({ team }: { team: TeamView }) {
               label="4-Star bonus value (illustrative)"
               value={`${money(report.financials.bonus_value_musd)} / yr`}
             />
-            <div>
+            <div className="bonus-progress">
               <div className="row spread small">
                 <span className="secondary">Progress to the bonus</span>
                 <span className="num strong">{pct(report.financials.bonus_progress)}</span>
@@ -261,16 +265,19 @@ function StarsTiles({ report }: { report: YearReport }) {
   return (
     <div className="grid grid-4">
       <Stat
+        icon={<Star />}
         label="Starting rating"
         value={s.baseline.toFixed(1)}
         meta={<StarRating value={s.baseline} />}
       />
       <Stat
+        icon={<CalendarCheck />}
         label={`Year ${report.year} rating`}
         value={s.year_rating.toFixed(1)}
-        meta={<span>Lagged: measures realize a share of the effect each rating year</span>}
+        meta={<span>Lags the KPIs by a rating year</span>}
       />
       <Stat
+        icon={<TrendingUp />}
         label="Projected path"
         value={s.projected.toFixed(1)}
         meta={
@@ -281,6 +288,7 @@ function StarsTiles({ report }: { report: YearReport }) {
         }
       />
       <Stat
+        icon={<Target />}
         label="Target"
         value={s.target.toFixed(1)}
         meta={
@@ -379,7 +387,7 @@ function KpiSection({ report }: { report: YearReport }) {
         subtitle={
           movedPercent.length
             ? 'Showing the KPIs that moved — pick up to four'
-            : 'No percent KPI moved this year — pick any to see its line'
+            : 'No percent KPI moved this year'
         }
       >
         {series.length ? (
@@ -399,26 +407,17 @@ function KpiSection({ report }: { report: YearReport }) {
             </span>
           </div>
         )}
-        <div className="chip-list" style={{ marginTop: 10 }}>
-          {percentKpis.map((k) => (
-            <button
-              key={k.id}
-              type="button"
-              className={`chip ${ids.includes(k.id) ? 'chip--on' : ''}`}
-              style={
-                ids.includes(k.id)
-                  ? ({ '--chip-c': KPI_COLORS[current[k.id]] } as React.CSSProperties)
-                  : undefined
-              }
-              aria-pressed={ids.includes(k.id)}
-              onClick={() => toggle(k.id)}
-            >
-              {ids.includes(k.id) && <span className="chip__swatch" aria-hidden />}
-              {k.name}
-              {hasMoved(k) && <span className="chip__dot" aria-label="moved" />}
-            </button>
-          ))}
-        </div>
+        {movedPercent.length > 0 && (
+          <div style={{ marginTop: 10 }}>
+            <KpiPicker
+              kpis={percentKpis}
+              selected={ids}
+              colorOf={(id) => KPI_COLORS[current[id]]}
+              max={KPI_COLORS.length}
+              onToggle={toggle}
+            />
+          </div>
+        )}
       </Card>
       <Card
         title="All leading KPIs"
@@ -441,6 +440,87 @@ function KpiSection({ report }: { report: YearReport }) {
           </tbody>
         </table>
       </Card>
+    </div>
+  )
+}
+
+/** Drop-down to choose which KPIs the chart shows (up to `max`), instead of a wall of chips. */
+function KpiPicker({
+  kpis,
+  selected,
+  colorOf,
+  max,
+  onToggle,
+}: {
+  kpis: KpiSeries[]
+  selected: string[]
+  colorOf: (id: string) => string
+  max: number
+  onToggle: (id: string) => void
+}) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (!open) return
+    const onDown = (e: MouseEvent) => {
+      if (!ref.current?.contains(e.target as Node)) setOpen(false)
+    }
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false)
+    document.addEventListener('mousedown', onDown)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('mousedown', onDown)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [open])
+  const full = selected.length >= max
+  return (
+    <div className="kpi-picker" ref={ref}>
+      <span className="kpi-picker__label">Show on chart:</span>
+      <button
+        type="button"
+        className="kpi-picker__trigger"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        onClick={() => setOpen((o) => !o)}
+      >
+        <span className="kpi-picker__count">
+          {selected.length} of {max}
+        </span>
+        <span className="kpi-picker__summary">
+          {selected.length ? 'KPIs · change' : 'Pick KPIs'}
+        </span>
+        <ChevronDown size={14} aria-hidden />
+      </button>
+      {open && (
+        <div className="kpi-picker__menu" role="listbox" aria-multiselectable="true">
+          <div className="kpi-picker__hint">Pick up to {max} to compare</div>
+          {kpis.map((k) => {
+            const on = selected.includes(k.id)
+            return (
+              <button
+                key={k.id}
+                type="button"
+                role="option"
+                aria-selected={on}
+                className={`kpi-picker__opt ${on ? 'is-on' : ''}`}
+                disabled={!on && full}
+                onClick={() => onToggle(k.id)}
+              >
+                <span
+                  className="kpi-picker__swatch"
+                  style={on ? { background: colorOf(k.id), borderColor: colorOf(k.id) } : undefined}
+                  aria-hidden
+                >
+                  {on && <Check size={11} strokeWidth={3} />}
+                </span>
+                <span className="kpi-picker__name">{k.name}</span>
+                {hasMoved(k) && <span className="chip__dot" aria-label="moved" />}
+              </button>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }
@@ -507,12 +587,12 @@ function InitiativesCard({ report }: { report: YearReport }) {
                   <td>
                     <div className="chip-title">
                       <span className="code-chip">{i.code}</span>
-                      <span className="strong">{i.name}</span>
+                      <span className="xs muted">
+                        Round {i.funded_round}
+                        {i.owner && ` · ${i.owner}`}
+                      </span>
                     </div>
-                    <div className="xs muted">
-                      Round {i.funded_round}
-                      {i.owner && ` · ${i.owner}`}
-                    </div>
+                    <div className="strong drivers-table__name">{i.name}</div>
                   </td>
                   <td className="small">
                     {i.live_label ? (

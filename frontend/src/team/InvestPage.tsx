@@ -1,5 +1,5 @@
-import { AlertTriangle, CheckCircle2, Lock, Send, X } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { CheckCircle2, Lock, Send, X } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { errorMessage } from '../api/client'
 import {
@@ -141,28 +141,24 @@ function LineControls({
   )
 }
 
-function Warnings({ preview }: { preview: DraftPreview | null }) {
-  if (!preview) return null
-  return (
-    <>
-      {preview.errors.length > 0 && (
-        <Callout tone="critical" title="Fix before submitting">
-          {preview.errors.join(' · ')}
-        </Callout>
-      )}
-      {preview.warnings.length > 0 && (
-        <Callout tone="warning" title="Worth a second look">
-          <ul className="list-reset stack" style={{ '--gap': '4px' } as React.CSSProperties}>
-            {preview.warnings.map((w) => (
-              <li key={w} className="small">
-                {w}
-              </li>
-            ))}
-          </ul>
-        </Callout>
-      )}
-    </>
-  )
+/** Surfaces draft errors and warnings as toasts (once each) so the player sees them without scrolling. */
+function useWarningToasts(preview: DraftPreview | null, extra: string[] = []) {
+  const toast = useToast()
+  const seen = useRef(new Set<string>())
+  const key = [...(preview?.errors ?? []), ...(preview?.warnings ?? []), ...extra].join('\n')
+  useEffect(() => {
+    const current = new Set<string>()
+    const fire = (msg: string, tone: 'error' | 'warning') => {
+      current.add(msg)
+      if (!seen.current.has(msg)) toast(msg, tone)
+    }
+    preview?.errors.forEach((m) => fire(m, 'error'))
+    preview?.warnings.forEach((m) => fire(m, 'warning'))
+    extra.forEach((m) => fire(m, 'error'))
+    // forget resolved ones so they toast again if they return
+    seen.current = current
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key])
 }
 
 export function InvestPage({ team }: { team: TeamView }) {
@@ -172,7 +168,6 @@ export function InvestPage({ team }: { team: TeamView }) {
   return (
     <div className="stack" style={{ '--gap': '20px' } as React.CSSProperties}>
       <PageHeader
-        eyebrow="Capital allocation"
         title={tab === 'r1' ? 'Round 1 — place your bets' : 'Round 2 — fund learning, not loyalty'}
         description={
           tab === 'r1'
@@ -247,6 +242,7 @@ function Round1({ team, catalog }: { team: TeamView; catalog: InvestmentView[] }
       { onSuccess: setPreview, onError: (e) => toast(errorMessage(e), 'error') },
     )
   }, [items, thesis])
+  useWarningToasts(preview)
 
   if (ws.round1_submitted_at) {
     return (
@@ -293,9 +289,16 @@ function Round1({ team, catalog }: { team: TeamView; catalog: InvestmentView[] }
       <Card
         className="invest__cart"
         title="Your portfolio"
-        subtitle={`${items.length} card${items.length === 1 ? '' : 's'}`}
+        actions={
+          <span
+            className="count-badge"
+            aria-label={`${items.length} card${items.length === 1 ? '' : 's'}`}
+          >
+            {items.length}
+          </span>
+        }
       >
-        <div className="stack" style={{ '--gap': '16px' } as React.CSSProperties}>
+        <div className="invest__pinned">
           <LedgerPanel ledger={localLedger} />
           {preview && (
             <CapacityPlan
@@ -304,6 +307,8 @@ function Round1({ team, catalog }: { team: TeamView; catalog: InvestmentView[] }
               labels={QUARTERS.map((q) => `Y1 ${q}`)}
             />
           )}
+        </div>
+        <div className="invest__scroll">
           {items.length === 0 ? (
             <p className="muted small">
               Add cards from the catalog. Most strong portfolios mix technology with capacity,
@@ -354,20 +359,20 @@ function Round1({ team, catalog }: { team: TeamView; catalog: InvestmentView[] }
               />
             )}
           </Field>
-          <Warnings preview={preview} />
+        </div>
+        <div className="invest__foot">
           <span className="xs muted">
             {save.isPending ? 'Saving draft…' : preview ? 'Draft saved' : 'Draft not saved yet'}
           </span>
           <Button
             variant="primary"
-            block
             icon={<Send />}
             disabled={
               items.length === 0 || !thesis.trim() || localLedger.available < 0 || errors.length > 0
             }
             onClick={() => setConfirm(true)}
           >
-            Submit Round 1
+            Submit
           </Button>
         </div>
       </Card>
@@ -503,6 +508,11 @@ function Round2({ team, catalog }: { team: TeamView; catalog: InvestmentView[] }
       { onSuccess: setPreview, onError: (e) => toast(errorMessage(e), 'error') },
     )
   }, [actions, thesis])
+  const overBudget = (preview?.ledger ?? team.ledger).available < 0
+  useWarningToasts(
+    preview,
+    overBudget ? ['Over budget: the ledger blocks overspend. Remove or cancel something.'] : [],
+  )
 
   if (ws.round2_submitted_at) {
     return (
@@ -652,9 +662,16 @@ function Round2({ team, catalog }: { team: TeamView; catalog: InvestmentView[] }
         <Card
           className="invest__cart"
           title="Round 2 plan"
-          subtitle={`${actions.length} change${actions.length === 1 ? '' : 's'}`}
+          actions={
+            <span
+              className="count-badge"
+              aria-label={`${actions.length} change${actions.length === 1 ? '' : 's'}`}
+            >
+              {actions.length}
+            </span>
+          }
         >
-          <div className="stack" style={{ '--gap': '16px' } as React.CSSProperties}>
+          <div className="invest__pinned">
             <LedgerPanel ledger={ledger} estimate={preview?.capital_is_estimate} />
             {preview && (
               <CapacityPlan
@@ -663,6 +680,8 @@ function Round2({ team, catalog }: { team: TeamView; catalog: InvestmentView[] }
                 labels={QUARTERS.map((q) => `Y2 ${q}`)}
               />
             )}
+          </div>
+          <div className="invest__scroll">
             {funding.length > 0 && (
               <ul className="list-reset">
                 {funding.map((a) => {
@@ -707,19 +726,13 @@ function Round2({ team, catalog }: { team: TeamView; catalog: InvestmentView[] }
                 />
               )}
             </Field>
-            <Warnings preview={preview} />
-            {ledger.available < 0 && (
-              <Callout tone="critical" title="Over budget">
-                <AlertTriangle size={14} aria-hidden /> The ledger blocks overspend. Remove or
-                cancel something.
-              </Callout>
-            )}
+          </div>
+          <div className="invest__foot">
             <span className="xs muted">
               {save.isPending ? 'Saving draft…' : preview ? 'Draft saved' : ''}
             </span>
             <Button
               variant="primary"
-              block
               icon={<Send />}
               loading={submit.isPending}
               disabled={
@@ -735,7 +748,7 @@ function Round2({ team, catalog }: { team: TeamView; catalog: InvestmentView[] }
                 }
               }}
             >
-              Submit Round 2
+              Submit
             </Button>
           </div>
         </Card>
