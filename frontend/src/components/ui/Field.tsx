@@ -1,10 +1,4 @@
-import {
-  type ComponentProps,
-  useId,
-  type InputHTMLAttributes,
-  type ReactNode,
-  type SelectHTMLAttributes,
-} from 'react'
+import { type ComponentProps, useId, type InputHTMLAttributes, type ReactNode } from 'react'
 
 interface FieldProps {
   label: ReactNode
@@ -20,8 +14,8 @@ export function Field({ label, hint, error, children }: FieldProps) {
       <label className="field__label" htmlFor={id}>
         {label}
       </label>
-      {children(id)}
       {hint && !error && <div className="field__hint">{hint}</div>}
+      {children(id)}
       {error && <div className="field__error">{error}</div>}
     </div>
   )
@@ -33,23 +27,24 @@ export const Input = (p: InputHTMLAttributes<HTMLInputElement>) => (
 export const Textarea = (p: ComponentProps<'textarea'>) => (
   <textarea {...p} className={`textarea ${p.className ?? ''}`} />
 )
-export const Select = (p: SelectHTMLAttributes<HTMLSelectElement>) => (
-  <select {...p} className={`select ${p.className ?? ''}`} />
-)
+export { Select } from './Select'
 
 export function Segmented<T extends string | number>({
   value,
   options,
   onChange,
   label,
+  block,
 }: {
   value: T
   options: { value: T; label: ReactNode }[]
   onChange: (v: T) => void
   label: string
+  /** Full-width row of equal rectangular options, for form fields. */
+  block?: boolean
 }) {
   return (
-    <div className="segmented" role="group" aria-label={label}>
+    <div className={`segmented ${block ? 'segmented--block' : ''}`} role="group" aria-label={label}>
       {options.map((o) => (
         <button
           key={String(o.value)}

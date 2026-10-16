@@ -616,7 +616,7 @@ function StageActions({
             run(`/results/${y}/release`, undefined, 'POST', `Year ${y} review released`)
           }
         >
-          Release Year {y} performance review
+          Release to teams
         </Button>
       </Quest>,
     )

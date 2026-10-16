@@ -1,4 +1,4 @@
-import { Bot, FileText, Lock, Mic, Plus, Send, Timer } from 'lucide-react'
+import { Bot, FileText, Lock, Plus, Send, Timer } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { errorMessage } from '../api/client'
 import { useCatalog, useDataRoom, useSavePitch } from '../api/hooks'
@@ -31,7 +31,7 @@ const FIELDS: {
     key: 'causal',
     label: 'Why it differed from your thesis',
     hint: 'Explain it in terms of the causal chain.',
-    rows: 3,
+    rows: 2,
   },
   {
     key: 'decision',
@@ -86,7 +86,6 @@ export function PitchPage({ team }: { team: TeamView }) {
   return (
     <div className="stack" style={{ '--gap': '20px' } as React.CSSProperties}>
       <PageHeader
-        eyebrow="Investment Round 2"
         title="90-second board pitch"
         description="The board funds learning, not loyalty to last year's projects. Every figure must be traceable to your data room or results."
         actions={
@@ -107,8 +106,9 @@ export function PitchPage({ team }: { team: TeamView }) {
         }
       />
       <StageBanner team={team} compact />
-      <div className="grid grid-split">
+      <div className="grid grid-split pitch-grid">
         <Card
+          className="pitch-form"
           title="Your pitch"
           actions={
             <Badge
@@ -141,7 +141,6 @@ export function PitchPage({ team }: { team: TeamView }) {
                   <Textarea
                     id={id}
                     rows={f.rows}
-                    style={f.rows === 1 ? { minHeight: 44 } : undefined}
                     value={pitch[f.key] ?? ''}
                     disabled={!editable || !!ws.pitch_submitted_at}
                     maxLength={1500}
@@ -161,41 +160,49 @@ export function PitchPage({ team }: { team: TeamView }) {
                 Deliver it out loud in 90 seconds. The facilitator scores it on the rubric.
               </Callout>
             ) : (
-              <Button
-                variant="primary"
-                icon={<Send />}
-                disabled={!editable || total === 0}
-                loading={save.isPending}
-                onClick={async () => {
-                  try {
-                    const r = await save.mutateAsync({ pitch, submit: true })
-                    setFigures(r.unsupported_figures)
-                    toast('Pitch submitted')
-                  } catch (e) {
-                    toast(errorMessage(e), 'error')
-                  }
-                }}
-              >
-                Submit pitch for scoring
-              </Button>
+              <div className="pitch-form__actions">
+                <Button
+                  variant="primary"
+                  size="sm"
+                  icon={<Send />}
+                  disabled={!editable || total === 0}
+                  loading={save.isPending}
+                  onClick={async () => {
+                    try {
+                      const r = await save.mutateAsync({ pitch, submit: true })
+                      setFigures(r.unsupported_figures)
+                      toast('Pitch submitted')
+                    } catch (e) {
+                      toast(errorMessage(e), 'error')
+                    }
+                  }}
+                >
+                  Submit pitch
+                </Button>
+              </div>
             )}
           </div>
         </Card>
         <div className="stack" style={{ '--gap': '16px' } as React.CSSProperties}>
           {ws.pitch_score ? (
-            <Card title="Board score" subtitle="Facilitator decision">
+            <Card className="card--inline-head" title="Board score" subtitle="Facilitator decision">
               <RubricView rows={catalog.rubrics.pitch} score={ws.pitch_score} />
             </Card>
           ) : (
             <Card title="How the board scores you" subtitle="Five rows, 0 to 3 each — 15 maximum">
-              <ul className="list-reset stack" style={{ '--gap': '10px' } as React.CSSProperties}>
-                {catalog.rubrics.pitch.map((r) => (
-                  <li key={r.id}>
-                    <div className="strong small">{r.criterion}</div>
-                    <div className="xs secondary">{r.good_answer}</div>
+              <ol className="rubric-list">
+                {catalog.rubrics.pitch.map((r, i) => (
+                  <li key={r.id} className="rubric-list__row">
+                    <span className="rubric-list__num" aria-hidden>
+                      {i + 1}
+                    </span>
+                    <div>
+                      <div className="rubric-list__title">{r.criterion}</div>
+                      <div className="rubric-list__desc">{r.good_answer}</div>
+                    </div>
                   </li>
                 ))}
-              </ul>
+              </ol>
             </Card>
           )}
           <Card
@@ -232,10 +239,11 @@ export function PitchPage({ team }: { team: TeamView }) {
               </tbody>
             </table>
           </Card>
-          <Callout tone="accent" title="Delivery tips">
-            <Mic size={13} aria-hidden /> Results → why → decision → risk and control → the ask.
-            Stop at 90 seconds.
-          </Callout>
+          <Card title="Delivery tips">
+            <p className="small secondary">
+              Results → why → decision → risk and control → the ask. Stop at 90 seconds.
+            </p>
+          </Card>
         </div>
       </div>
       <Dialog

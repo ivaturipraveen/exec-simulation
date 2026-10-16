@@ -29,6 +29,8 @@ import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { Textarea } from '../components/ui/Field'
 import { Badge, Callout, Empty, Loading } from '../components/ui/primitives'
+import { Pagination } from '../components/ui/Pagination'
+import { Tabs } from '../components/ui/Tabs'
 import { useConfirm, useToast } from '../components/ui/toastContext'
 import { auth, signIn } from '../lib/storage'
 
@@ -168,7 +170,6 @@ function SettingsWorkspace({ token, onExpired }: { token: string | null; onExpir
       toast(errorMessage(e), 'error')
     }
   }
-  const openReview = view.review.filter((r) => r.status === 'open').length
 
   return (
     <div className="settings__body">
@@ -217,7 +218,6 @@ function SettingsWorkspace({ token, onExpired }: { token: string | null; onExpir
               <Server aria-hidden />
             )}
             <span className="settings__nav-text">{g}</span>
-            {g === 'Content review' && openReview > 0 && <Badge tone="warning">{openReview}</Badge>}
           </button>
         ))}
       </nav>
@@ -294,10 +294,12 @@ function GroupEditor({
           <h1 className="ss-panel__title">{title}</h1>
           {GROUP_INTRO[title] && <p className="ss-panel__intro">{GROUP_INTRO[title]}</p>}
         </div>
-        <span className="ss-panel__count">
-          {edited > 0
-            ? `${edited} edited`
-            : `${fields.length} setting${fields.length === 1 ? '' : 's'}`}
+        <span
+          className={`count-badge ${edited > 0 ? 'count-badge--edited' : ''}`}
+          title={edited > 0 ? `${edited} edited` : `${fields.length} settings`}
+          aria-label={edited > 0 ? `${edited} edited` : `${fields.length} settings`}
+        >
+          {edited > 0 ? edited : fields.length}
         </span>
       </header>
       {weightKeys.length > 0 && (
@@ -358,6 +360,9 @@ function GroupEditor({
   )
 }
 
+/** Review items per page, so the list fits a screen instead of one long scroll. */
+const REVIEW_PAGE_SIZE = 8
+
 const STATUS_TONE = { open: 'warning', confirmed: 'good', changed: 'accent' } as const
 
 function ReviewEditor({
@@ -387,10 +392,22 @@ function ReviewEditor({
       toast(errorMessage(e), 'error')
     }
   }
-  const sections: [string, ReviewEntry[]][] = [
-    ['Content Pack §12 review checklist', entries.filter((e) => e.kind === 'checklist')],
-    ['Assumptions log (§1) and build assumptions', entries.filter((e) => e.kind === 'assumption')],
-  ]
+  const sections = {
+    checklist: {
+      tab: 'Review checklist',
+      title: 'Content Pack §12 review checklist',
+      list: entries.filter((e) => e.kind === 'checklist'),
+    },
+    assumption: {
+      tab: 'Assumptions',
+      title: 'Assumptions log (§1) and build assumptions',
+      list: entries.filter((e) => e.kind === 'assumption'),
+    },
+  }
+  const [tab, setTab] = useState<keyof typeof sections>('checklist')
+  const [page, setPage] = useState(1)
+  const { title, list: all } = sections[tab]
+  const list = all.slice((page - 1) * REVIEW_PAGE_SIZE, page * REVIEW_PAGE_SIZE)
   const done = entries.filter((e) => e.status !== 'open').length
   return (
     <div className="stack" style={{ '--gap': '16px' } as React.CSSProperties}>
@@ -401,74 +418,103 @@ function ReviewEditor({
           {entries.length} signed off.
         </p>
       </div>
-      {sections.map(([title, list]) => (
-        <Card key={title} title={title} flush>
-          <ul className="list-reset setting-list">
-            {list.map((e) => (
-              <li key={e.id} className="setting-row">
-                <div className="setting-row__text">
-                  <div className="row" style={{ '--gap': '8px' } as React.CSSProperties}>
-                    <span className="code-chip code-chip--strong">{e.id}</span>
-                    <span className="strong small">{e.section}</span>
-                    <Badge tone={STATUS_TONE[e.status]}>{e.status}</Badge>
-                  </div>
-                  <div className="small secondary" style={{ marginTop: 4 }}>
-                    {e.text}
-                  </div>
-                  {e.note && (
-                    <div className="xs" style={{ marginTop: 4 }}>
-                      <BadgeCheck size={12} aria-hidden /> {e.note}
-                    </div>
-                  )}
-                  {editing === e.id && (
-                    <div
-                      className="stack"
-                      style={{ '--gap': '8px', marginTop: 8 } as React.CSSProperties}
-                    >
-                      <Textarea
-                        aria-label="Review note"
-                        rows={2}
-                        value={note}
-                        onChange={(ev) => setNote(ev.target.value)}
-                        placeholder="What was confirmed, or what changed"
-                      />
-                      <div className="row wrap">
-                        <Button size="sm" variant="primary" onClick={() => save(e.id, 'confirmed')}>
-                          Confirm
-                        </Button>
-                        <Button
-                          size="sm"
-                          onClick={() => save(e.id, 'changed')}
-                          disabled={!note.trim()}
-                        >
-                          Record a change
-                        </Button>
-                        <Button size="sm" variant="ghost" onClick={() => save(e.id, 'open')}>
-                          Reopen
-                        </Button>
-                        <Button size="sm" variant="ghost" onClick={() => setEditing(null)}>
-                          Cancel
-                        </Button>
-                      </div>
-                    </div>
-                  )}
+      <Tabs
+        label="Review section"
+        value={tab}
+        onChange={(t) => {
+          setTab(t)
+          setPage(1)
+          setEditing(null)
+        }}
+        tabs={(Object.keys(sections) as (keyof typeof sections)[]).map((k) => ({
+          id: k,
+          label: (
+            <>
+              {sections[k].tab}{' '}
+              <span className="ss-tab__count">
+                {sections[k].list.filter((e) => e.status !== 'open').length}/
+                {sections[k].list.length}
+              </span>
+            </>
+          ),
+        }))}
+      />
+      <Card title={title} flush>
+        <ul className="list-reset setting-list">
+          {list.map((e) => (
+            <li key={e.id} className="setting-row review-row">
+              <div className="setting-row__text">
+                <div className="row" style={{ '--gap': '8px' } as React.CSSProperties}>
+                  <span className="code-chip code-chip--strong">{e.id}</span>
+                  <span className="strong small">{e.section}</span>
+                  <Badge tone={STATUS_TONE[e.status]}>{e.status}</Badge>
                 </div>
-                {editing !== e.id && (
-                  <Button
-                    size="sm"
-                    onClick={() => {
-                      setEditing(e.id)
-                      setNote(e.note)
-                    }}
-                  >
-                    Review
-                  </Button>
+                <div className="small secondary" style={{ marginTop: 4 }}>
+                  {e.text}
+                </div>
+                {e.note && (
+                  <div className="xs" style={{ marginTop: 4 }}>
+                    <BadgeCheck size={12} aria-hidden /> {e.note}
+                  </div>
                 )}
-              </li>
-            ))}
-          </ul>
-        </Card>
-      ))}
+                {editing === e.id && (
+                  <div
+                    className="stack"
+                    style={{ '--gap': '8px', marginTop: 8 } as React.CSSProperties}
+                  >
+                    <Textarea
+                      aria-label="Review note"
+                      rows={2}
+                      value={note}
+                      onChange={(ev) => setNote(ev.target.value)}
+                      placeholder="What was confirmed, or what changed"
+                    />
+                    <div className="row wrap">
+                      <Button size="sm" variant="primary" onClick={() => save(e.id, 'confirmed')}>
+                        Confirm
+                      </Button>
+                      <Button
+                        size="sm"
+                        onClick={() => save(e.id, 'changed')}
+                        disabled={!note.trim()}
+                      >
+                        Record a change
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={() => save(e.id, 'open')}>
+                        Reopen
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={() => setEditing(null)}>
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+              {editing !== e.id && (
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    setEditing(e.id)
+                    setNote(e.note)
+                  }}
+                >
+                  Review
+                </Button>
+              )}
+            </li>
+          ))}
+        </ul>
+        <Pagination
+          page={page}
+          pageSize={REVIEW_PAGE_SIZE}
+          total={all.length}
+          label={`${title} pages`}
+          onChange={(p) => {
+            setPage(p)
+            setEditing(null)
+          }}
+        />
+      </Card>
     </div>
   )
 }

@@ -56,10 +56,10 @@ const MODES: { value: AnalystMode; label: string; placeholder: string }[] = [
 ]
 
 const PROMPTS = [
-  'Which signals in the data room conflict with each other?',
-  'Where could a headline number be misleading us?',
-  'What does the data room say about our implementation capacity?',
-  'Which evidence would change our mind about our top priority?',
+  'Which data-room signals conflict?',
+  'Where might a headline number mislead us?',
+  'What does the data say about our capacity?',
+  'What evidence would change our top priority?',
 ]
 
 const historyKey = (teamId: string) => `execsim.analyst.${teamId}`
@@ -236,7 +236,7 @@ function AnalystChat({
               evidence from inference and will not decide for you.
             </p>
             <span className="upper muted">Try one of these</span>
-            <div className="stack" style={{ '--gap': '8px' } as React.CSSProperties}>
+            <div className="analyst-drawer__prompts">
               {PROMPTS.map((p) => (
                 <button
                   key={p}

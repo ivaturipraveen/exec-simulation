@@ -1,4 +1,4 @@
-import { FileText, PenLine, Send, Siren, Unlock, Wallet } from 'lucide-react'
+import { Check, FileText, PenLine, Send, Unlock } from 'lucide-react'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { errorMessage, request } from '../api/client'
@@ -225,7 +225,7 @@ function TeamDetail({
                 </Field>
               </div>
               <Button
-                icon={<Wallet />}
+                icon={<Check />}
                 disabled={!note.trim() || !amount || Number.isNaN(Number(amount))}
                 onClick={() =>
                   run(
@@ -311,6 +311,7 @@ function TeamDetail({
                     'Round 2 base set',
                   )
                 }
+                icon={<Check />}
               >
                 Set
               </Button>
@@ -348,7 +349,7 @@ function TeamDetail({
                   </Field>
                 </div>
                 <Button
-                  icon={<Siren />}
+                  icon={<Check />}
                   disabled={!note.trim()}
                   onClick={() =>
                     run(
