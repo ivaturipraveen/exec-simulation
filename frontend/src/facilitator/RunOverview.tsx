@@ -1,7 +1,7 @@
 import { Check, Copy, Star } from 'lucide-react'
 import type { SessionView, TeamProgress } from '../api/types'
 import { useToast } from '../components/ui/toastContext'
-import { money, payerSuffix } from '../lib/format'
+import { durationText, money, payerSuffix } from '../lib/format'
 import { useRemaining } from '../lib/useRemaining'
 import { teamSteps } from './teamStatus'
 
@@ -33,9 +33,9 @@ export function RunOfShow({ session }: { session: SessionView }) {
   const schedule = !started
     ? null
     : behind >= 2
-      ? { tone: behind >= 10 ? 'bad' : 'warn', text: `${behind} min behind` }
+      ? { tone: behind >= 10 ? 'bad' : 'warn', text: `${durationText(behind)} behind` }
       : behind <= -2
-        ? { tone: 'good', text: `${-behind} min ahead` }
+        ? { tone: 'good', text: `${durationText(behind)} ahead` }
         : { tone: 'good', text: 'On schedule' }
 
   return (

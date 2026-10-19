@@ -65,6 +65,16 @@ export function TeamApp() {
   const connected = useRealtime(session?.sessionId, session?.token ?? null, session?.teamId)
   const { data: catalog } = useCatalog()
   const navigate = useNavigate()
+  // the tab says which team and session this window belongs to, so two open tabs are never confused
+  const tabTitle = team ? `${team.team_name} · ${team.session_name}` : null
+  useEffect(() => {
+    if (!tabTitle) return
+    const before = document.title
+    document.title = tabTitle
+    return () => {
+      document.title = before
+    }
+  }, [tabTitle])
 
   if (!session) return <Navigate to="/" replace />
   if (error instanceof ApiError && (error.status === 401 || error.status === 404)) {
@@ -316,7 +326,15 @@ function Sidebar({ team }: { team: TeamView }) {
         <div className="brand-mark">{team.team_name.slice(0, 1).toUpperCase()}</div>
         <div className="stack grow" style={{ '--gap': '0px' } as React.CSSProperties}>
           {/* The team name is shown once, in the live ticker at the foot of the sidebar. */}
-          <span className="sidebar__room">Boardroom</span>
+          <span className="sidebar__room-row">
+            <span className="sidebar__room">Boardroom</span>
+            <span
+              className="sidebar__session-badge"
+              title={`Session: ${team.session_name} (${team.session_id})`}
+            >
+              #{team.session_id.slice(0, 6)}
+            </span>
+          </span>
           <span className="sidebar__archetype" title={archetype}>
             {archetype}
           </span>

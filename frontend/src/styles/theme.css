@@ -434,20 +434,6 @@ tr.is-highlight td {
   flex-direction: column;
   gap: 12px;
 }
-.rubric__total {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-}
-.rubric__score {
-  font-size: 34px;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-}
-.rubric__score .muted {
-  font-size: 18px;
-  font-weight: 600;
-}
 .rubric__rows {
   display: flex;
   flex-direction: column;

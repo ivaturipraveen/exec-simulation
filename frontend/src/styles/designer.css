@@ -231,15 +231,6 @@
   }
 }
 
-/* ---------- rubric score: "15 /15" stays together; the note beside it wraps instead ---------- */
-.rubric__score {
-  flex: none;
-  white-space: nowrap;
-}
-.rubric__total > :not(.rubric__score) {
-  min-width: 0;
-}
-
 /* ---------- AI analyst: compact, wrapping quick questions ---------- */
 .analyst-drawer__prompts {
   display: flex;
@@ -911,4 +902,402 @@
   font-weight: 700;
   line-height: 1.15;
   letter-spacing: -0.025em;
+}
+
+/* a long clock (an hour or more over) stays on one line and shrinks to fit its ring */
+.clock--big {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.hq-ring .clock--big[data-len='long'] {
+  font-size: 24px;
+}
+.hq-ring .clock--big[data-len='xl'] {
+  font-size: 19px;
+}
+
+/* Notices: each tone has its own soft wash, picked to sit well beside the blue UI instead of fighting it:
+   teal for information, mint for good news, warm cream for warnings, a soft coral for critical.
+   The wash is mixed from the card colour, so it works in light and dark mode. */
+.callout,
+.callout--neutral,
+.callout--accent,
+.callout--good,
+.callout--warning,
+.callout--critical,
+.packet,
+.shell--arena .packet,
+:root[data-theme='light'] .shell--arena .packet {
+  --tone: var(--accent);
+  background: color-mix(in srgb, var(--tone) 7%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--tone) 26%, var(--border));
+  box-shadow: none;
+  color: var(--text);
+}
+.callout--good {
+  --tone: #12a97a;
+}
+.callout--critical {
+  --tone: #e5484d;
+}
+.callout--accent svg,
+.callout--neutral svg,
+.callout--warning svg,
+.callout svg {
+  color: color-mix(in srgb, var(--tone) 85%, var(--text));
+}
+.callout--critical svg {
+  color: var(--critical-ink);
+}
+.callout--good svg {
+  color: var(--good-ink);
+}
+
+/* Answer key: the stat labels (ROOT CAUSES, MISLEADING SIGNALS, ...) are bold, and every card in a
+   team's tab shares one design: white, thin neutral border, no accent top line or side stripe. */
+.tp__stat-label {
+  font-weight: 700;
+  color: var(--text-2, var(--text-muted));
+}
+.ak-card,
+.ak-card--root,
+.ak-card--warn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+.ak-clue {
+  background: var(--surface-sunken);
+}
+.ak-clue__label {
+  color: var(--text-2, var(--text-muted));
+}
+
+/* Section headers inside a team's Answer key tab (HIDDEN ROOT CAUSES, MISLEADING SIGNALS, ...) */
+.sec__label {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+/* Field labels in read-only summaries (RESULTS / CAUSAL / DECISION ..., ROUND 1 / ROUND 2 ...) are
+   bold and darker, so the label and the content under it are easy to tell apart. */
+dt.upper,
+.card .upper.muted {
+  font-weight: 800;
+  color: var(--text);
+}
+dt.upper {
+  margin-bottom: 2px;
+}
+
+/* Table rows: the hover and selected highlight is a clear blue wash, strong enough to see at a glance
+   but light enough that the text keeps its contrast. */
+.table tbody tr:hover td,
+.table tbody tr.is-highlight td {
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface));
+}
+
+/* Card headers on one line: the title on the left and its description on the right (it used to sit
+   underneath, leaving the right half of the header empty). Narrow cards wrap it back below. */
+.card > .card__header > .grow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: 16px;
+  row-gap: 2px;
+}
+.card > .card__header > .grow > .card__subtitle {
+  margin: 0;
+  text-align: right;
+  font-size: 12.5px;
+}
+.shell--arena .content .card > .card__header {
+  padding: 9px 18px;
+}
+.card__body:not(.card__body--flush) {
+  padding: 14px 18px 16px;
+}
+.shell--arena .packet__label,
+:root[data-theme='light'] .shell--arena .packet__label {
+  color: var(--accent-ink, var(--accent));
+}
+
+/* Score result: a solid brand-blue band. It is the one loud element in the card, so the eye lands on it,
+   and it animates in once when the score arrives. The total is written here only. */
+.rubric__result {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px;
+  margin-bottom: 4px;
+  border-radius: 12px;
+  /* the same soft blue-to-green wash as the stage banner above the page */
+  background:
+    radial-gradient(520px 160px at 100% 0%, rgba(20, 199, 159, 0.16), transparent 60%),
+    radial-gradient(420px 160px at 0% 100%, rgba(30, 143, 255, 0.12), transparent 60%),
+    linear-gradient(120deg, var(--surface) 0%, #f1f7ff 55%, #eaf8f3 100%);
+  border: 1px solid var(--border);
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+  animation: rubric-arrive 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+:root[data-theme='dark'] .rubric__result {
+  background:
+    radial-gradient(520px 160px at 100% 0%, rgba(20, 199, 159, 0.14), transparent 60%),
+    radial-gradient(420px 160px at 0% 100%, rgba(30, 143, 255, 0.14), transparent 60%),
+    linear-gradient(120deg, var(--surface) 0%, var(--surface-2, var(--surface)) 100%);
+}
+.rubric__result-icon {
+  flex: none;
+  color: var(--accent);
+}
+.rubric__result-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.rubric__verdict-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-ink, var(--accent));
+}
+.rubric__verdict-note {
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 1.3;
+  color: var(--text);
+}
+.rubric__big {
+  flex: none;
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--accent-ink, var(--accent));
+}
+.rubric__big-of {
+  margin-left: 2px;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--text-muted);
+}
+@keyframes rubric-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.985);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+  60% {
+    box-shadow: 0 0 0 10px color-mix(in srgb, var(--accent) 0%, transparent);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rubric__result {
+    animation: none;
+  }
+}
+.rubric .dot--on {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Operating model (scored view) only: the "Your design at a glance" card on the right takes the height of
+   the Design score card on the left, and scrolls inside itself when its content is longer. */
+@media (min-width: 961px) {
+  .opmodel-split > .card:first-child {
+    display: block;
+    height: auto;
+    min-height: 0;
+  }
+  .opmodel-split > .card:first-child > .card__body {
+    flex: none;
+    overflow: visible;
+  }
+  .opmodel-split > .card:last-child {
+    display: flex;
+    flex-direction: column;
+    height: 0;
+    min-height: 100%;
+  }
+  .opmodel-split > .card:last-child > .card__body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+  }
+}
+
+/* Opportunity map: one card. The heading says what it is for and carries the status badge; the body is the
+   name field with the explanation and the agree checkbox below it. */
+.consent-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+/* "What I agreed to" opens across the full card width, so the whole consent wording reads on one block */
+.consent__details p {
+  max-width: none;
+  padding-right: 8px;
+}
+/* name field and the agree checkbox share one row; the checkbox sits level with the input box */
+.consent-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: end;
+}
+.consent-row__agree {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  font-size: 13.5px;
+}
+@media (max-width: 800px) {
+  .consent-row {
+    grid-template-columns: 1fr;
+  }
+}
+.consent-body__after {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+.consent__status {
+  padding: 2px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.consent__status.is-on {
+  border-color: color-mix(in srgb, var(--good) 40%, var(--border));
+  background: color-mix(in srgb, var(--good) 12%, var(--surface));
+  color: var(--good-ink);
+}
+.consent__summary {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+.consent__details summary {
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--accent-ink, var(--accent));
+}
+.consent__details p {
+  margin: 8px 0 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+/* Which session this is: a small badge beside "Boardroom"; the full session name is in its tooltip */
+.sidebar__room-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.sidebar__session-badge {
+  flex: none;
+  padding: 1px 8px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border));
+  background: var(--accent-soft);
+  font-family: var(--login-mono, ui-monospace, monospace);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent-ink, var(--accent));
+}
+
+/* "Say to the room": the line the facilitator reads aloud, highlighted without changing the box size:
+   the soft blue-to-green wash, a solid blue border, semibold upright text and a blue label. */
+.hq-say {
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--border));
+  background:
+    radial-gradient(520px 160px at 100% 0%, rgba(20, 199, 159, 0.14), transparent 60%),
+    radial-gradient(420px 160px at 0% 100%, rgba(30, 143, 255, 0.1), transparent 60%),
+    linear-gradient(120deg, var(--surface) 0%, #f1f7ff 55%, #eaf8f3 100%);
+  box-shadow: var(--shadow-sm);
+}
+:root[data-theme='dark'] .hq-say {
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+}
+.hq-say .hq-label {
+  font-weight: 800;
+  color: var(--accent-ink, var(--accent));
+}
+/* "Your cue" text is bold like the line above it, so the two read as the same kind of instruction */
+.hq-cue p {
+  font-weight: 650;
+}
+.hq-say p {
+  font-style: normal;
+  font-weight: 650;
+}
+
+/* Stage controls on the Run page: a button that cannot be used right now (Back after a simulated year) is a
+   clear solid grey with readable text, not a half-transparent white that disappears into the card. */
+.hq-level__controls .btn:disabled {
+  opacity: 1;
+  background: var(--surface-sunken);
+  border-color: var(--border-strong);
+  color: var(--text-muted);
+  box-shadow: none;
+}
+
+/* After agreeing: the name is a read-only field with the Stop button right beside it, on one line across
+   the card, so the button never drops onto a second line */
+.consent-row > .consent-name {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: flex-end;
+  gap: 12px;
+  min-width: 0;
+}
+.consent-name > .field {
+  flex: 0 1 340px;
+  min-width: 0;
+}
+.consent-name > .btn {
+  flex: none;
+  height: 36px;
+  margin-left: 0;
+  white-space: nowrap;
+  border-color: color-mix(in srgb, var(--danger, var(--critical)) 35%, var(--border-strong));
+  color: var(--critical-ink, var(--text));
+  background: var(--surface);
+}
+.consent-name > .btn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--critical) 8%, var(--surface));
+}
+
+/* After agreeing: the name looks like a normal field but cannot be typed into */
+.input--locked {
+  cursor: default;
+  background: var(--surface-sunken);
+  color: var(--text);
+  font-weight: 650;
+}
+.input--locked:focus {
+  border-color: var(--border-strong);
+  box-shadow: none;
 }

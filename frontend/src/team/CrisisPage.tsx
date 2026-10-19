@@ -147,31 +147,33 @@ export function CrisisPage({ team }: { team: TeamView }) {
         >
           <div className="grid grid-2">
             <Card title="1 · Stop or continue" subtitle={hint('stop_continue')}>
-              <fieldset className="radio-group">
-                <legend className="sr-only">Decision</legend>
-                {DECISIONS.map(([v, l]) => (
-                  <label key={v} className="checkbox">
-                    <input
-                      type="radio"
-                      name="decision"
-                      checked={form.decision === v}
-                      onChange={() => set('decision', v)}
-                    />{' '}
-                    {l}
-                  </label>
-                ))}
-              </fieldset>
-              <Field label="Criteria for restart">
-                {(id) => (
-                  <Textarea
-                    id={id}
-                    rows={2}
-                    value={form.restart_criteria}
-                    maxLength={1500}
-                    onChange={(e) => set('restart_criteria', e.target.value)}
-                  />
-                )}
-              </Field>
+              <div className="stack" style={{ '--gap': '16px' } as React.CSSProperties}>
+                <fieldset className="radio-group">
+                  <legend className="sr-only">Decision</legend>
+                  {DECISIONS.map(([v, l]) => (
+                    <label key={v} className="checkbox">
+                      <input
+                        type="radio"
+                        name="decision"
+                        checked={form.decision === v}
+                        onChange={() => set('decision', v)}
+                      />{' '}
+                      {l}
+                    </label>
+                  ))}
+                </fieldset>
+                <Field label="Criteria for restart">
+                  {(id) => (
+                    <Textarea
+                      id={id}
+                      rows={2}
+                      value={form.restart_criteria}
+                      maxLength={1500}
+                      onChange={(e) => set('restart_criteria', e.target.value)}
+                    />
+                  )}
+                </Field>
+              </div>
             </Card>
             <Card title="2 · Owner" subtitle={hint('owner')}>
               <div className="stack" style={{ '--gap': '10px' } as React.CSSProperties}>
@@ -350,7 +352,7 @@ export function CrisisPage({ team }: { team: TeamView }) {
               loading={respond.isPending}
               disabled={!form.owner.trim()}
             >
-              Submit response
+              Submit
             </Button>
           </div>
         </form>

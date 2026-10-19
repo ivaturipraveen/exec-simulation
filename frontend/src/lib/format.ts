@@ -3,12 +3,23 @@ export const pct = (x: number, digits = 0) => `${(x * 100).toFixed(digits)}%`
 export const signed = (x: number, digits = 1) => `${x > 0 ? '+' : ''}${x.toFixed(digits)}`
 export const stars = (x: number) => x.toFixed(1)
 
+/** m:ss under an hour, h:mm:ss beyond, so a long overrun stays readable instead of "+3931:26". */
 export function clockText(seconds: number): string {
   const neg = seconds < 0
   const s = Math.abs(Math.round(seconds))
   const m = Math.floor(s / 60)
   const r = s % 60
-  return `${neg ? '+' : ''}${m}:${r.toString().padStart(2, '0')}`
+  const sign = neg ? '+' : ''
+  if (m < 60) return `${sign}${m}:${r.toString().padStart(2, '0')}`
+  return `${sign}${Math.floor(m / 60)}:${(m % 60).toString().padStart(2, '0')}:${r.toString().padStart(2, '0')}`
+}
+
+/** "45 min" under an hour, "2h 5m" beyond. */
+export function durationText(minutes: number): string {
+  const m = Math.round(Math.abs(minutes))
+  if (m < 60) return `${m} min`
+  const h = Math.floor(m / 60)
+  return m % 60 ? `${h}h ${m % 60}m` : `${h}h`
 }
 
 /** Format a measure value by its unit kind ('percent' | 'score' | 'rate'). */

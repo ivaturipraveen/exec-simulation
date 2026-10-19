@@ -1,5 +1,14 @@
 import { describe, expect, test } from 'vitest'
-import { clockText, kpiValue, measureDelta, measureValue, money, pct, signed } from './format'
+import {
+  clockText,
+  durationText,
+  kpiValue,
+  measureDelta,
+  measureValue,
+  money,
+  pct,
+  signed,
+} from './format'
 import { cardCost } from './cost'
 import { measureStars } from './stars'
 
@@ -13,6 +22,13 @@ describe('format', () => {
   test('clockText counts down and shows overtime', () => {
     expect(clockText(125)).toBe('2:05')
     expect(clockText(-30)).toBe('+0:30')
+    expect(clockText(-(3931 * 60 + 26))).toBe('+65:31:26')
+    expect(clockText(3600)).toBe('1:00:00')
+  })
+  test('durationText keeps long gaps readable', () => {
+    expect(durationText(45)).toBe('45 min')
+    expect(durationText(3892)).toBe('64h 52m')
+    expect(durationText(120)).toBe('2h')
   })
   test('measure values by unit kind', () => {
     expect(measureValue(0.55, 'rate')).toBe('0.55')

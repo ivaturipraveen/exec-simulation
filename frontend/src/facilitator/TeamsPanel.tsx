@@ -89,7 +89,7 @@ function TeamDetail({
             <ol style={{ margin: 0, paddingLeft: 18 }} className="stack">
               {ws.priorities.map((p) => (
                 <li key={p.title}>
-                  <div className="strong">{p.title}</div>
+                  <div>{p.title}</div>
                   {p.rationale && <div className="small secondary">{p.rationale}</div>}
                   <div className="chip-list" style={{ marginTop: 4 }}>
                     {(p.evidence ?? []).map((e) => (
