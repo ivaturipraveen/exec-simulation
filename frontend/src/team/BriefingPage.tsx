@@ -26,8 +26,13 @@ export function BriefingPage({ team }: { team: TeamView }) {
             <Badge outline>Data readiness {p.data_readiness} of 5</Badge>
           </div>
         </div>
-        <div className="hero__stars" aria-hidden>
-          <StarRating value={p.starting_stars} />
+        <div className="hero__stars">
+          <span className="hero__stars-label">Starting rating</span>
+          <div className="hero__score">
+            <span className="hero__score-number">{p.starting_stars.toFixed(1)}</span>
+            <span className="hero__score-of">/ 5</span>
+          </div>
+          <StarRating value={p.starting_stars} variant="hero" />
         </div>
       </section>
 
@@ -42,70 +47,89 @@ export function BriefingPage({ team }: { team: TeamView }) {
       <div className="grid grid-4">
         <Stat
           label="Members"
-          icon={<Users size={14} aria-hidden />}
+          icon={<Users />}
           value={p.members.toLocaleString()}
-          meta={`Dual-eligible ${pct(p.dual_share)}`}
+          meta={`${pct(p.dual_share)} dual-eligible`}
         />
         <Stat
           label="Round 1 capital"
-          icon={<Wallet size={14} aria-hidden />}
+          icon={<Wallet />}
           value={money(p.capital_round1_musd, 1)}
-          meta={`Round 2: ${money(p.round2_base_musd, 1)} base + up to ${money(team.rules.round2_max_earned_musd, 1)} earned at the board pitch`}
+          meta={
+            <span
+              title={`Round 2 adds ${money(p.round2_base_musd, 1)}, plus up to ${money(team.rules.round2_max_earned_musd, 1)} earned at the board pitch`}
+            >
+              Round 2: {money(p.round2_base_musd, 1)} + up to{' '}
+              {money(team.rules.round2_max_earned_musd, 1)}
+            </span>
+          }
         />
         <Stat
           label="Capacity per quarter"
-          icon={<Gauge size={14} aria-hidden />}
+          icon={<Gauge />}
           value={`${p.capacity_per_quarter} pts`}
-          meta="Each card consumes points while it is being built"
+          meta={
+            <span title="Each card uses points while it is being built">
+              Used while a card is built
+            </span>
+          }
         />
         <Stat
           label="4-Star bonus value"
-          icon={<Scale size={14} aria-hidden />}
+          icon={<Scale />}
           value={money(p.bonus_value_musd, 1)}
-          meta={`Per year, illustrative ($${team.rules.bonus_pmpy_usd.toLocaleString()} per member)`}
+          meta={
+            <span
+              title={`Per year, illustrative ($${team.rules.bonus_pmpy_usd.toLocaleString()} per member)`}
+            >
+              Illustrative · ${team.rules.bonus_pmpy_usd.toLocaleString()} per member
+            </span>
+          }
         />
       </div>
 
       <div className="grid grid-2 briefing-row">
-        <Card title="Briefing">
-          <div className="stack" style={{ '--gap': '14px' } as React.CSSProperties}>
-            <p className="prose">{p.briefing}</p>
-            <Callout tone="accent" title="Board mandate">
-              {p.board_mandate}
-            </Callout>
-            <p className="prose small">{p.population}</p>
-          </div>
-        </Card>
+        <div className="stack" style={{ '--gap': '16px' } as React.CSSProperties}>
+          <Card title="Briefing">
+            <div className="stack" style={{ '--gap': '14px' } as React.CSSProperties}>
+              <p className="prose">{p.briefing}</p>
+              <Callout tone="accent" title="Board mandate">
+                {p.board_mandate}
+              </Callout>
+              <p className="prose small">{p.population}</p>
+            </div>
+          </Card>
+          <Card title="Visible advantages">
+            <ul className="list-reset stack" style={{ '--gap': '8px' } as React.CSSProperties}>
+              {p.advantages.map((a) => (
+                <li key={a} className="bullet bullet--good">
+                  {a}
+                </li>
+              ))}
+            </ul>
+          </Card>
+          <Card title="Visible constraints">
+            <ul className="list-reset stack" style={{ '--gap': '8px' } as React.CSSProperties}>
+              {p.constraints.map((a) => (
+                <li key={a} className="bullet bullet--warning">
+                  {a}
+                </li>
+              ))}
+            </ul>
+          </Card>
+        </div>
         <Card title="Profile">
-          <dl className="profile-grid">
+          <dl className="profile-form">
             {p.profile.map((r) => (
-              <div key={r.label}>
+              <div
+                key={r.label}
+                className={`profile-form__row${r.value.length > 48 ? ' profile-form__row--wide' : ''}`}
+              >
                 <dt>{r.label}</dt>
                 <dd>{r.value}</dd>
               </div>
             ))}
           </dl>
-        </Card>
-      </div>
-
-      <div className="grid grid-2">
-        <Card title="Visible advantages">
-          <ul className="list-reset stack" style={{ '--gap': '8px' } as React.CSSProperties}>
-            {p.advantages.map((a) => (
-              <li key={a} className="bullet bullet--good">
-                {a}
-              </li>
-            ))}
-          </ul>
-        </Card>
-        <Card title="Visible constraints">
-          <ul className="list-reset stack" style={{ '--gap': '8px' } as React.CSSProperties}>
-            {p.constraints.map((a) => (
-              <li key={a} className="bullet bullet--warning">
-                {a}
-              </li>
-            ))}
-          </ul>
         </Card>
       </div>
 

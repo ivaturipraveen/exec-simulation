@@ -72,7 +72,6 @@ export function CrisisPage({ team }: { team: TeamView }) {
   return (
     <div className="stack" style={{ '--gap': '20px' } as React.CSSProperties}>
       <PageHeader
-        eyebrow={`Crisis ${data.code}`}
         title={data.title}
         description="The information is incomplete by design. Decide containment, ownership, investigation, communication, protection and durable remediation. Concealment and cosmetic communications score zero."
         actions={

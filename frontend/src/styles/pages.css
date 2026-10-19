@@ -225,6 +225,44 @@
 .invest__cart {
   position: sticky;
   top: calc(var(--topbar-h) + 16px);
+  max-height: calc(100vh - var(--topbar-h) - 32px);
+  display: flex;
+  flex-direction: column;
+}
+/* capital + capacity stay put; only the card list and thesis scroll */
+.invest__cart > .card__body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 0;
+}
+.invest__pinned {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.invest__scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 12px 4px 12px 0;
+  overscroll-behavior: contain;
+}
+.invest__foot {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0 var(--space-box, 16px);
+  border-top: 1px solid var(--border);
 }
 .invest__grid {
   display: grid;
@@ -237,6 +275,7 @@
   }
   .invest__cart {
     position: static;
+    max-height: none;
   }
 }
 .inv {

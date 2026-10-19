@@ -488,15 +488,9 @@
   text-align: center;
 }
 
-/* KPI tile grids: tiles share a row height; a lone last tile spans the row so it never dangles. */
+/* KPI tile grids: tiles share a row height and a lone last tile keeps the same size as the rest. */
 .kpi-grid {
   grid-auto-rows: 1fr;
-}
-.kpi-grid > .kpi:last-child:nth-child(3n + 1) {
-  grid-column: 1 / -1;
-}
-dl.grid > div:last-child:nth-child(odd) {
-  grid-column: 1 / -1;
 }
 
 /* Company profile: compact two-column tiles instead of a long table, so it sits level with the briefing. */
@@ -930,15 +924,6 @@ dl.grid > div:last-child:nth-child(odd) {
 .workflow__step,
 .dataroom__item.is-active {
   border-left-color: var(--border);
-}
-.workflow__step--ai_assist {
-  background: color-mix(in srgb, var(--accent-soft) 45%, var(--surface));
-}
-.workflow__step--agent_approval {
-  background: color-mix(in srgb, var(--mint-soft) 55%, var(--surface));
-}
-.workflow__step--autonomous {
-  background: color-mix(in srgb, var(--bc-cyan) 8%, var(--surface));
 }
 .dataroom__item.is-active {
   border-left-color: transparent;

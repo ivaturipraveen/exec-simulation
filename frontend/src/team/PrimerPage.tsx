@@ -2,7 +2,7 @@ import { useCatalog } from '../api/hooks'
 import type { GameRules, TeamView } from '../api/types'
 import { Card } from '../components/ui/Card'
 import { money } from '../lib/format'
-import { Badge, Callout, Loading, PageHeader } from '../components/ui/primitives'
+import { Loading, PageHeader } from '../components/ui/primitives'
 
 const CLASSES = [
   [
@@ -108,7 +108,6 @@ export function PrimerPage({ team }: { team: TeamView }) {
   return (
     <div className="stack" style={{ '--gap': '20px' } as React.CSSProperties}>
       <PageHeader
-        eyebrow="Primer"
         title="Medicare Stars and AI in five minutes"
         description="Enough context to make good decisions — not a lecture. Everything here is simulated and simplified."
       />
@@ -178,9 +177,7 @@ export function PrimerPage({ team }: { team: TeamView }) {
             <tbody>
               {CLASSES.map(([c, m, e]) => (
                 <tr key={c}>
-                  <td>
-                    <Badge tone="accent">{c}</Badge>
-                  </td>
+                  <td className="strong">{c}</td>
                   <td>{m}</td>
                   <td className="secondary">{e}</td>
                 </tr>
@@ -253,11 +250,6 @@ export function PrimerPage({ team }: { team: TeamView }) {
           </table>
         </div>
       </Card>
-      <Callout tone="neutral">
-        {catalog.content_pack} · methodology baseline {catalog.methodology_baseline_date} · content
-        v{catalog.content_version}. Thresholds and weights are game constructs pending Stars SME
-        review. Held in reserve: {catalog.reserve_measures.join('; ')}.
-      </Callout>
     </div>
   )
 }

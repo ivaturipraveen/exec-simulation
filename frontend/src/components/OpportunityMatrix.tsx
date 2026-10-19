@@ -15,24 +15,28 @@ interface Item {
 const quadrants = (V: number, R: number) => [
   {
     key: 'strategic',
+    hint: 'High value · lower readiness',
     title: 'Strategic initiative',
     sub: 'Foundation, operating model or phased roadmap',
     test: (i: Item) => i.value >= V && i.readiness < R,
   },
   {
     key: 'act_now',
+    hint: 'High value · high readiness',
     title: 'Act now',
     sub: 'Prioritized pilot or productivity win',
     test: (i: Item) => i.value >= V && i.readiness >= R,
   },
   {
     key: 'defer',
+    hint: 'Lower value · lower readiness',
     title: 'Defer',
     sub: 'Low value · low readiness',
     test: (i: Item) => i.value < V && i.readiness < R,
   },
   {
     key: 'quick_win',
+    hint: 'Lower value · high readiness',
     title: 'Selective quick win',
     sub: 'Only if learning or capacity benefit is clear',
     test: (i: Item) => i.value < V && i.readiness >= R,
@@ -60,7 +64,6 @@ export function OpportunityMatrix({
   return (
     <div className="stack" style={{ '--gap': '12px' } as React.CSSProperties}>
       <div className="opp-matrix" role="list" aria-label="AI Opportunity Map">
-        <div className="opp-matrix__axis-y">Value →</div>
         <div className="opp-matrix__grid">
           {QUADRANTS.map((q) => {
             const inQ = items.filter(q.test)
@@ -70,6 +73,7 @@ export function OpportunityMatrix({
                 className={`opp-q opp-q--${q.key}`}
                 role="listitem"
                 aria-label={`${q.title}: ${inQ.length}`}
+                title={q.hint}
               >
                 <header>
                   <span className="strong small">
@@ -92,7 +96,6 @@ export function OpportunityMatrix({
             )
           })}
         </div>
-        <div className="opp-matrix__axis-x">Readiness →</div>
       </div>
       <div className="opp-foundation">
         <span className="strong small">Foundational band</span>

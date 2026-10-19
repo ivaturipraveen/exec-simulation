@@ -102,26 +102,8 @@ export function OperatingModelPage({ team }: { team: TeamView }) {
   return (
     <div className="stack" style={{ '--gap': '20px' } as React.CSSProperties}>
       <PageHeader
-        eyebrow="Human versus AI operating model"
         title="Quality-gap closure: who decides, who assists, who acts?"
         description="Assign each step one of four options. For every step you give to an agent, answer the six decision dimensions. Autonomy itself never scores: value, control adequacy, adoption feasibility and recoverability do."
-        actions={
-          editable && (
-            <>
-              <Button icon={<Save />} onClick={() => persist(false)} loading={save.isPending}>
-                Save draft
-              </Button>
-              <Button
-                variant="primary"
-                icon={<Send />}
-                onClick={() => persist(true)}
-                loading={save.isPending}
-              >
-                Submit design
-              </Button>
-            </>
-          )
-        }
       />
       <StageBanner team={team} compact />
       {compressed && (
@@ -269,6 +251,21 @@ export function OperatingModelPage({ team }: { team: TeamView }) {
           />
         </Card>
       </div>
+      {editable && (
+        <div className="opmodel-actions">
+          <Button icon={<Save />} onClick={() => persist(false)} loading={save.isPending}>
+            Save draft
+          </Button>
+          <Button
+            variant="primary"
+            icon={<Send />}
+            onClick={() => persist(true)}
+            loading={save.isPending}
+          >
+            Submit design
+          </Button>
+        </div>
+      )}
     </div>
   )
 }
