@@ -183,6 +183,7 @@ class SimplificationView(BaseModel):
     reason: str
     risk: str
     disclosure: str
+    key: str = ""
 
 
 class OpportunityConfigView(BaseModel):

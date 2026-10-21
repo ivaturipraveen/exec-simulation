@@ -3243,6 +3243,11 @@ export interface components {
       actual: string
       /** Disclosure */
       disclosure: string
+      /**
+       * Key
+       * @default
+       */
+      key: string
       /** Reason */
       reason: string
       /** Representation */

@@ -1773,3 +1773,46 @@
   align-items: center;
   gap: 8px 12px;
 }
+
+/* Primer: simplification register */
+.simplify-table,
+.simplify-table th,
+.simplify-table td {
+  font-family: var(--font-sans);
+}
+.simplify-table {
+  table-layout: fixed;
+  font-size: 13.5px;
+}
+.simplify-table th {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+.simplify-table td {
+  padding: 13px 18px;
+  line-height: 1.5;
+}
+.simplify-table th {
+  padding: 11px 18px;
+}
+.simplify-table__actual {
+  font-weight: 600;
+  color: var(--text);
+}
+.simplify-table__game {
+  color: var(--text-2);
+}
+.simplify-table__remember {
+  color: var(--text-2);
+  border-left: 3px solid color-mix(in srgb, var(--accent) 35%, transparent);
+}
+.simplify-table__remember strong {
+  font-weight: 700;
+  color: var(--text);
+}
+@media (max-width: 760px) {
+  .simplify-table {
+    table-layout: auto;
+    min-width: 640px;
+  }
+}
