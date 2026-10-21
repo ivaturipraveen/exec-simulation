@@ -230,7 +230,12 @@ export function PrimerPage({ team }: { team: TeamView }) {
         flush
       >
         <div className="table-wrap">
-          <table className="table table--compact">
+          <table className="table simplify-table">
+            <colgroup>
+              <col style={{ width: '30%' }} />
+              <col style={{ width: '30%' }} />
+              <col />
+            </colgroup>
             <thead>
               <tr>
                 <th>Real-world concept</th>
@@ -241,9 +246,11 @@ export function PrimerPage({ team }: { team: TeamView }) {
             <tbody>
               {catalog.simplifications.map((x) => (
                 <tr key={x.actual}>
-                  <td className="small">{x.actual}</td>
-                  <td className="small secondary">{x.representation}</td>
-                  <td className="small">“{x.disclosure}”</td>
+                  <td className="simplify-table__actual">{x.actual}</td>
+                  <td className="simplify-table__game">{x.representation}</td>
+                  <td className="simplify-table__remember">
+                    <Emphasis text={x.disclosure} phrase={x.key} />
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -251,5 +258,18 @@ export function PrimerPage({ team }: { team: TeamView }) {
         </div>
       </Card>
     </div>
+  )
+}
+
+/** The sentence with its key phrase in bold. */
+function Emphasis({ text, phrase }: { text: string; phrase?: string }) {
+  const at = phrase ? text.indexOf(phrase) : -1
+  if (!phrase || at < 0) return <>{text}</>
+  return (
+    <>
+      {text.slice(0, at)}
+      <strong>{phrase}</strong>
+      {text.slice(at + phrase.length)}
+    </>
   )
 }

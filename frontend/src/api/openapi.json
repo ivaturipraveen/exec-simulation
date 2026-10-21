@@ -4715,6 +4715,11 @@
             "title": "Disclosure",
             "type": "string"
           },
+          "key": {
+            "default": "",
+            "title": "Key",
+            "type": "string"
+          },
           "reason": {
             "title": "Reason",
             "type": "string"

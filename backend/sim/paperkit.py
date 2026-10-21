@@ -195,7 +195,11 @@ def facilitator_pack(content: ContentBundle) -> str:
         "## Simplification register (say these lines)",
         "| Actual concept | V1 representation | Facilitator disclosure |",
         "|---|---|---|",
-        *[f"| {s.actual} | {s.representation} | “{s.disclosure}” |" for s in content.simplifications],
+        *[
+            f"| {s.actual} | {s.representation} | "
+            f"{s.disclosure.replace(s.key, f'**{s.key}**', 1) if s.key else s.disclosure} |"
+            for s in content.simplifications
+        ],
     ]
     return "\n".join(lines) + "\n"
 

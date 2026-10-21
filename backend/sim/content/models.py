@@ -607,6 +607,14 @@ class Simplification(_Model):
     reason: str
     risk: str
     disclosure: str
+    # The phrase in the disclosure to emphasize when it is shown.
+    key: str = ""
+
+    @model_validator(mode="after")
+    def _key_in_disclosure(self) -> Simplification:
+        if self.key and self.key not in self.disclosure:
+            raise ValueError(f"key {self.key!r} is not part of the disclosure {self.disclosure!r}")
+        return self
 
 
 class OpportunityConfig(_Model):
