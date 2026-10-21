@@ -4,6 +4,7 @@ Skipped by default so `make check` never spends API credits. Run with `make test
 """
 
 import os
+import time
 
 import pytest
 
@@ -58,3 +59,30 @@ def test_refuses_unsupported_figures(analyst) -> None:
         ),
     )
     assert "$14" not in ans.answer  # OD-07: no figures without a cited artifact
+
+
+def test_streams_the_answer_in_pieces_and_ends_with_the_same_text(analyst) -> None:
+    """The typewriter effect depends on this: text must arrive while Claude is still writing."""
+    a, room = analyst
+    started = time.monotonic()
+    first_piece_at = done_at = None
+    events: list[dict] = []
+    for event in a.ask_stream(
+        "horizon", room, AskBody(question="Why are complaints rising in the new counties?")
+    ):
+        events.append(event)
+        if event["type"] == "delta" and first_piece_at is None:
+            first_piece_at = time.monotonic() - started
+        if event["type"] == "done":
+            done_at = time.monotonic() - started
+
+    kinds = [e["type"] for e in events]
+    assert kinds[0] == "meta" and kinds[-1] == "done" and "error" not in kinds
+    pieces = [e["text"] for e in events if e["type"] == "delta"]
+    assert len(pieces) > 3  # a stream of pieces, not the whole answer in one block
+    final = events[-1]["answer"]
+    assert final["generative"] and set(final["citations"]) <= room
+    # the pieces add up to the final answer (whitespace between separate text blocks aside)
+    assert " ".join("".join(pieces).split()) == " ".join(final["answer"].split())
+    # the first words arrived well before the answer was finished
+    assert first_piece_at is not None and done_at is not None and done_at - first_piece_at > 0.3

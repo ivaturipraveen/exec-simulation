@@ -12,6 +12,7 @@ dependencies = [
     "sqlmodel>=0.0.48",
     "alembic>=1.16",
     "anthropic>=1.12",
+    "httpx2>=2.13",  # the Anthropic SDK's HTTP client; its transport errors are handled while streaming
     "psycopg[binary]>=3.2",  # PostgreSQL driver (production database)
     "reportlab>=5.0",  # one-page Opportunity Map PDF
 ]

@@ -16,10 +16,13 @@ import logging
 import math
 import re
 from collections import Counter
+from collections.abc import Iterator
+from contextlib import contextmanager
 from dataclasses import dataclass
 from typing import Literal
 
 import anthropic
+import httpx2
 from pydantic import BaseModel, Field
 
 from app.core.config import Settings
@@ -241,6 +244,22 @@ class AnalystUnavailable(DomainError):
     code = "analyst_unavailable"
 
 
+@contextmanager
+def _api_errors() -> Iterator[None]:
+    """Turn the AI service's failures into one error the app can show to a team."""
+    try:
+        yield
+    except anthropic.RateLimitError as exc:
+        raise AnalystUnavailable("The analyst is at capacity — try again shortly") from exc
+    except anthropic.APIStatusError as exc:
+        log.warning("analyst API error %s request_id=%s", exc.status_code, getattr(exc, "request_id", None))
+        raise AnalystUnavailable("The analyst is temporarily unavailable") from exc
+    except (anthropic.APIConnectionError, httpx2.TransportError) as exc:
+        # The SDK wraps a failed connection when a request is made, but a connection that drops while
+        # an answer is streaming surfaces as the underlying transport error: treat both the same.
+        raise AnalystUnavailable("Cannot reach the AI service — check the network") from exc
+
+
 class Analyst:
     def __init__(
         self, settings: Settings, content: ContentBundle, client: anthropic.Anthropic | None
@@ -254,7 +273,10 @@ class Analyst:
     def generative(self) -> bool:
         return self.client is not None
 
-    def ask(self, payer_id: str, allowed: set[str], body: AskBody) -> AnalystAnswer:
+    def _search(
+        self, payer_id: str, allowed: set[str], body: AskBody
+    ) -> tuple[list[Source], list[tuple[Chunk, float]]]:
+        """The team's own passages that match the question, as sources and as raw hits."""
         query = f"{body.question}\n{body.context}" if body.mode in ("challenge", "explain") else body.question
         hits = self.index.search(payer_id, allowed, query)
         sources = [
@@ -267,9 +289,10 @@ class Analyst:
             )
             for c, s in hits
         ]
-        if self.client is None:
-            return self._retrieval_only(body, sources)
+        return sources, hits
 
+    @staticmethod
+    def _prompt(body: AskBody, hits: list[tuple[Chunk, float]]) -> str:
         source_xml = (
             "\n\n".join(
                 f'<source id="{c.artifact_id}" title="{c.title}" domain="{c.domain}">\n{c.text}\n</source>'
@@ -277,14 +300,53 @@ class Analyst:
             )
             or "<no_sources_matched/>"
         )
-        user = (
+        return (
             f"<mode>{body.mode}</mode>\n<task>{MODE_INSTRUCTIONS[body.mode]}</task>\n\n"
             f"<sources>\n{source_xml}\n</sources>\n\n"
             + (f"<team_context>\n{body.context}\n</team_context>\n\n" if body.context else "")
             + f"<question>\n{body.question}\n</question>"
         )
-        response = self._call(SYSTEM_PROMPT, user)
 
+    def ask(self, payer_id: str, allowed: set[str], body: AskBody) -> AnalystAnswer:
+        sources, hits = self._search(payer_id, allowed, body)
+        if self.client is None:
+            return self._retrieval_only(body, sources)
+        response = self._call(SYSTEM_PROMPT, self._prompt(body, hits))
+        return self._finalize(body, sources, response)
+
+    def ask_stream(self, payer_id: str, allowed: set[str], body: AskBody) -> Iterator[dict]:
+        """The same answer as `ask`, delivered as it is written.
+
+        Yields plain dicts, in this order: one `meta` (the sources, known before the model starts),
+        any number of `delta` (a piece of answer text), then one `done` carrying the final
+        `AnalystAnswer` (citations included). The final answer is authoritative: it can differ from the
+        pieces already sent, for example when the model refuses or the answer is cut off.
+        Raises `AnalystUnavailable` if the AI service fails part-way.
+        """
+        sources, hits = self._search(payer_id, allowed, body)
+        yield {
+            "type": "meta",
+            "sources": [s.model_dump(mode="json") for s in sources],
+            "generative": self.client is not None,
+        }
+        if self.client is None:
+            answer = self._retrieval_only(body, sources)
+            yield {"type": "delta", "text": answer.answer}
+            yield {"type": "done", "answer": answer.model_dump(mode="json")}
+            return
+        with (
+            _api_errors(),
+            self.client.beta.messages.stream(
+                **self._request_args(SYSTEM_PROMPT, self._prompt(body, hits))
+            ) as stream,
+        ):
+            for piece in stream.text_stream:
+                yield {"type": "delta", "text": piece}
+            final = stream.get_final_message()
+        yield {"type": "done", "answer": self._finalize(body, sources, final).model_dump(mode="json")}
+
+    def _finalize(self, body: AskBody, sources: list[Source], response) -> AnalystAnswer:
+        """Turn the model's finished message into the answer the team sees."""
         if response.stop_reason == "refusal":
             return AnalystAnswer(
                 answer="The analyst can't help with that request. Try rephrasing it as a question "
@@ -308,27 +370,22 @@ class Analyst:
             model=response.model,
         )
 
+    def _request_args(self, system: str, user: str, max_tokens: int | None = None) -> dict:
+        """Arguments shared by the one-shot and the streaming call, so they can never drift apart."""
+        return {
+            "model": self.settings.anthropic_model,
+            "max_tokens": max_tokens or self.settings.ai_max_tokens,
+            "system": [{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}],
+            "messages": [{"role": "user", "content": user}],
+            "output_config": {"effort": self.settings.ai_effort},
+            "betas": ["server-side-fallback-2026-07-01"],
+            "fallbacks": "default",
+        }
+
     def _call(self, system: str, user: str, max_tokens: int | None = None):
         assert self.client is not None
-        try:
-            return self.client.beta.messages.create(
-                model=self.settings.anthropic_model,
-                max_tokens=max_tokens or self.settings.ai_max_tokens,
-                system=[{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}],
-                messages=[{"role": "user", "content": user}],
-                output_config={"effort": self.settings.ai_effort},
-                betas=["server-side-fallback-2026-07-01"],
-                fallbacks="default",
-            )
-        except anthropic.RateLimitError as exc:
-            raise AnalystUnavailable("The analyst is at capacity — try again shortly") from exc
-        except anthropic.APIStatusError as exc:
-            log.warning(
-                "analyst API error %s request_id=%s", exc.status_code, getattr(exc, "request_id", None)
-            )
-            raise AnalystUnavailable("The analyst is temporarily unavailable") from exc
-        except anthropic.APIConnectionError as exc:
-            raise AnalystUnavailable("Cannot reach the AI service — check the network") from exc
+        with _api_errors():
+            return self.client.beta.messages.create(**self._request_args(system, user, max_tokens))
 
     @staticmethod
     def _json(response) -> dict | None:
