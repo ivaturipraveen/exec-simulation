@@ -31,14 +31,16 @@ export function Countdown({
   ]
     .filter(Boolean)
     .join(' ')
+  const text = clockText(remaining)
   return (
     <span
       className={cls}
+      data-len={text.length > 8 ? 'xl' : text.length > 6 ? 'long' : undefined}
       role="timer"
       aria-label={`${paused ? 'Paused, ' : ''}${clockText(remaining)} ${remaining < 0 ? 'over time' : 'remaining'}`}
     >
       {!big && (paused ? <Pause aria-hidden /> : <Clock aria-hidden />)}
-      {clockText(remaining)}
+      {text}
       {remaining < 0 && !big && <span className="xs">over</span>}
     </span>
   )

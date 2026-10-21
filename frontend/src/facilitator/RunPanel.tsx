@@ -47,7 +47,7 @@ import { Button } from '../components/ui/Button'
 import { Input, Select } from '../components/ui/Field'
 import { Badge, Callout } from '../components/ui/primitives'
 import { useConfirm, useToast } from '../components/ui/toastContext'
-import { clockText, money } from '../lib/format'
+import { clockText, durationText, money } from '../lib/format'
 import { useRemaining } from '../lib/useRemaining'
 import { RubricDialog } from './RubricDialog'
 import { RunOfShow, TeamProgressCard } from './RunOverview'
@@ -756,7 +756,7 @@ function StageActions({
             {lateCut && (
               <div className="hq-watch hq-watch--critical">
                 <div className="hq-watch__title">
-                  <Hourglass aria-hidden /> {behind} min behind the run of show
+                  <Hourglass aria-hidden /> {durationText(behind)} behind the run of show
                 </div>
                 {session.contingency.length > 0 ? (
                   <ul className="list-reset hq-watch__list">

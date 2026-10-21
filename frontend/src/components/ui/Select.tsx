@@ -15,6 +15,7 @@ import {
   type ReactNode,
 } from 'react'
 import { createPortal } from 'react-dom'
+import { placeList, type ListPlacement } from '../../lib/listPlacement'
 
 interface Option {
   value: string
@@ -98,7 +99,7 @@ export function Select({
   const selectedIndex = options.findIndex((o) => o.value === current)
   const [open, setOpen] = useState(false)
   const [active, setActive] = useState(0)
-  const [rect, setRect] = useState<{ left: number; width: number; top?: number; bottom?: number }>()
+  const [rect, setRect] = useState<ListPlacement & { top?: number; bottom?: number }>()
   const trigger = useRef<HTMLButtonElement>(null)
   const list = useRef<HTMLUListElement>(null)
   const listId = useId()
@@ -111,8 +112,7 @@ export function Select({
     const wanted = Math.min(MAX_LIST, options.length * 36 + 12)
     const flip = below < wanted + GAP && r.top > below
     setRect({
-      left: r.left,
-      width: r.width,
+      ...placeList(r, window.innerWidth),
       ...(flip ? { bottom: window.innerHeight - r.top + GAP } : { top: r.bottom + GAP }),
     })
   }, [options.length])
@@ -249,7 +249,8 @@ export function Select({
             className="select-list"
             style={{
               left: rect.left,
-              minWidth: rect.width,
+              minWidth: rect.minWidth,
+              maxWidth: rect.maxWidth,
               top: rect.top,
               bottom: rect.bottom,
               maxHeight: MAX_LIST,

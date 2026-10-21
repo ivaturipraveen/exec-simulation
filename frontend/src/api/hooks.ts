@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient, type QueryKey } from '@tanstack/react-query'
+import { withConsent } from '../lib/consent'
 import { auth } from '../lib/storage'
 import { request } from './client'
 import type {
@@ -166,11 +167,36 @@ export const useDeleteOpportunity = () =>
     }),
   )
 
-/** One participant's consent to share their opportunities on the organization map. */
-export const useOpportunityConsent = () =>
-  useTeamMutation((body: { granted: boolean; participant: string; at: string }) =>
-    request<Workspace>('PUT', '/team/opportunities/consent', { token: teamToken(), body }),
-  )
+/**
+ * One participant's consent to share their opportunities on the organization map.
+ *
+ * The choice shows at once: it is written into the cached team view before the request goes out. Any
+ * refetch already on its way is cancelled first, so an older answer cannot land on top of it and flip
+ * the card back for a moment. If the save fails the cache goes back as it was; either way the server
+ * has the last word, because the team view is refetched when the request settles.
+ */
+export const useOpportunityConsent = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (body: { granted: boolean; participant: string; at: string }) =>
+      request<Workspace>('PUT', '/team/opportunities/consent', { token: teamToken(), body }),
+    onMutate: async (body) => {
+      await qc.cancelQueries({ queryKey: keys.team, exact: true })
+      const before = qc.getQueryData<TeamView>(keys.team)
+      if (before) {
+        qc.setQueryData<TeamView>(
+          keys.team,
+          withConsent(before, body.participant, body.granted, body.at),
+        )
+      }
+      return { before }
+    },
+    onError: (_err, _body, context) => {
+      if (context?.before) qc.setQueryData<TeamView>(keys.team, context.before)
+    },
+    onSettled: () => qc.invalidateQueries({ queryKey: keys.team }),
+  })
+}
 
 export const useSubmitFeedback = () =>
   useTeamMutation((body: FeedbackBody) =>

@@ -1,4 +1,4 @@
-import { MessageSquareHeart, PenLine, Plus, Save, Trash2 } from 'lucide-react'
+import { Check, MessageSquareHeart, PenLine, Plus, Save, Share2, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { errorMessage } from '../api/client'
 import {
@@ -19,6 +19,7 @@ import { Dialog } from '../components/ui/Dialog'
 import { Field, Input, Segmented, Select, Textarea } from '../components/ui/Field'
 import { Callout, Empty, PageHeader } from '../components/ui/primitives'
 import { useToast } from '../components/ui/toastContext'
+import { isShared, personKey } from '../lib/consent'
 import { storage } from '../lib/storage'
 
 const scale = [1, 2, 3, 4, 5].map((v) => ({ value: v, label: String(v) }))
@@ -33,8 +34,6 @@ export function OpportunitiesPage({ team }: { team: TeamView }) {
   const [participant, setParticipant] = useState(() => storage.get('execsim.participant') ?? '')
   const [draft, setDraft] = useState<Opportunity | null>(null)
   const [feedbackOpen, setFeedbackOpen] = useState(false)
-  // The box shows the new choice at once; the server's answer replaces it when it arrives.
-  const [pendingShare, setPendingShare] = useState<boolean | null>(null)
 
   if (!team.flags.can_capture_opportunities) {
     return (
@@ -46,24 +45,19 @@ export function OpportunitiesPage({ team }: { team: TeamView }) {
 
   // Always the server's list: a teammate's additions appear live (realtime refreshes the team).
   const items = ws.opportunities
-  const personKey = (name: string) => name.split(/\s+/).filter(Boolean).join(' ').toLowerCase()
-  const consents = (ws.consents ?? {}) as Record<string, { granted: boolean }>
-  const sharedFor = (name: string) =>
-    consents[personKey(name)]?.granted ??
-    (Object.keys(consents).length === 0 && !!ws.consent?.granted)
-  const consent = participant.trim() ? (pendingShare ?? sharedFor(participant)) : false
+  const sharedFor = (name: string) => isShared(ws, name)
+  // Read straight from the team data. The save hook writes the new choice into that data at once and
+  // lets the server's answer replace it, so the card never flips back in between.
+  const consent = participant.trim() ? sharedFor(participant) : false
   const mine = items.filter((o) => personKey(o.participant) === personKey(participant))
   const editing = !!draft && items.some((o) => o.id === draft.id)
 
   const setShare = async (granted: boolean) => {
-    setPendingShare(granted)
     try {
       await giveConsent.mutateAsync({ granted, participant, at: new Date().toISOString() })
       toast(granted ? 'Your opportunities are shared with the facilitator' : 'Sharing turned off')
     } catch (e) {
       toast(errorMessage(e), 'error')
-    } finally {
-      setPendingShare(null)
     }
   }
 
@@ -92,40 +86,95 @@ export function OpportunitiesPage({ team }: { team: TeamView }) {
         title="AI Opportunity Map"
         description="Where could these capabilities create value in your organization, what prevents action today, and what can move in the next 90 days?"
       />
-      <Card>
-        <div className="grid grid-2" style={{ alignItems: 'end' }}>
-          <Field label="Your name" hint="Used to attribute your opportunities (aim for 2–3 each).">
-            {(id) => (
-              <Input
-                id={id}
-                value={participant}
-                maxLength={80}
-                onChange={(e) => {
-                  setParticipant(e.target.value)
-                  storage.set('execsim.participant', e.target.value)
-                }}
-              />
+      <Card
+        title={consent ? 'Shared with the organization map' : 'Share with the organization map'}
+        icon={<Share2 />}
+        actions={
+          <span className={`consent__status ${consent ? 'is-on' : ''}`} role="status">
+            {consent ? (
+              <>
+                <Check size={12} aria-hidden /> Shared · {mine.length} opportunit
+                {mine.length === 1 ? 'y' : 'ies'}
+              </>
+            ) : participant.trim() ? (
+              'Not shared'
+            ) : (
+              'Enter your name first'
             )}
-          </Field>
-          <div className="stack" style={{ '--gap': '6px' } as React.CSSProperties}>
-            <label className="checkbox small">
-              <input
-                type="checkbox"
-                checked={consent}
-                disabled={!participant.trim() || giveConsent.isPending}
-                onChange={(e) => void setShare(e.target.checked)}
-              />
-              {catalog?.opportunity.consent_text ??
-                'I consent to this opportunity being stored and shared with the organization map.'}
-            </label>
-            <span className="xs muted">
-              {!participant.trim()
-                ? 'Enter your name first: consent is personal.'
-                : consent
-                  ? `Shared: your ${mine.length} opportunit${mine.length === 1 ? 'y appears' : 'ies appear'} on the facilitator's organization map.`
-                  : `Not shared yet: your opportunities stay with your team until you tick this.`}
-            </span>
+          </span>
+        }
+      >
+        <div className="consent-body">
+          <div className="consent-row">
+            {consent ? (
+              // Once agreed the name is settled: it looks like the field but cannot be typed into.
+              <div className="consent-name">
+                <Field label="Your name">
+                  {(id) => <Input id={id} value={participant} readOnly className="input--locked" />}
+                </Field>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  disabled={giveConsent.isPending}
+                  onClick={() => void setShare(false)}
+                >
+                  Stop sharing my opportunities
+                </Button>
+              </div>
+            ) : (
+              <Field label="Your name" hint="Attributes your opportunities. Aim for 2–3 each.">
+                {(id) => (
+                  <Input
+                    id={id}
+                    value={participant}
+                    maxLength={80}
+                    onChange={(e) => {
+                      setParticipant(e.target.value)
+                      storage.set('execsim.participant', e.target.value)
+                    }}
+                  />
+                )}
+              </Field>
+            )}
+            {!consent && (
+              // Sits on the same line as the name field, lined up with the input box.
+              <label className="checkbox consent-row__agree">
+                <input
+                  type="checkbox"
+                  checked={false}
+                  disabled={!participant.trim() || giveConsent.isPending}
+                  onChange={() => void setShare(true)}
+                />
+                I agree to share my opportunities
+              </label>
+            )}
           </div>
+          {consent ? (
+            // Already agreed: no repeat of the explanation. The person can still stop sharing.
+            <div className="consent-body__after">
+              <details className="consent__details">
+                <summary>What I agreed to</summary>
+                <p>
+                  {catalog?.opportunity.consent_text ??
+                    'I consent to this opportunity being stored and shared with the organization map.'}
+                </p>
+              </details>
+            </div>
+          ) : (
+            <>
+              <p className="consent__summary">
+                The facilitator can add your opportunities to the combined map for your
+                organization. Until you agree, they stay with your team.
+              </p>
+              <details className="consent__details">
+                <summary>What am I agreeing to?</summary>
+                <p>
+                  {catalog?.opportunity.consent_text ??
+                    'I consent to this opportunity being stored and shared with the organization map.'}
+                </p>
+              </details>
+            </>
+          )}
         </div>
       </Card>
       <div className="grid grid-split">
@@ -472,6 +521,7 @@ function FeedbackDialog({
             <span className="field__label">{label}</span>
             <Segmented
               label={label}
+              block
               value={f[k]}
               options={scale}
               onChange={(v) => setF({ ...f, [k]: v })}

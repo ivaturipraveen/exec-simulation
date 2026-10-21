@@ -87,8 +87,7 @@
 .tp__stat-value,
 .stat__value,
 .kpi__value,
-.score-hero__value,
-.rubric__score {
+.score-hero__value {
   background: linear-gradient(120deg, var(--text) 30%, var(--accent) 100%);
   -webkit-background-clip: text;
   background-clip: text;

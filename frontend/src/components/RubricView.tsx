@@ -1,21 +1,35 @@
+import { CheckCircle2 } from 'lucide-react'
 import type { RubricRowView, RubricScore } from '../api/types'
+
+const words = (s: string) => s.toLowerCase().match(/[a-z0-9]+/g) ?? []
+const FILLER = new Set(['a', 'an', 'the', 'of', 'for', 'to', 'and', 'with', 'is', 'are'])
+/** True when the rationale only repeats the level text (same words, any order), so it adds nothing. */
+const restates = (rationale: string, level: string) => {
+  const have = new Set(words(level))
+  return words(rationale).every((w) => FILLER.has(w) || have.has(w))
+}
 
 /** 0–3 rubric rows with level descriptions; shows the suggestion when the final differs. */
 export function RubricView({ rows, score }: { rows: RubricRowView[]; score: RubricScore }) {
   return (
     <div className="rubric">
-      <div className="rubric__total">
-        <span className="rubric__score num">
+      {/* The result arrives as a solid brand-blue band that animates in once, so it is obvious where to
+          look. The total appears here only; each row below shows just its own 0-3. */}
+      <div className="rubric__result" role="status">
+        <CheckCircle2 className="rubric__result-icon" size={28} aria-hidden />
+        <div className="rubric__result-text">
+          <span className="rubric__verdict-label">
+            {score.overridden
+              ? 'Score received · facilitator'
+              : score.source === 'ai'
+                ? 'Score received · AI-suggested'
+                : 'Score received'}
+          </span>
+          {score.note && <span className="rubric__verdict-note">{score.note}</span>}
+        </div>
+        <span className="rubric__big num" aria-label={`${score.total} out of ${score.max}`}>
           {score.total}
-          <span className="muted">/{score.max}</span>
-        </span>
-        <span className="xs muted">
-          {score.overridden
-            ? 'Facilitator score'
-            : score.source === 'ai'
-              ? 'AI-suggested score'
-              : 'Suggested score'}
-          {score.note && ` · ${score.note}`}
+          <span className="rubric__big-of">/{score.max}</span>
         </span>
       </div>
       <ul className="list-reset rubric__rows">
@@ -33,12 +47,14 @@ export function RubricView({ rows, score }: { rows: RubricRowView[]; score: Rubr
                 </span>
               </div>
               <div className="xs secondary">
-                {value} · {r.levels[value]}
+                {r.levels[value]}
                 {score.overridden && suggested !== value && (
                   <span className="muted"> (suggested {suggested})</span>
                 )}
               </div>
-              {score.rationale[r.id] && <div className="xs muted">{score.rationale[r.id]}</div>}
+              {score.rationale[r.id] && !restates(score.rationale[r.id], r.levels[value]) && (
+                <div className="xs muted">{score.rationale[r.id]}</div>
+              )}
             </li>
           )
         })}
