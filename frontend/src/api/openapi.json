@@ -9508,6 +9508,57 @@
         "tags": ["team"]
       }
     },
+    "/api/team/ai/ask/stream": {
+      "post": {
+        "description": "The same analyst as `/ai/ask`, streamed so the page can show the answer as it is written.\n\nSign-in, scope, rate limit and context are all checked first, so those failures are ordinary\nJSON errors with a status code. Once the stream has started, a failure arrives as an `error`\nevent instead, because the status line has already been sent.",
+        "operationId": "ask_analyst_stream_api_team_ai_ask_stream_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AskBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Server-sent events: meta, delta..., done | error"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Ask Analyst Stream",
+        "tags": ["team"]
+      }
+    },
     "/api/team/crisis": {
       "get": {
         "operationId": "crisis_api_team_crisis_get",

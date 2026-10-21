@@ -1,6 +1,11 @@
 """Participant endpoints. Every route is scoped to the caller's own team."""
 
+import json
+import logging
+from collections.abc import Iterator
+
 from fastapi import APIRouter, Request
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 from app.api.deps import GameDep, TeamId
@@ -14,8 +19,11 @@ from app.schemas.workspace import (
     Round2Action,
     Workspace,
 )
-from app.services.analyst import AnalystAnswer, AskBody
+from app.services.analyst import Analyst, AnalystAnswer, AnalystUnavailable, AskBody
+from app.services.game import GameService
 from sim.engine import CrisisResponse, OperatingModelDesign, PitchSubmission, Scorecard, YearReport
+
+log = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/team", tags=["team"])
 
@@ -154,9 +162,10 @@ def feedback(body: Feedback, team_id: TeamId, game: GameDep) -> Workspace:
     return game.add_feedback(team_id, body)
 
 
-@router.post("/ai/ask")
-def ask_analyst(body: AskBody, team_id: TeamId, game: GameDep, request: Request) -> AnalystAnswer:
-    """Grounded analyst over the team's released data room (DAT-002). Rate-limited and logged."""
+def _analyst_request(
+    body: AskBody, team_id: str, game: GameService, request: Request
+) -> tuple[Analyst, str, set[str], AskBody]:
+    """Everything both analyst routes do before the model is called: scope, rate limit, context."""
     analyst = request.app.state.analyst
     settings = request.app.state.settings
     _, payer_id = game.team_payer(team_id)
@@ -164,6 +173,53 @@ def ask_analyst(body: AskBody, team_id: TeamId, game: GameDep, request: Request)
     game.record_ai_request(team_id, settings.ai_requests_per_10_min, body.question, body.mode, [])
     if body.mode in ("challenge", "explain", "pitch") and not body.context.strip():
         body = body.model_copy(update={"context": game.team_context_text(team_id)[:6000]})
+    return analyst, payer_id, allowed, body
+
+
+@router.post("/ai/ask")
+def ask_analyst(body: AskBody, team_id: TeamId, game: GameDep, request: Request) -> AnalystAnswer:
+    """Grounded analyst over the team's released data room (DAT-002). Rate-limited and logged."""
+    analyst, payer_id, allowed, body = _analyst_request(body, team_id, game, request)
     answer = analyst.ask(payer_id, allowed, body)
     game.log_ai_answer(team_id, answer.citations, answer.generative)
     return answer
+
+
+def _sse(event: dict) -> str:
+    """One server-sent event: a named event with its JSON payload."""
+    return f"event: {event['type']}\ndata: {json.dumps(event, ensure_ascii=False)}\n\n"
+
+
+@router.post(
+    "/ai/ask/stream",
+    response_class=StreamingResponse,
+    responses={200: {"description": "Server-sent events: meta, delta..., done | error"}},
+)
+def ask_analyst_stream(body: AskBody, team_id: TeamId, game: GameDep, request: Request) -> StreamingResponse:
+    """The same analyst as `/ai/ask`, streamed so the page can show the answer as it is written.
+
+    Sign-in, scope, rate limit and context are all checked first, so those failures are ordinary
+    JSON errors with a status code. Once the stream has started, a failure arrives as an `error`
+    event instead, because the status line has already been sent.
+    """
+    analyst, payer_id, allowed, body = _analyst_request(body, team_id, game, request)
+
+    def events() -> Iterator[str]:
+        try:
+            for event in analyst.ask_stream(payer_id, allowed, body):
+                if event["type"] == "done":
+                    answer = event["answer"]
+                    game.log_ai_answer(team_id, answer["citations"], answer["generative"])
+                yield _sse(event)
+        except AnalystUnavailable as exc:
+            yield _sse({"type": "error", "message": exc.message})
+        except Exception:
+            log.exception("analyst stream failed")
+            yield _sse({"type": "error", "message": "The analyst ran into a problem — try again"})
+
+    return StreamingResponse(
+        events(),
+        media_type="text/event-stream",
+        # no caching, and tell nginx-style proxies not to hold the pieces back
+        headers={"Cache-Control": "no-cache, no-transform", "X-Accel-Buffering": "no"},
+    )

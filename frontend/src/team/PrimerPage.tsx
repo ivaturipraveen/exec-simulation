@@ -248,9 +248,7 @@ export function PrimerPage({ team }: { team: TeamView }) {
                 <tr key={x.actual}>
                   <td className="simplify-table__actual">{x.actual}</td>
                   <td className="simplify-table__game">{x.representation}</td>
-                  <td className="simplify-table__remember">
-                    <Emphasis text={x.disclosure} phrase={x.key} />
-                  </td>
+                  <td className="simplify-table__remember">{x.disclosure}</td>
                 </tr>
               ))}
             </tbody>
@@ -258,18 +256,5 @@ export function PrimerPage({ team }: { team: TeamView }) {
         </div>
       </Card>
     </div>
-  )
-}
-
-/** The sentence with its key phrase in bold. */
-function Emphasis({ text, phrase }: { text: string; phrase?: string }) {
-  const at = phrase ? text.indexOf(phrase) : -1
-  if (!phrase || at < 0) return <>{text}</>
-  return (
-    <>
-      {text.slice(0, at)}
-      <strong>{phrase}</strong>
-      {text.slice(at + phrase.length)}
-    </>
   )
 }

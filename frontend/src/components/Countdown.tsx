@@ -1,4 +1,5 @@
 import { Clock, Pause } from 'lucide-react'
+import type { CSSProperties } from 'react'
 import type { ClockView } from '../api/types'
 import { clockText } from '../lib/format'
 import { useRemaining } from '../lib/useRemaining'
@@ -35,7 +36,8 @@ export function Countdown({
   return (
     <span
       className={cls}
-      data-len={text.length > 8 ? 'xl' : text.length > 6 ? 'long' : undefined}
+      // how many characters the time has: the ring sizes its digits from this, so a long time still fits
+      style={{ '--chars': text.length } as CSSProperties}
       role="timer"
       aria-label={`${paused ? 'Paused, ' : ''}${clockText(remaining)} ${remaining < 0 ? 'over time' : 'remaining'}`}
     >

@@ -971,6 +971,30 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/api/team/ai/ask/stream': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Ask Analyst Stream
+     * @description The same analyst as `/ai/ask`, streamed so the page can show the answer as it is written.
+     *
+     *     Sign-in, scope, rate limit and context are all checked first, so those failures are ordinary
+     *     JSON errors with a status code. Once the stream has started, a failure arrives as an `error`
+     *     event instead, because the status line has already been sent.
+     */
+    post: operations['ask_analyst_stream_api_team_ai_ask_stream_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/api/team/crisis': {
     parameters: {
       query?: never
@@ -5701,6 +5725,39 @@ export interface operations {
         content: {
           'application/json': components['schemas']['AnalystAnswer']
         }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  ask_analyst_stream_api_team_ai_ask_stream_post: {
+    parameters: {
+      query?: never
+      header?: {
+        authorization?: string | null
+      }
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AskBody']
+      }
+    }
+    responses: {
+      /** @description Server-sent events: meta, delta..., done | error */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
       }
       /** @description Validation Error */
       422: {

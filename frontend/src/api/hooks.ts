@@ -1,11 +1,10 @@
 import { useMutation, useQuery, useQueryClient, type QueryKey } from '@tanstack/react-query'
 import { withConsent } from '../lib/consent'
 import { auth } from '../lib/storage'
+import { streamAnalyst, type AnalystQuestion, type AnalystStreamHandlers } from './analystStream'
 import { request } from './client'
 import type {
   OrganizationMap,
-  AnalystAnswer,
-  AnalystMode,
   AnswerKeyEntry,
   ArtifactContent,
   Catalog,
@@ -203,11 +202,12 @@ export const useSubmitFeedback = () =>
     request<Workspace>('POST', '/team/feedback', { token: teamToken(), body }),
   )
 
-export const useAskAnalyst = () =>
-  useMutation({
-    mutationFn: (body: { question: string; mode: AnalystMode; context?: string }) =>
-      request<AnalystAnswer>('POST', '/team/ai/ask', { token: teamToken(), body }),
-  })
+/** Ask the analyst and get the answer as it is written (see `streamAnalyst`). */
+export const askAnalyst = (
+  question: AnalystQuestion,
+  handlers: AnalystStreamHandlers,
+  signal?: AbortSignal,
+) => streamAnalyst(question, teamToken(), handlers, signal)
 
 // ------------------------------------------------------------------ facilitator
 
