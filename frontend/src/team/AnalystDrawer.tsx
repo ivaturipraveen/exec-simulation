@@ -1,4 +1,4 @@
-import { Bot, FileText, Send, Sparkles, User, X } from 'lucide-react'
+import { Bot, Send, Sparkles, X } from 'lucide-react'
 import {
   useCallback,
   useEffect,
@@ -9,23 +9,34 @@ import {
   type ReactNode,
 } from 'react'
 import { errorMessage } from '../api/client'
-import { useAskAnalyst } from '../api/hooks'
-import type { AnalystAnswer, AnalystMode, TeamView } from '../api/types'
+import { askAnalyst } from '../api/hooks'
+import type { AnalystMode, TeamView } from '../api/types'
 import { ArtifactViewer } from '../components/ArtifactViewer'
 import { Button } from '../components/ui/Button'
 import { Dialog } from '../components/ui/Dialog'
 import { Segmented, Textarea } from '../components/ui/Field'
-import { Markdown } from '../components/ui/Markdown'
-import { Badge, Callout } from '../components/ui/primitives'
+import { Callout } from '../components/ui/primitives'
 import { useToast } from '../components/ui/toastContext'
+import { shouldBlockWheel } from '../lib/wheelGuard'
 import { AnalystContext, type AnalystPreset } from './analystContext'
+import { AnswerBubble, type AnswerTurn } from './AnswerBubble'
 
-interface Turn {
+interface Turn extends AnswerTurn {
   question: string
   mode: AnalystMode
-  answer?: AnalystAnswer
-  error?: string
 }
+
+/** What is kept between visits: finished conversations only, never a half-written answer. */
+const forHistory = ({ question, mode, answer, error }: Turn): Turn => ({
+  question,
+  mode,
+  answer,
+  error,
+})
+
+/** A saved turn with no answer was cut off (the page was closed mid-answer): say so, do not spin. */
+const settled = (t: Turn): Turn =>
+  t.answer || t.error ? t : { ...t, error: 'This answer was interrupted. Ask the question again.' }
 
 const MODES: { value: AnalystMode; label: string; placeholder: string }[] = [
   {
@@ -84,6 +95,22 @@ export function AnalystProvider({ team, children }: { team: TeamView; children: 
     return () => window.removeEventListener('keydown', onKey)
   }, [open])
 
+  // Scrolling inside the panel stays inside it. A wheel gesture over a part of the panel that cannot
+  // scroll (the header, the question box) would otherwise carry on into the page behind. React's own
+  // wheel handlers are passive and cannot stop that, so this is a native, non-passive listener.
+  const panel = useRef<HTMLElement>(null)
+  useEffect(() => {
+    const el = panel.current
+    if (!el) return
+    const onWheel = (e: WheelEvent) => {
+      if (Math.abs(e.deltaY) >= Math.abs(e.deltaX) && shouldBlockWheel(e.target, el, e.deltaY)) {
+        e.preventDefault()
+      }
+    }
+    el.addEventListener('wheel', onWheel, { passive: false })
+    return () => el.removeEventListener('wheel', onWheel)
+  }, [])
+
   return (
     <AnalystContext.Provider value={value}>
       {children}
@@ -100,6 +127,7 @@ export function AnalystProvider({ team, children }: { team: TeamView; children: 
       )}
       {/* Kept mounted while closed so an answer that is still on its way is not lost. */}
       <aside
+        ref={panel}
         className={`analyst-drawer ${open ? 'is-open' : ''}`}
         aria-label="AI analyst"
         aria-hidden={!open}
@@ -110,24 +138,25 @@ export function AnalystProvider({ team, children }: { team: TeamView; children: 
             <Bot />
           </span>
           <div className="grow">
-            <div className="analyst-drawer__title">AI analyst</div>
+            <div className="analyst-drawer__titlerow">
+              <div className="analyst-drawer__title">AI analyst</div>
+              {team.ai_enabled ? (
+                <span className="analyst-drawer__status">
+                  <span className="analyst-drawer__dot" aria-hidden /> Claude connected
+                </span>
+              ) : (
+                <span className="analyst-drawer__status analyst-drawer__status--off">
+                  <span className="analyst-drawer__dot" aria-hidden /> Retrieval only
+                </span>
+              )}
+            </div>
             <div className="analyst-drawer__sub">
               {team.ai_enabled ? (
-                <>
-                  <span className="analyst-drawer__status">
-                    <span className="analyst-drawer__dot" aria-hidden /> Claude connected
-                  </span>
-                  <span>
-                    <Sparkles aria-hidden /> Grounded in your data room
-                  </span>
-                </>
+                <span>
+                  <Sparkles aria-hidden /> Grounded in your data room
+                </span>
               ) : (
-                <>
-                  <span className="analyst-drawer__status analyst-drawer__status--off">
-                    <span className="analyst-drawer__dot" aria-hidden /> Retrieval only
-                  </span>
-                  <span>Shows the most relevant data-room passages</span>
-                </>
+                <span>Shows the most relevant data-room passages</span>
               )}
             </div>
           </div>
@@ -161,16 +190,21 @@ function AnalystChat({
   const [question, setQuestion] = useState('')
   const [turns, setTurns] = useState<Turn[]>(() => {
     try {
-      return JSON.parse(sessionStorage.getItem(historyKey(team.team_id)) ?? '[]') as Turn[]
+      const saved = JSON.parse(sessionStorage.getItem(historyKey(team.team_id)) ?? '[]') as Turn[]
+      return saved.map(settled)
     } catch {
       return []
     }
   })
   const [doc, setDoc] = useState<string | null>(null)
-  const ask = useAskAnalyst()
+  const [busy, setBusy] = useState(false) // an answer is being written
   const toast = useToast()
   const threadRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
+  const request = useRef<AbortController | null>(null)
+
+  // Leaving the page cancels an answer that is still being written.
+  useEffect(() => () => request.current?.abort(), [])
 
   // A page that opens the analyst with a mode or context (pitch coach, results explainer) sets it.
   useEffect(() => {
@@ -183,15 +217,29 @@ function AnalystChat({
   }, [open, preset])
 
   useEffect(() => {
+    if (busy) return // keep the conversation as it was until the answer is complete
     try {
-      sessionStorage.setItem(historyKey(team.team_id), JSON.stringify(turns.slice(-30)))
+      sessionStorage.setItem(
+        historyKey(team.team_id),
+        JSON.stringify(turns.slice(-30).map(forHistory)),
+      )
     } catch {
       /* ignore */
     }
-    // Scroll only the chat thread; scrollIntoView would also move the page behind the panel.
+  }, [turns, busy, team.team_id])
+
+  // A new question scrolls the thread to the end. Scroll only the thread; scrollIntoView would also
+  // move the page behind the panel.
+  useEffect(() => {
     const el = threadRef.current
     if (el) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
-  }, [turns, team.team_id])
+  }, [turns.length])
+
+  // While an answer types out, stay at the end, but only if the reader has not scrolled up.
+  const keepAtEnd = useCallback(() => {
+    const el = threadRef.current
+    if (el && el.scrollHeight - el.scrollTop - el.clientHeight < 140) el.scrollTop = el.scrollHeight
+  }, [])
 
   const thesisContext = () => {
     if (context) return context
@@ -206,21 +254,29 @@ function AnalystChat({
   async function submit(e?: FormEvent, text?: string) {
     e?.preventDefault()
     const q = (text ?? question).trim()
-    if (q.length < 3) return
+    if (q.length < 3 || busy) return
     const idx = turns.length
-    setTurns((t) => [...t, { question: q, mode }])
+    const update = (change: (x: Turn) => Partial<Turn>) =>
+      setTurns((t) => t.map((x, i) => (i === idx ? { ...x, ...change(x) } : x)))
+    setTurns((t) => [...t, { question: q, mode, fresh: true }])
     setQuestion('')
+    setBusy(true)
+    const controller = new AbortController()
+    request.current = controller
     try {
-      const answer = await ask.mutateAsync({
-        question: q,
-        mode,
-        context: thesisContext().slice(0, 6000),
-      })
-      setTurns((t) => t.map((x, i) => (i === idx ? { ...x, answer } : x)))
+      const answer = await askAnalyst(
+        { question: q, mode, context: thesisContext().slice(0, 6000) },
+        { onDelta: (piece) => update((x) => ({ partial: (x.partial ?? '') + piece })) },
+        controller.signal,
+      )
+      update(() => ({ answer }))
     } catch (err) {
+      if (controller.signal.aborted) return
       const message = errorMessage(err)
-      setTurns((t) => t.map((x, i) => (i === idx ? { ...x, error: message } : x)))
+      update(() => ({ error: message }))
       toast(message, 'error')
+    } finally {
+      setBusy(false)
     }
   }
 
@@ -228,7 +284,12 @@ function AnalystChat({
 
   return (
     <>
-      <div className="analyst-drawer__thread analyst__thread" aria-live="polite" ref={threadRef}>
+      <div
+        className="analyst-drawer__thread analyst__thread"
+        aria-live="polite"
+        aria-busy={busy} // screen readers wait for the whole answer instead of reading every typed letter
+        ref={threadRef}
+      >
         {turns.length === 0 && (
           <div className="analyst-drawer__empty">
             <p className="secondary small">
@@ -253,49 +314,12 @@ function AnalystChat({
         {turns.map((t, i) => (
           <div key={i} className="analyst__turn">
             <div className="analyst__q">
-              <span className="analyst__avatar">
-                <User aria-hidden />
+              <span className="analyst__q-mode">
+                {MODES.find((m) => m.value === t.mode)?.label}
               </span>
-              <div className="grow">
-                <Badge>{MODES.find((m) => m.value === t.mode)?.label}</Badge>
-                <p style={{ marginTop: 6 }}>{t.question}</p>
-              </div>
+              <p className="analyst__bubble analyst__bubble--user">{t.question}</p>
             </div>
-            <div className="analyst__a">
-              <span className="analyst__avatar analyst__avatar--ai">
-                <Bot aria-hidden />
-              </span>
-              <div className="grow stack" style={{ '--gap': '10px' } as React.CSSProperties}>
-                {!t.answer && !t.error && (
-                  <span className="row muted">
-                    <span className="spinner" aria-hidden /> Analyzing your data room…
-                  </span>
-                )}
-                {t.error && <Callout tone="critical">{t.error}</Callout>}
-                {t.answer && (
-                  <>
-                    <Markdown>{t.answer.answer}</Markdown>
-                    {t.answer.sources.length > 0 && (
-                      <div className="chip-list">
-                        {[...new Map(t.answer.sources.map((s) => [s.artifact_id, s])).values()].map(
-                          (s) => (
-                            <button
-                              key={s.artifact_id}
-                              type="button"
-                              className={`badge ${t.answer!.citations.includes(s.artifact_id) ? 'badge--accent' : ''}`}
-                              style={{ cursor: 'pointer' }}
-                              onClick={() => setDoc(s.artifact_id)}
-                            >
-                              <FileText aria-hidden /> {s.title}
-                            </button>
-                          ),
-                        )}
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-            </div>
+            <AnswerBubble turn={t} onOpenSource={setDoc} onGrow={keepAtEnd} />
           </div>
         ))}
       </div>
@@ -334,7 +358,7 @@ function AnalystChat({
             type="submit"
             variant="primary"
             icon={<Send />}
-            loading={ask.isPending}
+            loading={busy}
             disabled={question.trim().length < 3}
             aria-label="Send"
             iconOnly

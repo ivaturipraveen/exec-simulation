@@ -1802,13 +1802,10 @@
 .simplify-table__game {
   color: var(--text-2);
 }
+/* "What to remember" is plain text like "In this game": no bold, no divider line. Only the first column
+   (the real-world concept) is bold, so it reads as the row label. */
 .simplify-table__remember {
   color: var(--text-2);
-  border-left: 3px solid color-mix(in srgb, var(--accent) 35%, transparent);
-}
-.simplify-table__remember strong {
-  font-weight: 700;
-  color: var(--text);
 }
 @media (max-width: 760px) {
   .simplify-table {

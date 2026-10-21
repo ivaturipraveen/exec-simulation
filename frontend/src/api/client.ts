@@ -27,6 +27,48 @@ export class ApiError extends Error {
 
 type Method = 'GET' | 'POST' | 'PUT' | 'DELETE'
 
+/** The error for a request that never got an answer (offline, wrong address, blocked by CORS). */
+export function networkError(): ApiError {
+  return new ApiError(
+    0,
+    'network_error',
+    API_ORIGIN
+      ? `Cannot reach the API at ${API_ORIGIN}. Check your connection, that the API is running, and that its CORS_ORIGINS includes this site.`
+      : 'Cannot reach the server. Check your connection.',
+  )
+}
+
+/**
+ * A static host answering /api with its own index.html means the UI was built without VITE_API_URL
+ * (or the API is down): say so instead of failing on the HTML. Returns null for a normal answer.
+ */
+export function unreachableError(response: Response): ApiError | null {
+  if (!(response.headers.get('content-type') ?? '').includes('text/html')) return null
+  return new ApiError(
+    response.status || 0,
+    'api_unreachable',
+    API_ORIGIN
+      ? `The API at ${API_ORIGIN} did not answer correctly. Check that the API service is running.`
+      : 'This page cannot reach the API. When the UI is hosted separately, build it with VITE_API_URL set to the API address.',
+  )
+}
+
+/** The error for a failed (non-2xx) response, using the server's error envelope when it sent one. */
+export async function errorFromResponse(response: Response): Promise<ApiError> {
+  let code = 'http_error'
+  let message = `Request failed (${response.status})`
+  let details: unknown
+  try {
+    const body = (await response.json()) as {
+      error?: { code: string; message: string; details?: unknown }
+    }
+    if (body.error) ({ code, message, details } = body.error)
+  } catch {
+    /* non-JSON error */
+  }
+  return new ApiError(response.status, code, message, details)
+}
+
 export async function request<T>(
   method: Method,
   path: string,
@@ -43,40 +85,14 @@ export async function request<T>(
       body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
     })
   } catch {
-    throw new ApiError(
-      0,
-      'network_error',
-      API_ORIGIN
-        ? `Cannot reach the API at ${API_ORIGIN}. Check your connection, that the API is running, and that its CORS_ORIGINS includes this site.`
-        : 'Cannot reach the server. Check your connection.',
-    )
+    throw networkError()
   }
-  // A static host answering /api with its own index.html means the UI was built without
-  // VITE_API_URL (or the API is down): say so instead of failing on the HTML.
   const textual = !options.raw && !options.blob
-  if (textual && (response.headers.get('content-type') ?? '').includes('text/html')) {
-    throw new ApiError(
-      response.status || 0,
-      'api_unreachable',
-      API_ORIGIN
-        ? `The API at ${API_ORIGIN} did not answer correctly. Check that the API service is running.`
-        : 'This page cannot reach the API. When the UI is hosted separately, build it with VITE_API_URL set to the API address.',
-    )
+  if (textual) {
+    const unreachable = unreachableError(response)
+    if (unreachable) throw unreachable
   }
-  if (!response.ok) {
-    let code = 'http_error'
-    let message = `Request failed (${response.status})`
-    let details: unknown
-    try {
-      const body = (await response.json()) as {
-        error?: { code: string; message: string; details?: unknown }
-      }
-      if (body.error) ({ code, message, details } = body.error)
-    } catch {
-      /* non-JSON error */
-    }
-    throw new ApiError(response.status, code, message, details)
-  }
+  if (!response.ok) throw await errorFromResponse(response)
   if (response.status === 204) return undefined as T
   if (options.blob) return (await response.blob()) as T
   if (options.raw) return (await response.text()) as T

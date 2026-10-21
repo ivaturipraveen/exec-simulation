@@ -98,7 +98,7 @@
   stroke: #d98e04;
   stroke-width: 0.6;
   stroke-linejoin: round;
-  filter: drop-shadow(0 1px 4px rgba(242, 163, 15, 0.55));
+  /* no glow: a drop-shadow on a shape that is clipped to a box shows up as a square tint behind the star */
 }
 .stars--hero .stars__star {
   animation: star-pop 480ms var(--ease-out, ease-out) both;
@@ -125,7 +125,8 @@
   /* beats `.grid > .card`, which stacks the children of every card in a grid */
   display: flex;
   flex-direction: row;
-  align-items: center;
+  /* the icon starts at the top, level with where the label's text starts, not in the vertical middle */
+  align-items: flex-start;
   gap: 12px;
   padding: 12px 14px;
 }
@@ -909,16 +910,31 @@
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
-.hq-ring .clock--big[data-len='long'] {
-  font-size: 24px;
+/* The digits in the timer ring are sized from how many characters the time has (`--chars`, set by the
+   clock), so every length keeps about the same room to the ring's edge. A five-character time such as
+   +8:58 is 24px; each extra character takes the size down, so "+10:25" and "+1:57:34" no longer touch
+   or cross the ring. The numbers are measured: at least 12px of clear space between digits and ring. */
+.hq-ring {
+  --ring-size: 132px;
+  width: var(--ring-size);
+  height: var(--ring-size);
 }
-.hq-ring .clock--big[data-len='xl'] {
-  font-size: 19px;
+.hq-ring .clock--big {
+  font-size: clamp(
+    calc(var(--ring-size) * 0.098),
+    calc(var(--ring-size) * 0.96 / var(--chars, 5)),
+    calc(var(--ring-size) * 0.182)
+  );
+}
+@media (max-width: 640px) {
+  .hq-ring {
+    --ring-size: 112px; /* the same breakpoint as the smaller ring in run.css */
+  }
 }
 
-/* Notices: each tone has its own soft wash, picked to sit well beside the blue UI instead of fighting it:
-   teal for information, mint for good news, warm cream for warnings, a soft coral for critical.
-   The wash is mixed from the card colour, so it works in light and dark mode. */
+/* Notices are plain white cards with a neutral border: no blue wash behind information, warnings or the
+   Crisis packet. Only the two tones that carry meaning keep a tint: green for good news, red for a real
+   problem. The tint is mixed from the card colour, so it works in light and dark mode. */
 .callout,
 .callout--neutral,
 .callout--accent,
@@ -929,16 +945,25 @@
 .shell--arena .packet,
 :root[data-theme='light'] .shell--arena .packet {
   --tone: var(--accent);
-  background: color-mix(in srgb, var(--tone) 7%, var(--surface));
-  border: 1px solid color-mix(in srgb, var(--tone) 26%, var(--border));
+  background: var(--surface);
+  border: 1px solid var(--border);
   box-shadow: none;
   color: var(--text);
 }
 .callout--good {
   --tone: #12a97a;
+  background: color-mix(in srgb, var(--tone) 7%, var(--surface));
+  border-color: color-mix(in srgb, var(--tone) 26%, var(--border));
 }
 .callout--critical {
   --tone: #e5484d;
+  background: color-mix(in srgb, var(--tone) 7%, var(--surface));
+  border-color: color-mix(in srgb, var(--tone) 26%, var(--border));
+}
+/* the facilitator's "Your cue" box follows the same rule: white, not blue */
+.hq-cue {
+  background: var(--surface);
+  border: 1px solid var(--border);
 }
 .callout--accent svg,
 .callout--neutral svg,
@@ -1300,4 +1325,177 @@ dt.upper {
 .input--locked:focus {
   border-color: var(--border-strong);
   box-shadow: none;
+}
+
+/* AI analyst drawer header: the robot icon and the close button start at the top, level with the title,
+   instead of floating in the vertical middle of the title and status lines. */
+.analyst-drawer__head {
+  align-items: flex-start;
+  /* a little more room between the icon and the title block */
+  gap: 16px;
+}
+
+/* AI analyst status badge ("Retrieval only" / "Claude connected") sits beside the title. The pulsing dot
+   keeps clear of the text: the glow used to grow 10px wide against a 5px gap and paint over the first
+   letter. */
+.analyst-drawer__titlerow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  /* sideways room between the title and its badge; the vertical spacing is unchanged */
+  gap: 4px 20px;
+}
+.analyst-drawer__titlerow > .analyst-drawer__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding-left: 10px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.analyst-drawer__dot {
+  flex: none;
+  animation-name: analyst-dot-pulse;
+}
+@keyframes analyst-dot-pulse {
+  70% {
+    box-shadow: 0 0 0 5px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .analyst-drawer__dot {
+    animation: none;
+  }
+}
+
+/* ---------- AI analyst chat: bubbles, a typing cursor and a waiting indicator ---------- */
+.analyst-drawer__thread .analyst__turn {
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 0;
+}
+/* the person's question: a dark bubble on the right, with the mode as a small caption above it */
+.analyst__q {
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+.analyst__q-mode {
+  margin-right: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+.analyst__bubble {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 1.55;
+}
+.analyst__bubble--user {
+  max-width: 88%;
+  margin: 0;
+  padding: 9px 14px;
+  border-radius: 16px 16px 4px 16px;
+  background: #0b1f3a;
+  color: #fff;
+  white-space: pre-wrap;
+}
+:root[data-theme='dark'] .analyst__bubble--user {
+  background: #eaf1f9;
+  color: #0b1f3a;
+}
+/* the analyst's answer: a light bubble on the left, beside its avatar */
+.analyst__bubble--ai {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 16px 16px 16px 4px;
+  background: var(--surface-2);
+}
+.analyst__bubble--ai .md > :first-child {
+  margin-top: 0;
+}
+.analyst__bubble--ai .md > :last-child {
+  margin-bottom: 0;
+}
+.analyst__a .analyst__avatar {
+  margin-top: 2px;
+}
+/* while text is still arriving, a cursor blinks at its end */
+.analyst__bubble.is-typing .md > :last-child::after {
+  content: '';
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  background: var(--accent);
+  animation: analyst-caret 1s steps(1) infinite;
+}
+@keyframes analyst-caret {
+  50% {
+    opacity: 0;
+  }
+}
+/* before the first word arrives */
+.analyst__waiting {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.analyst__dots {
+  display: inline-flex;
+  gap: 4px;
+}
+.analyst__dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  animation: analyst-bounce 1.2s ease-in-out infinite;
+}
+.analyst__dots span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.analyst__dots span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+@keyframes analyst-bounce {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.45;
+  }
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .analyst__bubble.is-typing .md > :last-child::after,
+  .analyst__dots span {
+    animation: none;
+  }
+}
+
+/* Scrolling the AI analyst panel never scrolls the page behind it. Without this, a wheel or trackpad
+   scroll that reaches the end of the conversation (or starts over the header or the question box, which
+   do not scroll) carries on into the page. `contain` keeps the scroll inside the panel. */
+.analyst-drawer {
+  overflow: hidden;
+  overscroll-behavior: contain;
+}
+.analyst-drawer__thread {
+  overscroll-behavior: contain;
 }
